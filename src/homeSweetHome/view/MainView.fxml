@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="768.0" prefWidth="1280.0" stylesheets="@main.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.MainViewController">
+    <children>
+        <BorderPane layoutX="267.0" layoutY="334.0" prefHeight="720.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <left>
+                <AnchorPane prefHeight="720.0" prefWidth="244.0" style="-fx-background-color: yellow;" BorderPane.alignment="CENTER">
+                    <children>
+                        <VBox layoutX="72.0" layoutY="199.0" prefHeight="720.0" prefWidth="244.0" styleClass="background1" stylesheets="@main.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <children>
+                                <HBox prefHeight="100.0" prefWidth="200.0" />
+                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="244.0">
+                                    <children>
+                                        <Button fx:id="btnLoadControlPanelView" mnemonicParsing="false" onAction="#LoadControlPanelView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Panel de Control">
+                                            <font>
+                                                <Font name="Nirmala UI Semilight" size="9.0" />
+                                            </font>
+                                            <styleClass>
+                                                <String fx:value="font" />
+                                                <String fx:value="button-menu" />
+                                            </styleClass>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
+                                    <children>
+                                        <Button fx:id="btnLoadUserView" mnemonicParsing="false" onAction="#loadUserView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Usuarios">
+                                            <font>
+                                                <Font name="Segoe UI" size="12.0" />
+                                            </font>
+                                            <styleClass>
+                                                <String fx:value="font" />
+                                                <String fx:value="button-menu" />
+                                            </styleClass>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
+                                    <children>
+                                        <Button fx:id="btnLoadMealView" mnemonicParsing="false" onAction="#LoadMealView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Comidas">
+                                            <font>
+                                                <Font name="Segoe UI" size="12.0" />
+                                            </font>
+                                            <styleClass>
+                                                <String fx:value="font" />
+                                                <String fx:value="button-menu" />
+                                            </styleClass>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
+                                    <children>
+                                        <Button fx:id="btnLoadPurchaseView" mnemonicParsing="false" onAction="#LoadPurchaseView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Compras">
+                                            <font>
+                                                <Font name="Segoe UI" size="12.0" />
+                                            </font>
+                                            <styleClass>
+                                                <String fx:value="font" />
+                                                <String fx:value="button-menu" />
+                                            </styleClass>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
+                                    <children>
+                                        <Button fx:id="btnLoadTaskView" mnemonicParsing="false" onAction="#LoadTaskView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Tareas">
+                                            <font>
+                                                <Font name="Segoe UI" size="12.0" />
+                                            </font>
+                                            <styleClass>
+                                                <String fx:value="font" />
+                                                <String fx:value="button-menu" />
+                                            </styleClass>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
+                                    <children>
+                                        <Button fx:id="btnLoadEventView" mnemonicParsing="false" onAction="#LoadEventView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Eventos">
+                                            <font>
+                                                <Font name="Segoe UI" size="12.0" />
+                                            </font>
+                                            <styleClass>
+                                                <String fx:value="font" />
+                                                <String fx:value="button-menu" />
+                                            </styleClass>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
+                                    <children>
+                                        <Button fx:id="btnLoadBudgetView" mnemonicParsing="false" onAction="#LoadBudgetView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Gastos">
+                                            <font>
+                                                <Font name="Segoe UI" size="12.0" />
+                                            </font>
+                                            <styleClass>
+                                                <String fx:value="font" />
+                                                <String fx:value="button-menu" />
+                                            </styleClass>
+                                        </Button>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </children>
+                </AnchorPane>
+            </left>
+            <top>
+                <AnchorPane prefHeight="96.0" prefWidth="1280.0" styleClass="background2" stylesheets="@main.css" BorderPane.alignment="CENTER">
+                    <children>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="1280.0" spacing="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <children>
+                                <ImageView fx:id="userImage" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../../images/add-image.png" />
+                                    </image>
+                                </ImageView>
+                                <Label fx:id="lblHola" prefHeight="30.0" prefWidth="134.0" styleClass="font" stylesheets="@main.css" textFill="WHITE">
+                                    <font>
+                                        <Font size="20.0" />
+                                    </font>
+                                </Label>
+                                
+                                <MenuBar styleClass="menu-bar" stylesheets="@main.css">
+                                    <menus>
+                                        <Menu styleClass="button-menu">
+                                            <items>
+                                                <MenuItem fx:id="btnSettings" onAction="#settings" styleClass="button-menu" text="Ajustes" />
+                                                <MenuItem fx:id="btnCloseSession" onAction="#closeSession" styleClass="button-menu" text="Cerrar Sesión" />
+                                                <MenuItem fx:id="btnExitApp" onAction="#exitApp" styleClass="button-menu" text="Salir" />
+                                            </items>
+                                 <graphic>
+                                    <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../images/settings2.png" />
+                                       </image>
+                                       <effect>
+                                          <ColorAdjust brightness="1.0" />
+                                       </effect>
+                                    </ImageView>
+                                 </graphic>
+                                        </Menu>
+                                    </menus>
+                                </MenuBar>
+                        
+                        
+                            </children>
+                            <padding>
+                                <Insets left="30.0" right="30.0" />
+                            </padding>
+                        </HBox>
+                    </children>
+                </AnchorPane>
+            </top>
+            <center>
+                <BorderPane fx:id="rootPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                    <center>
+                        <AnchorPane fx:id="viewContainer" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                    </center>
+                </BorderPane>
+            </center>
+        </BorderPane>
+    </children>
+</AnchorPane>
