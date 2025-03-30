@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.CreateUserViewController">
+   <children>
+      <VBox layoutX="239.0" layoutY="86.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="47.0" prefWidth="600.0" />
+            <HBox alignment="CENTER" prefHeight="47.0" prefWidth="600.0">
+               <children>
+                  <TextField fx:id="fieldName" promptText="nombre" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="47.0" prefWidth="600.0">
+               <children>
+                  <TextField fx:id="fieldSurname" promptText="apellidos" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="47.0" prefWidth="600.0">
+               <children>
+                  <TextField fx:id="fieldMail" promptText="mail" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="47.0" prefWidth="600.0">
+               <children>
+                  <ComboBox fx:id="cmbRol" prefWidth="150.0" promptText="rol" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="115.0" prefWidth="600.0">
+               <children>
+                  <ImageView fx:id="imgUser" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                  <Button fx:id="btnLoadImage" mnemonicParsing="false" onAction="#loadImage" text="Cargar Imagen" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="47.0" prefWidth="600.0" />
+            <HBox alignment="CENTER" prefHeight="47.0" prefWidth="600.0">
+               <children>
+                  <Button fx:id="btnCreate" mnemonicParsing="false" onAction="#createNewUser" text="Crear" />
+                  <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#cancel" text="Cancelar" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane> -->
+
+<AnchorPane id="AnchorPane" prefHeight="675.0" prefWidth="600.0" stylesheets="@createUser.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.user.CreateUserViewController">
+   <children>
+      <VBox alignment="CENTER" layoutX="0.0" layoutY="0.0" prefHeight="679.0" prefWidth="600.0" spacing="30" styleClass="main-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox prefHeight="12.0" prefWidth="600.0" />
+            <HBox alignment="CENTER" prefHeight="72.0" prefWidth="600.0">
+               <children>
+                  <Label text="Nuevo Usuario" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" spacing="20">
+               <children>
+                  <TextField fx:id="fieldName" promptText="Nombre" styleClass="text-field" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" spacing="20">
+               <children>
+                  <TextField fx:id="fieldSurname" promptText="Apellidos" styleClass="text-field" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" spacing="20">
+               <children>
+                  <TextField fx:id="fieldMail" promptText="Correo Electrónico" styleClass="text-field" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" spacing="20">
+               <children>
+                  <TextField fx:id="fieldPassword" promptText="Contraseña" styleClass="text-field" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" spacing="20">
+               <children>
+                  <ComboBox fx:id="cmbRol" prefHeight="42.0" prefWidth="182.0" promptText="Rol" styleClass="combo-box" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" spacing="30">
+               <children>
+                  <ImageView fx:id="imgUser" fitHeight="100.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../images/add-image.png" />
+                     </image>
+                  </ImageView>
+                  <Button fx:id="btnLoadImage" mnemonicParsing="false" onAction="#loadImage" styleClass="btn-primary" text="Cargar Imagen" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="171.0" prefWidth="600.0" spacing="25">
+               <children>
+                  <Button fx:id="btnCreate" mnemonicParsing="false" onAction="#createNewUser" prefHeight="40.0" prefWidth="120.0" styleClass="btn-primary" text="Crear" />
+                  <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#cancel" prefHeight="40.0" prefWidth="120.0" styleClass="btn-secondary" text="Cancelar" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

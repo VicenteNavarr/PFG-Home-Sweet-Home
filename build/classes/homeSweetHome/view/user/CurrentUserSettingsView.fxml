@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- <AnchorPane id="AnchorPane" prefHeight="624.0" prefWidth="1036.0" stylesheets="@userView.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.UserViewController">
+   <children>
+      <BorderPane prefHeight="624.0" prefWidth="1036.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <top>
+            <VBox alignment="CENTER" styleClass="header-section" BorderPane.alignment="CENTER">
+               <children>
+                  <Label styleClass="header-label" text="USUARIOS" />
+               </children>
+            </VBox>
+         </top>
+         <center>
+            <VBox alignment="CENTER" spacing="20" BorderPane.alignment="CENTER">
+               <children>
+                  <ScrollPane fx:id="scrollPane" prefHeight="430.0" prefWidth="941.0" style="-fx-background-color: white;" styleClass="custom-scroll-pane" stylesheets="@userView.css">
+                     <content>
+                        <VBox fx:id="UserContainer" alignment="CENTER" prefHeight="71.0" prefWidth="872.0" spacing="30.0" />
+                     </content>
+                     <padding>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets left="50.0" right="50.0" />
+                     </VBox.margin>
+                  </ScrollPane>
+                  <HBox alignment="CENTER" spacing="15">
+                     <children>
+                        <Button fx:id="btnCreateUser" mnemonicParsing="false" onAction="#createUser" styleClass="btn-primary" text="Crear Nuevo  Usuario" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </center>
+      </BorderPane>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</AnchorPane> -->
+
+<AnchorPane id="AnchorPane" prefHeight="740.0" prefWidth="1111.0" style="-fx-background-color: white;" stylesheets="@userView.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.user.CurrentUserSettingsViewController">
+   <children>
+      <BorderPane style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <!-- Sección superior -->
+         <top>
+            <VBox alignment="CENTER" styleClass="header-section" BorderPane.alignment="CENTER">
+               <children>
+                  <Label styleClass="header-label" text="AJUSTES" />
+               </children>
+            </VBox>
+         </top>
+         
+         <!-- Sección central -->
+         <center>
+            <VBox alignment="CENTER" prefHeight="593.0" prefWidth="1071.0" spacing="20" BorderPane.alignment="CENTER">
+               <children>
+                  <AnchorPane id="AnchorPane" prefHeight="675.0" prefWidth="600.0" stylesheets="@createUser.css">
+                     <children>
+                        <VBox alignment="CENTER" layoutX="0.0" layoutY="0.0" prefHeight="679.0" prefWidth="600.0" spacing="30" styleClass="main-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <HBox prefHeight="12.0" prefWidth="600.0" />
+                              <HBox alignment="CENTER" prefHeight="72.0" prefWidth="600.0">
+                                 <children>
+                                    <Label text="Ajustes" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" spacing="20">
+                                 <children>
+                                    <TextField fx:id="fieldName" promptText="Nombre" styleClass="text-field" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" spacing="20">
+                                 <children>
+                                    <TextField fx:id="fieldSurname" promptText="Apellidos" styleClass="text-field" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" spacing="20">
+                                 <children>
+                                    <TextField fx:id="fieldMail" promptText="Correo Electrónico" styleClass="text-field" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" spacing="20">
+                                 <children>
+                                    <TextField fx:id="fieldPassword" promptText="Contraseña" styleClass="text-field" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" spacing="20" />
+                              <HBox alignment="CENTER" spacing="30">
+                                 <children>
+                                    <ImageView fx:id="imgUser" fitHeight="100.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../images/add-image.png" />
+                                       </image>
+                                    </ImageView>
+                                    <Button fx:id="btnLoadImage" mnemonicParsing="false" onAction="#loadImage" styleClass="btn-primary" text="Cargar Imagen" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="171.0" prefWidth="600.0" spacing="25">
+                                 <children>
+                                    <Button fx:id="btnCreate" mnemonicParsing="false" onAction="#saveChanges" prefHeight="40.0" prefWidth="120.0" styleClass="btn-primary" text="Guardar" />
+                                    <Button fx:id="btnCancel" mnemonicParsing="false" prefHeight="40.0" prefWidth="120.0" styleClass="btn-secondary" text="Cancelar" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+               </children>
+            </VBox>
+         </center>
+      </BorderPane>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</AnchorPane>

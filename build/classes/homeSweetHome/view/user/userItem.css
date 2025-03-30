@@ -1,0 +1,97 @@
+
+/* Estilo Global */
+@font-face {
+    font-family: 'Poppins';
+    src: url('../../../fonts/Poppins-Regular.ttf'); /* Ruta relativa desde el archivo CSS */
+}
+
+
+/* Fondo principal */
+.root {
+    -fx-background-color: #EFEFEF; /* Fondo suave */
+    -fx-padding: 10;
+    -fx-font-family: 'Poppins';
+}
+
+.font{
+    
+    -fx-font-family: 'Poppins';
+
+}
+
+/* Imagen del usuario */
+.user-image {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.5, 0, 1); /* Sombra suave */
+    -fx-border-radius: 10; /* Bordes redondeados */
+    -fx-fit-width: 80px; /* Tamaño fijo: ancho */
+    -fx-fit-height: 80px; /* Tamaño fijo: alto */
+    -fx-background-radius: 40px; /* Radio para hacerla redonda */
+    -fx-border-radius: 40px; /* Borde redondeado */
+    -fx-border-color: #cccccc; /* Borde opcional */
+    -fx-border-width: 2px; /* Espesor del borde */
+    
+}
+
+/* Información del usuario */
+.item-info {
+    -fx-padding: 10;
+    -fx-spacing: 10;
+}
+
+.item-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333; /* Texto oscuro */
+}
+
+.item-date {
+    -fx-font-size: 12px;
+    -fx-text-fill: #666666; /* Texto más claro */
+}
+
+/* Botones de acción */
+.action-buttons {
+    -fx-spacing: 20; /* Separación entre botones */
+}
+
+.btn-primary {
+    -fx-background-color: #D35C37;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5;
+    -fx-padding: 8 15;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #BF9A77; /* Fondo más claro al pasar */
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #A24E2E; /* Fondo más oscuro al hacer clic */
+}
+
+.btn-secondary {
+    -fx-background-color: #97B8C2;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5;
+    -fx-padding: 8 15;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #7A9EA9; /* Fondo más claro al pasar */
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: #688893; /* Fondo más oscuro al hacer clic */
+}
+
+
+
+.rounded-border-pane {
+    -fx-background-color: #688893; /* O el color que desees */
+    -fx-background-radius: 15; /* Bordes redondeados */
+    -fx-padding: 10; /* Espaciado interior opcional */
+}

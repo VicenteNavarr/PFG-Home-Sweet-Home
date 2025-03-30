@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.LoginViewController">
+   <children>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <AnchorPane fx:id="si_loginForm" layoutX="300.0" layoutY="-6.0" prefHeight="409.0" prefWidth="300.0" styleClass="white-form" stylesheets="@loginview.css">
+               <children>
+                  <Label layoutX="48.0" layoutY="89.0" styleClass="head-label" stylesheets="@loginview.css" text="Acceder" textFill="#0a8064">
+                     <font>
+                        <Font name="Arial" size="18.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="login_usuario" layoutX="48.0" layoutY="139.0" prefHeight="31.0" prefWidth="204.0" promptText="Usuario" styleClass="textfield" stylesheets="@loginview.css" />
+                  <PasswordField fx:id="login_contrasenia" layoutX="48.0" layoutY="181.0" prefHeight="31.0" prefWidth="204.0" promptText="Contraseña" styleClass="textfield" stylesheets="@loginview.css" />
+                  <Button fx:id="btnLogin" layoutX="48.0" layoutY="230.0" mnemonicParsing="false" onAction="#login" prefHeight="39.0" prefWidth="204.0" styleClass="login-btn" stylesheets="@loginview.css" text="Acceder" />
+                  <Hyperlink fx:id="hl_OlvidoContrasenia" layoutX="48.0" layoutY="278.0" text="¿Olvidaste tu contraseña?" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="su_signupForm" layoutY="-6.0" prefHeight="409.0" prefWidth="300.0" styleClass="white-form" stylesheets="@loginview.css">
+               <children>
+                  <Label layoutX="48.0" layoutY="89.0" styleClass="head-label" stylesheets="@loginview.css" text="Registrarse" textFill="#0a8064">
+                     <font>
+                        <Font name="Arial" size="18.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="nombre" layoutX="48.0" layoutY="139.0" prefHeight="31.0" prefWidth="204.0" promptText="Nombre" styleClass="textfield" stylesheets="@loginview.css" />
+                  <PasswordField fx:id="contrasenia" layoutX="48.0" layoutY="264.0" prefHeight="31.0" prefWidth="204.0" promptText="Contraseña" styleClass="textfield" stylesheets="@loginview.css" />
+                  <Button fx:id="btnRegistro" layoutX="48.0" layoutY="315.0" mnemonicParsing="false" onAction="#signUp" prefHeight="39.0" prefWidth="204.0" styleClass="login-btn" stylesheets="@loginview.css" text="Registrarse" />
+                  <TextField fx:id="apellidos" layoutX="48.0" layoutY="183.0" prefHeight="31.0" prefWidth="204.0" promptText="Apellidos" styleClass="textfield" stylesheets="@loginview.css" />
+                  <TextField fx:id="mail" layoutX="48.0" layoutY="223.0" prefHeight="31.0" prefWidth="204.0" promptText="Mail" styleClass="textfield" stylesheets="@loginview.css" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="side_form" layoutY="1.0" prefHeight="403.0" prefWidth="300.0" styleClass="gradient" stylesheets="@loginview.css">
+               <children>
+                  <Label layoutX="88.0" layoutY="307.0" text="Crear Cuenta" textFill="WHITE">
+                     <font>
+                        <Font name="Arial" size="18.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="side_createBtn" layoutX="48.0" layoutY="340.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="39.0" prefWidth="204.0" styleClass="create-btn" stylesheets="@loginview.css" text="Crear nueva Cuenta" />
+                  <Button fx:id="side_alreadyHave" layoutX="49.0" layoutY="340.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="39.0" prefWidth="204.0" styleClass="create-btn" stylesheets="@loginview.css" text="Ya tengo una Cuenta" visible="false" />
+                  <Label alignment="CENTER" layoutX="-3.0" layoutY="223.0" prefHeight="16.0" prefWidth="300.0" text="Home, Sweet Home" textFill="WHITE">
+                     <font>
+                        <Font name="Arial" size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+   </children>
+</StackPane>
