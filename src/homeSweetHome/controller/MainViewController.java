@@ -225,7 +225,7 @@ public class MainViewController implements Initializable {
 
         try {
 
-            AnchorPane root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/EventView.fxml"));
+            AnchorPane root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/event/EventView.fxml"));
             viewContainer.getChildren().setAll(root);
 
             // Establece la vista cargada en el centro del BorderPane
