@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" style="-fx-background-color: white;" stylesheets="@purchaseView.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.purchase.PurchaseViewController">
+    <children>
+        <BorderPane style="-fx-background-color: white;" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <!-- Sección superior -->
+            <top>
+                <VBox alignment="CENTER" spacing="10" BorderPane.alignment="CENTER">
+                    <children>
+                        <Label styleClass="header-label" text="Gestión de Compras" />
+                    </children>
+                </VBox>
+            </top>
+
+            <!-- Sección central con altura fija -->
+            <center>
+                <VBox alignment="CENTER" spacing="20" BorderPane.alignment="CENTER">
+                    <padding>
+                        <Insets top="20" right="20" bottom="20" left="20" />
+                    </padding>
+                    <children>
+                        <HBox alignment="CENTER" spacing="40">
+                            <children>
+                                <!-- Tabla del Inventario -->
+                                <VBox alignment="CENTER" spacing="10">
+                                    <children>
+                                        <Label text="Inventario" styleClass="header-section" />
+                                        <TableView fx:id="tableViewInventory" prefHeight="300.0" prefWidth="600.0">
+                                            <columns>
+                                                <TableColumn fx:id="colProductName" text="Producto" />
+                                                <TableColumn fx:id="colQuantity" text="Cantidad Actual" />
+                                                <TableColumn fx:id="colMinQuantity" text="Cantidad Mínima" />
+                                                <TableColumn fx:id="colCategory" text="Categoría" />
+                                            </columns>
+                                        </TableView>
+                                    </children>
+                                </VBox>
+
+                                <!-- Tabla de la Lista de la Compra -->
+                                <VBox alignment="CENTER" spacing="10">
+                                    <children>
+                                        <Label text="Lista de la Compra" styleClass="header-section" />
+                                        <TableView fx:id="tableViewShoppingList" prefHeight="300.0" prefWidth="600.0">
+                                            <columns>
+                                                <TableColumn fx:id="colShoppingProduct" text="Producto" />
+                                                <TableColumn fx:id="colShoppingQuantity" text="Cantidad Necesaria" />
+                                            </columns>
+                                        </TableView>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </center>
+        </BorderPane>
+    </children>
+</AnchorPane>
+
+
+
+

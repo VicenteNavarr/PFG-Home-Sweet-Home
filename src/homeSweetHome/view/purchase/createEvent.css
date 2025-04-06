@@ -1,0 +1,71 @@
+/* Estilo Global */
+@font-face {
+    font-family: 'Poppins';
+    src: url('../../../fonts/Poppins-Regular.ttf'); /* Ruta relativa desde el archivo CSS */
+}
+
+.root {
+    -fx-font-family: 'Poppins'; /* Fuente global aplicada a toda la interfaz */
+    -fx-background-color: #f4f4f4; /* Fondo global suave */
+    -fx-font-size: 14px; /* Tamaño de fuente base */
+}
+
+/* TextFields con solo una línea debajo */
+.text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #BF9A77 transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-prompt-text-fill: #B0B0B0; /* Color del placeholder */
+    -fx-text-fill: #333333; /* Color del texto */
+    -fx-padding: 5 10 5 10;
+}
+
+.text-field:focused {
+    -fx-border-color: transparent transparent #D35C37 transparent; /* Línea más destacada al enfocar */
+}
+
+/* ComboBox estilos */
+.combo-box {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #BF9A77;
+    -fx-border-radius: 5;
+    -fx-font-size: 14px;
+    -fx-padding: 5;
+}
+
+/* Botones primarios */
+.btn-primary {
+    -fx-background-color: #D35C37;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #BF9A77; /* Color más suave al pasar el ratón */
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #A24E2E; /* Color más oscuro al hacer clic */
+}
+
+/* Botones secundarios */
+.btn-secondary {
+    -fx-background-color: #97B8C2;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #7A9EA9; /* Color más oscuro al pasar el ratón */
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: #688893; /* Color más oscuro al hacer clic */
+}
+
