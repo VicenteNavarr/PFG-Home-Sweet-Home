@@ -10,24 +10,38 @@ public class Purchase {
     private int cantidadNecesaria; // Cantidad necesaria para comprar
     private String fecha; // Fecha de la compra
     private int idGrupo; // ID del grupo al que pertenece la compra
-    private String nombreProducto; // Nombre del producto (nuevo atributo)
+    private String nombreProducto; // Nombre del producto
+    private String tipo; // Tipo de cantidad: "Cantidad" o "Gramos"
 
-    // Constructor
-    public Purchase(int id, int idInventario, int cantidadNecesaria, String fecha, int idGrupo, String nombreProducto) {
+    // Constructor completo
+    public Purchase(int id, int idInventario, int cantidadNecesaria, String fecha, int idGrupo, String nombreProducto, String tipo) {
         this.id = id;
         this.idInventario = idInventario;
         this.cantidadNecesaria = cantidadNecesaria;
         this.fecha = fecha;
         this.idGrupo = idGrupo;
         this.nombreProducto = nombreProducto;
+        this.tipo = tipo;
     }
 
-    // Getter para nombreProducto
+    // Constructor vacío
+    public Purchase() {
+    }
+
+    // Getter y Setter para tipo
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    // Getter y Setter para nombreProducto
     public String getNombreProducto() {
         return nombreProducto;
     }
 
-    // Setter para nombreProducto
     public void setNombreProducto(String nombreProducto) {
         this.nombreProducto = nombreProducto;
     }
@@ -72,4 +86,19 @@ public class Purchase {
     public void setIdGrupo(int idGrupo) {
         this.idGrupo = idGrupo;
     }
+
+    // Método toString para depuración
+    @Override
+    public String toString() {
+        return "Purchase{"
+                + "id=" + id
+                + ", idInventario=" + idInventario
+                + ", cantidadNecesaria=" + cantidadNecesaria
+                + ", fecha='" + fecha + '\''
+                + ", idGrupo=" + idGrupo
+                + ", nombreProducto='" + nombreProducto + '\''
+                + ", tipo='" + tipo + '\''
+                + '}';
+    }
+
 }

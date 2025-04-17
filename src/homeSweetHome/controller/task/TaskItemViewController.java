@@ -123,10 +123,6 @@ public class TaskItemViewController implements Initializable {
         }
     }
 
-    @FXML
-    private void markAsCompleted(ActionEvent event) {
-    }
-
     /**
      * Elimina una tarea.
      *
@@ -149,6 +145,32 @@ public class TaskItemViewController implements Initializable {
         } else {
             // Muestra un mensaje de error si algo falla.
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se pudo eliminar la tarea.");
+        }
+    }
+
+    /**
+     * Marca una tarea como completada y la mueve a la tabla de histórico en la
+     * base de datos. Luego actualiza la interfaz gráfica eliminando la tarea de
+     * la vista actual.
+     *
+     * @param event Evento activado al presionar el botón "Completar Tarea".
+     */
+    @FXML
+    private void completeTask(ActionEvent event) {
+        TaskDAO taskDAO = new TaskDAO();
+        int groupId = CurrentSession.getInstance().getUserGroupId();
+
+        boolean success = taskDAO.moveTaskToHistory(taskId, groupId);
+
+        if (success) {
+            // Elimina visualmente la tarea completada de la vista actual
+            taskViewController.getTaskContainer().getChildren().remove(borderPaneContainer);
+
+            // Muestra un mensaje de éxito
+            AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Tarea Completada", "La tarea ha sido movida al historial.");
+        } else {
+            // Muestra un mensaje de error si algo falla
+            AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se pudo completar la tarea. Puede que no pertenezca a tu grupo.");
         }
     }
 

@@ -42,7 +42,7 @@
    <right>
    <VBox alignment="CENTER" spacing="10" styleClass="action-buttons">
       <children>
-         <Button fx:id="btnComplete" mnemonicParsing="false" onAction="#markAsCompleted" styleClass="btn-success" text="Completar" />
+         <Button fx:id="btnComplete" mnemonicParsing="false" onAction="#completeTask" styleClass="btn-success" text="Completar" />
          <Button fx:id="btnOpenUpdateTask" mnemonicParsing="false" onAction="#openUpdateTask" styleClass="btn-primary" text="Modificar" />
          <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#deleteTask" styleClass="btn-secondary" text="Eliminar" />
       </children>

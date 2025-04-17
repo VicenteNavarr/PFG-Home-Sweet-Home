@@ -1,0 +1,103 @@
+/* Fondo global */
+.root {
+    -fx-background-color: #FFFFFF;
+    -fx-font-family: 'Poppins'; /* Fuente global */
+    -fx-font-size: 14px;
+}
+
+/* Estilo de la sección del encabezado */
+.header-section {
+    -fx-background-color: #D35C37; /* Fondo rojo intenso */
+    -fx-padding: 20;
+}
+
+.header-label {
+    -fx-text-fill: #FFFFFF; /* Texto blanco */
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+}
+
+/* Contenedor de usuarios (lado derecho) */
+.user-container {
+    -fx-background-color: #FFFFFF; /* Fondo blanco para contraste */
+    -fx-padding: 10;
+    -fx-border-color: #D3D3D3;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+}
+
+/* Botones principales */
+.btn-primary {
+    -fx-background-color: #D35C37;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 16px;
+    -fx-background-radius: 5;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #BF9A77; /* Color más suave al pasar el ratón */
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #A24E2E; /* Color más oscuro al hacer clic */
+}
+
+/* Sección central (acciones principales) */
+.main-actions {
+    -fx-background-color: #FFFFFF; /* Fondo claro */
+    -fx-border-color: #D3D3D3;
+    -fx-border-width: 1 0 0 0; /* Línea superior */
+    -fx-padding: 20;
+}
+
+/* ScrollPane */
+.scroll-pane {
+    -fx-background: transparent; /* Fondo transparente */
+    -fx-border-color: transparent; /* Sin bordes */
+    -fx-background-insets: 0; /* Quita el fondo interno */
+    -fx-padding: 0; /* Asegura que no haya relleno extra */
+}
+
+/* Personalizar la barra de desplazamiento horizontal y vertical */
+.custom-scroll-pane .scroll-bar {
+    -fx-background-color: transparent; /* Fondo transparente */
+}
+
+/* Estilo del track (fondo de la barra) */
+.custom-scroll-pane .scroll-bar:vertical .track,
+.custom-scroll-pane .scroll-bar:horizontal .track {
+    -fx-background-color: #EFEFEF; /* Color claro para integrarse con el diseño */
+    -fx-background-radius: 10; /* Bordes redondeados */
+}
+
+/* Estilo del thumb (la parte que puedes mover) */
+.custom-scroll-pane .scroll-bar:vertical .thumb,
+.custom-scroll-pane .scroll-bar:horizontal .thumb {
+    -fx-background-color: #D35C37; /* Rojo intenso */
+    -fx-background-radius: 10; /* Bordes redondeados */
+}
+
+/* Cambiar el color al pasar el mouse por encima */
+.custom-scroll-pane .scroll-bar:vertical .thumb:hover,
+.custom-scroll-pane .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #BF9A77; /* Color más suave al pasar el mouse */
+}
+
+/* Opcional: Estilo de las flechas */
+.custom-scroll-pane .increment-button,
+.custom-scroll-pane .decrement-button {
+    -fx-background-color: transparent; /* Flechas transparentes */
+}
+
+
+.btn-increase {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+}
+.btn-decrease {
+    -fx-background-color: #f44336;
+    -fx-text-fill: white;
+}

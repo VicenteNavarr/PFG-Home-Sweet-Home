@@ -202,4 +202,53 @@ public class TaskDAO {
         return null; // Retornar null si la tarea no se encuentra o ocurre un error
     }
 
+    /**
+     * Mueve una tarea desde la tabla principal "Tareas" al histórico
+     * "TareasHistorico". Primero actualiza el estado de la tarea a 'Completada'
+     * en la tabla principal.
+     *
+     * @param tareaId ID de la tarea que se desea mover.
+     * @param groupId ID del grupo del usuario actual, para asegurar que
+     * pertenece al grupo correcto.
+     * @return true si la tarea fue movida exitosamente, false si ocurrió algún
+     * error.
+     */
+    public boolean moveTaskToHistory(int tareaId, int groupId) {
+        // Consulta para actualizar el estado de la tarea a 'Completada'
+        String updateStatusQuery = "UPDATE Tareas SET estado = 'Completada' WHERE id = ? AND id_grupo = ?";
+        // Consulta para insertar la tarea en la tabla de histórico
+        String insertQuery = "INSERT INTO TareasHistorico (id, nombre_tarea, descripcion, fecha_limite, asignado_a_id, id_grupo, fecha_completada) "
+                + "SELECT id, nombre_tarea, descripcion, fecha_limite, asignado_a_id, id_grupo, NOW() "
+                + "FROM Tareas WHERE id = ? AND id_grupo = ? AND estado = 'Completada'";
+        // Consulta para eliminar la tarea de la tabla principal
+        String deleteQuery = "DELETE FROM Tareas WHERE id = ? AND id_grupo = ? AND estado = 'Completada'";
+
+        try (Connection connection = MySQLConnection.getConnection(); PreparedStatement updateStatusStmt = connection.prepareStatement(updateStatusQuery); PreparedStatement insertStmt = connection.prepareStatement(insertQuery); PreparedStatement deleteStmt = connection.prepareStatement(deleteQuery)) {
+
+            // Actualiza el estado de la tarea a 'Completada'
+            updateStatusStmt.setInt(1, tareaId);
+            updateStatusStmt.setInt(2, groupId);
+            int rowsUpdated = updateStatusStmt.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                // Inserta la tarea en la tabla de histórico
+                insertStmt.setInt(1, tareaId);
+                insertStmt.setInt(2, groupId);
+                int rowsInserted = insertStmt.executeUpdate();
+
+                if (rowsInserted > 0) {
+                    // Elimina la tarea de la tabla principal
+                    deleteStmt.setInt(1, tareaId);
+                    deleteStmt.setInt(2, groupId);
+                    int rowsDeleted = deleteStmt.executeUpdate();
+                    return rowsDeleted > 0;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al mover la tarea al histórico: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

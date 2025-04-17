@@ -157,7 +157,7 @@ public class CreateEventViewController implements Initializable {
             if (success) {
                 AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Éxito", "El evento se ha creado correctamente.");
                 if (eventViewController != null) {
-                    //eventViewController.loadEvents();
+                    eventViewController.loadEvents();
                 }
                 ((Stage) btnCreateEvent.getScene().getWindow()).close();
             } else {

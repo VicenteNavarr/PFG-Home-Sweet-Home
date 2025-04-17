@@ -4,7 +4,9 @@ import homeSweetHome.dataPersistence.CurrentSession;
 import homeSweetHome.dataPersistence.UserDAO;
 import homeSweetHome.model.User;
 import homeSweetHome.utils.AlertUtils;
+import static homeSweetHome.utils.AlertUtils.showAlert;
 import homeSweetHome.utils.ImageUtils;
+import homeSweetHome.utils.ValidationUtils;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -79,6 +81,12 @@ public class CreateUserViewController implements Initializable {
         // Valida campos obligatorios
         if (nombre.isEmpty() || apellidos.isEmpty() || correoElectronico.isEmpty() || contrasenia.isEmpty() || imgUser.getImage() == null) {
             AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos", "Por favor, completa todos los campos e incluye una imagen.");
+            return;
+        }
+
+        // Validaa el formato del correo electrónico utilizando ValidationUtils
+        if (!ValidationUtils.isValidEmail(fieldMail.getText())) {
+            showAlert(Alert.AlertType.ERROR, "Error de Registro", "El correo electrónico no tiene un formato válido.");
             return;
         }
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -9,52 +10,61 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" style="-fx-background-color: white;" stylesheets="@purchaseView.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.purchase.PurchaseViewController">
+<AnchorPane id="AnchorPane" prefHeight="624.0" prefWidth="1036.0" style="-fx-background-color: white;" stylesheets="@purchaseView.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.purchase.PurchaseViewController">
     <children>
-        <BorderPane style="-fx-background-color: white;" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <BorderPane style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <!-- Sección superior -->
             <top>
-                <VBox alignment="CENTER" spacing="10" BorderPane.alignment="CENTER">
+                <VBox alignment="CENTER" styleClass="header-section" BorderPane.alignment="CENTER">
                     <children>
-                        <Label styleClass="header-label" text="Gestión de Compras" />
+                        <Label styleClass="header-label" text="COMPRAS" />
                     </children>
                 </VBox>
             </top>
 
-            <!-- Sección central con altura fija -->
+            <!-- Sección central con márgenes ajustados -->
             <center>
                 <VBox alignment="CENTER" spacing="20" BorderPane.alignment="CENTER">
                     <padding>
-                        <Insets top="20" right="20" bottom="20" left="20" />
+                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
                     </padding>
                     <children>
                         <HBox alignment="CENTER" spacing="40">
                             <children>
                                 <!-- Tabla del Inventario -->
-                                <VBox alignment="CENTER" spacing="10">
+                                <VBox alignment="CENTER" maxWidth="1024.0" spacing="10">
                                     <children>
-                                        <Label text="Inventario" styleClass="header-section" />
-                                        <TableView fx:id="tableViewInventory" prefHeight="300.0" prefWidth="600.0">
+                                        <Label styleClass="header-section" text="Inventario" />
+                                        <TableView fx:id="tableViewInventory" prefHeight="300.0" prefWidth="700.0">
                                             <columns>
                                                 <TableColumn fx:id="colProductName" text="Producto" />
                                                 <TableColumn fx:id="colQuantity" text="Cantidad Actual" />
                                                 <TableColumn fx:id="colMinQuantity" text="Cantidad Mínima" />
                                                 <TableColumn fx:id="colCategory" text="Categoría" />
+                                                <TableColumn fx:id="colType" text="Tipo" /> <!-- Nueva columna para "Cantidad" o "Gramos" -->
+                                                <TableColumn fx:id="colQuantityControls" prefWidth="150.0" text="Controles" /> <!-- Nueva columna para botones +/- -->
                                             </columns>
                                         </TableView>
+                                        
+                                        <!-- Botón debajo de la tabla del Inventario -->
+                                        <Button fx:id="btnOpenAddNewProduct" mnemonicParsing="false" onAction="#openAddNewProduct" styleClass="btn-primary" text="Añadir Nuevo Producto" />
                                     </children>
                                 </VBox>
 
                                 <!-- Tabla de la Lista de la Compra -->
-                                <VBox alignment="CENTER" spacing="10">
+                                <VBox alignment="CENTER" maxWidth="1024.0" spacing="10">
                                     <children>
-                                        <Label text="Lista de la Compra" styleClass="header-section" />
-                                        <TableView fx:id="tableViewShoppingList" prefHeight="300.0" prefWidth="600.0">
+                                        <Label styleClass="header-section" text="Lista de la Compra" />
+                                        <TableView fx:id="tableViewShoppingList" prefHeight="300.0" prefWidth="300.0">
                                             <columns>
                                                 <TableColumn fx:id="colShoppingProduct" text="Producto" />
                                                 <TableColumn fx:id="colShoppingQuantity" text="Cantidad Necesaria" />
+                                                <TableColumn fx:id="colShoppingType" text="Tipo" /> <!-- Nueva columna para "Cantidad" o "Gramos" -->
                                             </columns>
                                         </TableView>
+                                        
+                                        <!-- Botón debajo de la tabla de la Lista de la Compra -->
+                                        <Button fx:id="btnCompletePurchase" mnemonicParsing="false" onAction="#completePurchase" styleClass="btn-primary" text="Completar Compra" />
                                     </children>
                                 </VBox>
                             </children>
@@ -64,8 +74,7 @@
             </center>
         </BorderPane>
     </children>
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
 </AnchorPane>
-
-
-
-

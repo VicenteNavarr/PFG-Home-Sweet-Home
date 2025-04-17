@@ -49,6 +49,8 @@ public class EventItemViewController implements Initializable {
     private Label lblTime;
     @FXML
     private Button btnOpenUpdateEvent;
+    @FXML
+    private Button btnComplete;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -160,4 +162,31 @@ public class EventItemViewController implements Initializable {
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se pudo eliminar el evento.");
         }
     }
+
+    /**
+     * Marca un evento como completado y lo mueve a la tabla de histórico en la
+     * base de datos. Luego actualiza la interfaz gráfica eliminando el evento
+     * de la vista actual.
+     *
+     * @param event Evento activado al presionar el botón "Completar Evento".
+     */
+    @FXML
+    private void completeEvent(ActionEvent event) {
+        EventDAO eventDAO = new EventDAO();
+        int groupId = CurrentSession.getInstance().getUserGroupId();
+
+        boolean success = eventDAO.moveEventToHistory(eventId, groupId);
+
+        if (success) {
+            // Elimina visualmente el evento completado de la vista actual
+            eventViewController.getEventContainer().getChildren().remove(borderPaneContainer);
+
+            // Muestra un mensaje de éxito
+            AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Evento Completado", "El evento ha sido movido al historial.");
+        } else {
+            // Muestra un mensaje de error si algo falla
+            AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se pudo completar el evento. Puede que no pertenezca a tu grupo.");
+        }
+    }
+
 }

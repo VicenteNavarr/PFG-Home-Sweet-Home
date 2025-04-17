@@ -3,9 +3,8 @@ package homeSweetHome.controller;
 import homeSweetHome.dataPersistence.CurrentSession;
 import homeSweetHome.dataPersistence.UserDAO;
 import homeSweetHome.model.User;
+import homeSweetHome.utils.ValidationUtils;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -109,6 +108,12 @@ public class LoginViewController {
         if (nombre.getText().isEmpty() || apellidos.getText().isEmpty() || mail.getText().isEmpty() || contrasenia.getText().isEmpty()) {
 
             showAlert(Alert.AlertType.ERROR, "Error de Registro", "Todos los campos son obligatorios.");
+            return;
+        }
+
+        // Valida el formato del correo electrónico utilizando ValidationUtils
+        if (!ValidationUtils.isValidEmail(mail.getText())) {
+            showAlert(Alert.AlertType.ERROR, "Error de Registro", "El correo electrónico no tiene un formato válido.");
             return;
         }
 
