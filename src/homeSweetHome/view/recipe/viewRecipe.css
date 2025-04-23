@@ -1,0 +1,80 @@
+/* Estilo Global */
+@font-face {
+    font-family: 'Poppins';
+    src: url('../../../fonts/Poppins-Regular.ttf'); /* Ruta relativa desde el archivo CSS */
+}
+
+.root {
+    -fx-font-family: 'Poppins'; /* Fuente global aplicada a toda la interfaz */
+    -fx-background-color: #f4f4f4; /* Fondo global suave */
+    -fx-font-size: 14px; /* Tamaño de fuente base */
+}
+
+/* Estilo para el Título */
+.title-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #D35C37; /* Resaltado en rojo oscuro */
+    -fx-padding: 10 0 20 0;
+    -fx-text-alignment: center;
+}
+
+/* Etiquetas de texto */
+.text-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #333333; /* Color oscuro para contraste */
+    -fx-background-color: #FFFFFF; /* Fondo blanco */
+    -fx-border-color: #BF9A77; /* Línea borde suave */
+    -fx-border-width: 1;
+    -fx-padding: 10;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+/* Títulos de secciones */
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #555555; /* Gris oscuro */
+    -fx-padding: 5 0 10 0;
+}
+
+/* Contenido de texto largo (ej.: ingredientes e instrucciones) */
+.text-area-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+    -fx-border-color: #BF9A77;
+    -fx-border-width: 1;
+    -fx-padding: 15;
+    -fx-background-color: #FFFFFF; /* Fondo blanco */
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-max-height: 300px; /* Para limitar el tamaño máximo */
+    -fx-overflow: auto; /* Permitir scroll si es necesario */
+}
+
+/* Botón Cerrar */
+.btn-secondary {
+    -fx-background-color: #97B8C2; /* Azul suave */
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5;
+    -fx-padding: 10 20;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #7A9EA9; /* Azul un poco más oscuro */
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: #688893; /* Azul aún más oscuro */
+}
+
+/* Imagen redondeada */
+.image {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 10, 0, 2, 2); /* Sombra */
+    -fx-background-radius: 75;
+    -fx-clip: true;
+}
+

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" prefHeight="675.0" prefWidth="600.0" stylesheets="@createRecipe.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.recipe.AddIngredientViewController">
+    <children>
+        <VBox alignment="CENTER" layoutX="0.0" layoutY="0.0" prefHeight="679.0" prefWidth="600.0" spacing="30" styleClass="main-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <HBox prefHeight="12.0" prefWidth="600.0" />
+                <HBox alignment="CENTER" prefHeight="72.0" prefWidth="600.0">
+                    <children>
+                        <Label text="Añadir Ingrediente" />
+                    </children>
+                </HBox>
+            <HBox alignment="CENTER" spacing="20">
+               <children>
+                  <TextField fx:id="fieldIngredientName" prefWidth="200" promptText="Nombre del Ingrediente" styleClass="text-field" />
+               </children>
+            </HBox>
+                <HBox alignment="CENTER" spacing="20">
+               <children>
+                  <ComboBox fx:id="Measure" prefHeight="42.0" prefWidth="209.0" promptText="Medida" />
+               </children>
+                </HBox>
+                <!-- Campo para fecha -->
+                <HBox alignment="CENTER" spacing="20">
+               <children>
+                  <TextField fx:id="fieldIngredientQuantity" prefWidth="200" promptText="Cantidad" styleClass="text-field" />
+               </children>
+                </HBox>
+            <HBox alignment="CENTER" spacing="20">
+               <children>
+                  <ComboBox fx:id="category" prefHeight="42.0" prefWidth="209.0" promptText="Categoría" />
+               </children>
+            </HBox>
+
+                <HBox alignment="CENTER" spacing="20" />
+                <HBox alignment="CENTER" prefHeight="171.0" prefWidth="600.0" spacing="25">
+                    <children>
+                        <Button fx:id="btnAddIngredient" mnemonicParsing="false" onAction="#createAddIngredient" prefHeight="40.0" prefWidth="120.0" styleClass="btn-primary" text="Crear" />
+                        <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#cancel" prefHeight="40.0" prefWidth="120.0" styleClass="btn-secondary" text="Cancelar" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

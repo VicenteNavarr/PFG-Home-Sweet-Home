@@ -64,6 +64,19 @@
                                         </Button>
                                     </children>
                                 </HBox>
+                        <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
+                           <children>
+                              <Button fx:id="btnLoadRecipes" mnemonicParsing="false" onAction="#LoadRecipeView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Recetas">
+                                 <font>
+                                    <Font name="Segoe UI" size="12.0" />
+                                 </font>
+                                 <styleClass>
+                                    <String fx:value="font" />
+                                    <String fx:value="button-menu" />
+                                 </styleClass>
+                              </Button>
+                           </children>
+                        </HBox>
                                 <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
                                     <children>
                                         <Button fx:id="btnLoadPurchaseView" mnemonicParsing="false" onAction="#LoadPurchaseView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Compras">

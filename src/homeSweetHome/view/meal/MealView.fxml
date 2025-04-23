@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" prefHeight="624.0" prefWidth="1036.0" style="-fx-background-color: white;" stylesheets="@mealView.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.meal.MealViewController">
+    <children>
+        <BorderPane style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <!-- Sección superior -->
+            <top>
+                <VBox alignment="CENTER" styleClass="header-section" BorderPane.alignment="CENTER">
+                    <children>
+                        <Label styleClass="header-label" text="MENÚ SEMANAL" />
+                    </children>
+                </VBox>
+            </top>
+
+            <!-- Sección central -->
+            <center>
+                <VBox alignment="CENTER" spacing="20" BorderPane.alignment="CENTER">
+                    <padding>
+                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                    </padding>
+                    <children>
+                        <!-- ScrollPane para habilitar desplazamiento -->
+                        <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background-color: transparent;">
+                            <content>
+                                <!-- GridPane para mostrar las recetas dinámicamente -->
+                                <GridPane fx:id="MealGrid" alignment="CENTER" hgap="20" vgap="20">
+                                    <!-- Aquí se añadirán las tarjetas dinámicamente -->
+                                </GridPane>
+                            </content>
+                        </ScrollPane>
+
+                        <!-- Botón siempre visible fuera del ScrollPane -->
+                        <HBox alignment="CENTER" spacing="10">
+                            <children>
+                                <Button fx:id="btnGenerateMeal" mnemonicParsing="false" onAction="#generateMeal" styleClass="btn-primary" text="Generar Menú Semanal" />
+                        <Button fx:id="btnConfirmMeal" mnemonicParsing="false" onAction="#confirmMeal" styleClass="btn-primary" text="Confirmar Menú Semanal" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </center>
+        </BorderPane>
+    </children>
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+</AnchorPane>

@@ -72,6 +72,8 @@ public class MainViewController implements Initializable {
     private MenuItem btnCloseSession;
     @FXML
     private MenuItem btnExitApp;
+    @FXML
+    private Button btnLoadRecipes;
 
     /**
      * Initializes the controller class.
@@ -150,7 +152,7 @@ public class MainViewController implements Initializable {
 
         try {
 
-            AnchorPane root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/MealView.fxml"));
+            AnchorPane root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/meal/MealView.fxml"));
             viewContainer.getChildren().setAll(root);
 
             // Establece la vista cargada en el centro del BorderPane
@@ -251,6 +253,32 @@ public class MainViewController implements Initializable {
         try {
 
             AnchorPane root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/budget/BudgetView.fxml"));
+            viewContainer.getChildren().setAll(root);
+
+            // Establece la vista cargada en el centro del BorderPane
+            rootPane.setCenter(root);
+
+        } catch (IOException ex) {
+
+            Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
+
+        }
+
+    }
+    
+    
+    /**
+     * Método llamado cuando se hace clic en el botón "btnLoadBudgetView". Carga
+     * y muestra la vista BudgetView.fxml en el centro del BorderPane.
+     *
+     * @param event
+     */
+    @FXML
+    private void LoadRecipeView(ActionEvent event) {
+
+        try {
+
+            AnchorPane root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/recipe/RecipeView.fxml"));
             viewContainer.getChildren().setAll(root);
 
             // Establece la vista cargada en el centro del BorderPane
@@ -407,6 +435,10 @@ public class MainViewController implements Initializable {
 
         System.out.println("Saliendo del programa");
         System.exit(0);
+    }
+
+    @FXML
+    private void LoadRecipesView(ActionEvent event) {
     }
 
 }

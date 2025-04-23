@@ -1,202 +1,3 @@
-//package homeSweetHome.dataPersistence;
-//
-//import homeSweetHome.model.Inventory;
-//import java.sql.*;
-//import java.util.ArrayList;
-//import java.util.List;
-//
-///**
-// * Data Access Object (DAO) para gestionar el inventario en la base de datos.
-// * Proporciona métodos para realizar operaciones CRUD y recuperar datos
-// * específicos del inventario.
-// */
-//public class InventoryDAO {
-//
-//    /**
-//     * Recupera todos los productos del inventario de un grupo específico.
-//     *
-//     * @param groupId El ID del grupo cuyos productos del inventario se quieren
-//     * recuperar.
-//     * @return Una lista de productos del inventario pertenecientes al grupo
-//     * especificado.
-//     */
-//    public List<Inventory> getAllInventoryProducts(int groupId) {
-//        List<Inventory> inventories = new ArrayList<>();
-//        String query = "SELECT * FROM Inventario WHERE id_grupo = ?";
-//
-//        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-//
-//            stmt.setInt(1, groupId);
-//            ResultSet rs = stmt.executeQuery();
-//
-//            while (rs.next()) {
-//                Inventory inventory = new Inventory(
-//                        rs.getInt("id"),
-//                        rs.getString("nombre_producto"),
-//                        rs.getInt("cantidad"),
-//                        rs.getInt("cantidad_minima"),
-//                        rs.getInt("cantidad_maxima"),
-//                        rs.getString("categoria"),
-//                        rs.getString("tipo"), // Nuevo campo "tipo"
-//                        rs.getInt("id_grupo")
-//                );
-//                inventories.add(inventory);
-//            }
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.err.println("Error al recuperar los productos del inventario.");
-//        }
-//        return inventories;
-//    }
-//
-//    /**
-//     * Verifica si un producto ya existe en el inventario, ignorando el caso.
-//     *
-//     * @param nombreProducto El nombre del producto a verificar.
-//     * @param groupId El ID del grupo del usuario.
-//     * @return True si el producto ya existe, False en caso contrario.
-//     */
-//    public boolean isProductInInventory(String nombreProducto, int groupId) {
-//        String query = "SELECT COUNT(*) FROM Inventario WHERE LOWER(nombre_producto) = LOWER(?) AND id_grupo = ?";
-//
-//        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-//            stmt.setString(1, nombreProducto);
-//            stmt.setInt(2, groupId);
-//
-//            try (ResultSet rs = stmt.executeQuery()) {
-//                if (rs.next()) {
-//                    return rs.getInt(1) > 0; // Si el conteo es mayor que 0, el producto ya existe
-//                }
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.err.println("Error al verificar si el producto ya existe en el inventario.");
-//        }
-//        return false;
-//    }
-//
-//    /**
-//     * Agrega un nuevo producto al inventario.
-//     *
-//     * @param inventory El objeto del producto que se quiere agregar al
-//     * inventario.
-//     * @return True si el producto fue agregado correctamente, False en caso
-//     * contrario.
-//     */
-//    public boolean addInventoryProduct(Inventory inventory) {
-//        String query = "INSERT INTO Inventario (nombre_producto, cantidad, cantidad_minima, cantidad_maxima, categoria, tipo, id_grupo) VALUES (?, ?, ?, ?, ?, ?, ?)";
-//
-//        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-//
-//            stmt.setString(1, inventory.getNombreProducto());
-//            stmt.setInt(2, inventory.getCantidad());
-//            stmt.setInt(3, inventory.getCantidadMinima());
-//            stmt.setInt(4, inventory.getCantidadMaxima());
-//            stmt.setString(5, inventory.getCategoria());
-//            stmt.setString(6, inventory.getTipo()); // Nuevo campo "tipo"
-//            stmt.setInt(7, inventory.getIdGrupo());
-//
-//            return stmt.executeUpdate() > 0;
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.err.println("Error al agregar el producto al inventario.");
-//        }
-//        return false;
-//    }
-//
-//    /**
-//     * Actualiza un producto existente en el inventario.
-//     *
-//     * @param inventory El objeto del producto que se quiere actualizar.
-//     * @return True si el producto fue actualizado correctamente, False en caso
-//     * contrario.
-//     */
-//    public boolean updateInventoryProduct(Inventory inventory) {
-//        String query = "UPDATE Inventario SET nombre_producto = ?, cantidad = ?, cantidad_minima = ?, cantidad_maxima = ?, categoria = ?, tipo = ? WHERE id = ?";
-//
-//        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-//
-//            stmt.setString(1, inventory.getNombreProducto());
-//            stmt.setInt(2, inventory.getCantidad());
-//            stmt.setInt(3, inventory.getCantidadMinima());
-//            stmt.setInt(4, inventory.getCantidadMaxima());
-//            stmt.setString(5, inventory.getCategoria());
-//            stmt.setString(6, inventory.getTipo()); // Nuevo campo "tipo"
-//            stmt.setInt(7, inventory.getId());
-//
-//            return stmt.executeUpdate() > 0;
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.err.println("Error al actualizar el producto en el inventario.");
-//        }
-//        return false;
-//    }
-//
-//    /**
-//     * Elimina un producto del inventario por su ID.
-//     *
-//     * @param id El ID del producto que se quiere eliminar.
-//     * @return True si el producto fue eliminado correctamente, False en caso
-//     * contrario.
-//     */
-//    public boolean deleteInventoryProduct(int id) {
-//        String query = "DELETE FROM Inventario WHERE id = ?";
-//
-//        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-//
-//            stmt.setInt(1, id);
-//
-//            return stmt.executeUpdate() > 0;
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.err.println("Error al eliminar el producto del inventario.");
-//        }
-//        return false;
-//    }
-//
-//    /**
-//     * Recupera los productos que necesitan reabastecimiento para un grupo
-//     * específico.
-//     *
-//     * @param groupId El ID del grupo cuyos productos necesitan
-//     * reabastecimiento.
-//     * @return Una lista de productos del inventario que requieren
-//     * reabastecimiento.
-//     */
-//    public List<Inventory> getReplenishmentProducts(int groupId) {
-//        List<Inventory> inventories = new ArrayList<>();
-//        String query = "SELECT * FROM Inventario WHERE cantidad < cantidad_minima AND id_grupo = ?";
-//
-//        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-//
-//            stmt.setInt(1, groupId);
-//            ResultSet rs = stmt.executeQuery();
-//
-//            while (rs.next()) {
-//                Inventory inventory = new Inventory(
-//                        rs.getInt("id"),
-//                        rs.getString("nombre_producto"),
-//                        rs.getInt("cantidad"),
-//                        rs.getInt("cantidad_minima"),
-//                        rs.getInt("cantidad_maxima"),
-//                        rs.getString("categoria"),
-//                        rs.getString("tipo"), // Nuevo campo "tipo"
-//                        rs.getInt("id_grupo")
-//                );
-//                inventories.add(inventory);
-//            }
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.err.println("Error al recuperar los productos que necesitan reabastecimiento.");
-//        }
-//        return inventories;
-//    }
-//}
 package homeSweetHome.dataPersistence;
 
 import homeSweetHome.model.Product;
@@ -284,10 +85,41 @@ public class InventoryDAO {
      * @return True si el producto fue agregado correctamente, False en caso
      * contrario.
      */
+//    public boolean addInventoryProduct(Product product) {
+//        String query = "INSERT INTO Inventario (nombre_producto, cantidad, cantidad_minima, cantidad_maxima, categoria, tipo, id_grupo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+//
+//        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+//
+//            stmt.setString(1, product.getNombreProducto());
+//            stmt.setInt(2, product.getCantidad());
+//            stmt.setInt(3, product.getCantidadMinima());
+//            stmt.setInt(4, product.getCantidadMaxima());
+//            stmt.setString(5, product.getCategoria());
+//            stmt.setString(6, product.getTipo());
+//            stmt.setInt(7, product.getIdGrupo());
+//
+//            return stmt.executeUpdate() > 0;
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            System.err.println("Error al agregar el producto al inventario.");
+//        }
+//        return false;
+//    }
     public boolean addInventoryProduct(Product product) {
         String query = "INSERT INTO Inventario (nombre_producto, cantidad, cantidad_minima, cantidad_maxima, categoria, tipo, id_grupo) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            // Trazas para depuración
+            System.out.println("INSERTANDO EN INVENTARIO:");
+            System.out.println("Nombre Producto: " + product.getNombreProducto());
+            System.out.println("Cantidad: " + product.getCantidad());
+            System.out.println("Cantidad Mínima: " + product.getCantidadMinima());
+            System.out.println("Cantidad Máxima: " + product.getCantidadMaxima());
+            System.out.println("Categoría: " + product.getCategoria());
+            System.out.println("Tipo: " + product.getTipo());
+            System.out.println("ID Grupo: " + product.getIdGrupo());
 
             stmt.setString(1, product.getNombreProducto());
             stmt.setInt(2, product.getCantidad());
@@ -305,7 +137,6 @@ public class InventoryDAO {
         }
         return false;
     }
-    
 
     /**
      * Actualiza un producto existente en el inventario.
@@ -515,6 +346,74 @@ public class InventoryDAO {
             System.err.println("Error al verificar si el ID de inventario existe: " + inventoryId);
         }
         return false;
+    }
+
+    /**
+     * Verifica si un producto específico existe en el inventario.
+     *
+     * Este método consulta la tabla `Inventario` para comprobar si existe un
+     * registro asociado al ID del producto proporcionado.
+     *
+     * @param productId El ID del producto a verificar.
+     * @return true si el producto existe en el inventario, false en caso
+     * contrario.
+     */
+    public boolean productExistsInInventory(int productId) {
+        String query = "SELECT COUNT(*) FROM Inventario WHERE id = ?";
+        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, productId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    return true; // El producto existe
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Error al verificar si el producto existe en el inventario: " + productId);
+        }
+        return false; // El producto no existe
+    }
+
+    /**
+     * Recupera la cantidad actual de un producto en el inventario.
+     *
+     * @param productId El ID del producto.
+     * @return La cantidad actual si el producto existe, o 0 si no se encuentra.
+     */
+    public int getProductQuantity(int productId) {
+        String query = "SELECT cantidad FROM inventario WHERE id_producto = ?";
+        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, productId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("cantidad"); // Devuelve la cantidad encontrada
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Error al obtener la cantidad del producto en el inventario.");
+        }
+        return 0; // Devuelve 0 si el producto no existe o si ocurre un error
+    }
+
+    public int getMinQuantity(int productId) {
+        String query = "SELECT cantidad_minima FROM Inventario WHERE id = ?";
+        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, productId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("cantidad_minima");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Error al obtener la cantidad mínima para el producto con ID: " + productId);
+        }
+        return 0; // Valor por defecto si no se encuentra el producto
     }
 
 }
