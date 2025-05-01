@@ -6,6 +6,7 @@ import homeSweetHome.dataPersistence.UserDAO;
 import homeSweetHome.model.Task;
 import homeSweetHome.model.User;
 import homeSweetHome.utils.AlertUtils;
+import homeSweetHome.utils.LanguageManager;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import java.time.ZoneId;
+import javafx.application.Platform;
 
 /**
  * FXML Controller class for the Update Task View.
@@ -49,6 +51,15 @@ public class UpdateTaskViewController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+
+        // Registra este controlador como listener del LanguageManager
+        LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
+        updateTexts(); // Actualiza los textos inicialmente
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
+
         int groupId = CurrentSession.getInstance().getUserGroupId(); // ID del grupo actual
         UserDAO userDAO = new UserDAO();
         List<User> usuarios = userDAO.getUsersByGroup(groupId);
@@ -60,12 +71,65 @@ public class UpdateTaskViewController implements Initializable {
         }
     }
 
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+    
+    /**
+     * Actualiza los textos de la interfaz en función del idioma.
+     */
+    private void updateTexts() {
+        
+        // Obtiene la instancia única del Singleton
+        LanguageManager languageManager = LanguageManager.getInstance();
+
+        if (languageManager == null) {
+            
+            System.err.println("Error: LanguageManager es nulo. Traducción no aplicada.");
+            return;
+        }
+
+        // Verificación del idioma activo
+        String idiomaActivo = languageManager.getLanguageCode();
+        System.out.println("Idioma activo en updateTexts(): " + idiomaActivo);
+
+        // Traducción de botones
+        btnUpdateTask.setText(languageManager.getTranslation("updateTask"));
+        btnCancelTask.setText(languageManager.getTranslation("cancel"));
+
+        System.out.println("Botón 'updateTask': " + btnUpdateTask.getText());
+        System.out.println("Botón 'cancel': " + btnCancelTask.getText());
+
+        // Traducción de campos de texto (`promptText`)
+        fieldTaskName.setPromptText(languageManager.getTranslation("promptTaskName"));
+        fieldTaskDescription.setPromptText(languageManager.getTranslation("promptTaskDescription"));
+
+        System.out.println("Etiqueta 'promptTaskName': " + fieldTaskName.getPromptText());
+        System.out.println("Etiqueta 'promptTaskDescription': " + fieldTaskDescription.getPromptText());
+
+        // Traducción del `DatePicker`
+        fieldDateLimit.setPromptText(languageManager.getTranslation("promptDateLimit"));
+
+        System.out.println("Fecha límite 'promptDateLimit': " + fieldDateLimit.getPromptText());
+
+        // Traducción del `ComboBox` de usuarios
+        cmbUsuario.setPromptText(languageManager.getTranslation("promptUserSelection"));
+
+        System.out.println("ComboBox de usuarios 'promptUserSelection': " + cmbUsuario.getPromptText());
+
+        // Refresca UI para aplicar los cambios visualmente
+        Platform.runLater(() -> fieldTaskName.getScene().getWindow().sizeToScene());
+
+        System.out.println("Traducciones aplicadas correctamente en UpdateTaskViewController.");
+    }
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
+    
     /**
      * Método para establecer la referencia al TaskViewController principal.
      *
      * @param taskViewController - Controlador principal
      */
     public void setTaskViewController(TaskViewController taskViewController) {
+        
         this.taskViewController = taskViewController;
     }
 
@@ -76,6 +140,7 @@ public class UpdateTaskViewController implements Initializable {
      * @param task - Objeto Task que contiene los datos de la tarea
      */
     public void setTaskData(Task task) {
+        
         System.out.println("ID recibido en setTaskData: " + task.getId());
 
         // Asigna los valores a los campos de entrada
@@ -84,28 +149,37 @@ public class UpdateTaskViewController implements Initializable {
 
         // Configura la fecha límite en el DatePicker
         if (task.getFechaLimite() != null) {
+            
             // Verifica si es una instancia de java.sql.Date
             if (task.getFechaLimite() instanceof java.sql.Date) {
+                
                 fieldDateLimit.setValue(((java.sql.Date) task.getFechaLimite()).toLocalDate());
+                
             } else {
+                
                 // Si es java.util.Date u otra, conveierte correctamente
                 fieldDateLimit.setValue(task.getFechaLimite().toInstant()
                         .atZone(ZoneId.systemDefault())
                         .toLocalDate());
             }
+            
         } else {
+            
             fieldDateLimit.setValue(null); // En caso de que no haya fecha límite, se deja vacío
         }
 
         // Selecciona el usuario asignado en el ComboBox
         if (task.getAsignadoAId() != 0) {
+            
             for (String usuario : cmbUsuario.getItems()) {
                 if (getUserNameById(task.getAsignadoAId()).equals(usuario)) {
                     cmbUsuario.getSelectionModel().select(usuario);
                     break;
                 }
             }
+            
         } else {
+            
             cmbUsuario.getSelectionModel().clearSelection(); // Si no hay usuario asignado
         }
     }
@@ -118,11 +192,15 @@ public class UpdateTaskViewController implements Initializable {
      * encuentra
      */
     private String getUserNameById(int id) {
+        
         for (Map.Entry<String, Integer> entry : userMap.entrySet()) {
+            
             if (entry.getValue().equals(id)) {
+                
                 return entry.getKey(); // Retorna el nombre del usuario
             }
         }
+        
         return "Usuario desconocido"; // Retorna un valor predeterminado si no se encuentra
     }
 
@@ -133,6 +211,7 @@ public class UpdateTaskViewController implements Initializable {
      */
     @FXML
     private void cancel(ActionEvent event) {
+        
         ((Stage) btnCancelTask.getScene().getWindow()).close();
     }
 
@@ -143,7 +222,9 @@ public class UpdateTaskViewController implements Initializable {
      */
     @FXML
     private void updateTaskTask(ActionEvent event) {
+        
         try {
+            
             // Recupera valores de los campos de entrada
             String nombreTarea = fieldTaskName.getText().trim(); // Nombre de la tarea
             String descripcion = fieldTaskDescription.getText().trim(); // Descripción de la tarea
@@ -161,13 +242,16 @@ public class UpdateTaskViewController implements Initializable {
 
             // Valida que no haya campos vacíos
             if (nombreTarea.isEmpty() || descripcion.isEmpty() || usuarioSeleccionado == null || fechaLimite == null) {
+                
                 AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos", "Por favor completa todos los campos, incluida la fecha límite.");
                 return;
             }
 
             // Valida el usuario seleccionado
             int asignadoAId = userMap.getOrDefault(usuarioSeleccionado, -1);
+            
             if (asignadoAId == -1) {
+                
                 AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se encontró el usuario seleccionado.");
                 return;
             }
@@ -201,21 +285,27 @@ public class UpdateTaskViewController implements Initializable {
             boolean success = taskDAO.updateTask(tareaActualizada);
 
             if (success) {
+                
                 // Muestra un mensaje de éxito
                 AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Éxito", "La tarea se ha actualizado correctamente.");
 
                 // Refresca la lista de tareas en el controlador principal
                 if (taskViewController != null) {
+                    
                     taskViewController.loadTasks();
                 }
 
                 // Cierra la ventana actual
                 ((Stage) btnUpdateTask.getScene().getWindow()).close();
+                
             } else {
+                
                 // Muestra un mensaje de error si la actualización falla
                 AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "Ocurrió un problema al intentar actualizar la tarea.");
             }
+            
         } catch (Exception e) {
+            
             // Maneja cualquier excepción no prevista
             e.printStackTrace();
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "Se produjo un error al procesar la actualización.");

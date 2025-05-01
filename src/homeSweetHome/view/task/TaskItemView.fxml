@@ -15,19 +15,19 @@
          <children>
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
-                  <Label styleClass="font-label" text="Nombre Tarea:" />
+                  <Label fx:id="lbNombreTarea" styleClass="font-label" text="Nombre Tarea:" />
                   <Label fx:id="lblTaskName" prefHeight="25.0" prefWidth="250.0" styleClass="font" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
-                  <Label styleClass="font-label" text="Quién hace la tarea:" />
+                  <Label fx:id="lblQuien" styleClass="font-label" text="Quién hace la tarea:" />
                   <Label fx:id="lblAssignedTo" prefHeight="25.0" prefWidth="250.0" styleClass="font" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
-                  <Label styleClass="font-label" text="Fecha Límite:" />
+                  <Label fx:id="lblFechaLimite" styleClass="font-label" text="Fecha Límite:" />
                   <Label fx:id="lblDueDate" prefHeight="25.0" prefWidth="250.0" styleClass="font" />
                </children>
             </HBox>

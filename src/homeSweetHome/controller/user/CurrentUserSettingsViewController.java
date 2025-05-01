@@ -8,10 +8,12 @@ import homeSweetHome.dataPersistence.UserDAO;
 import homeSweetHome.model.User;
 import homeSweetHome.utils.AlertUtils;
 import homeSweetHome.utils.ImageUtils;
+import homeSweetHome.utils.LanguageManager;
 import java.io.File;
 import java.net.URL;
 import java.sql.Blob;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -55,6 +57,12 @@ public class CurrentUserSettingsViewController implements Initializable {
 
     private User currentUser; // Variable para almacenar el usuario actual
 
+    /**
+     * Asigna el controlador de la vista de usuario.
+     *
+     * @param userViewController el controlador de la vista de usuario a
+     * establecer
+     */
     public void setUserViewController(UserViewController userViewController) {
         this.userViewController = userViewController;
     }
@@ -65,8 +73,65 @@ public class CurrentUserSettingsViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+
+        // Registra este controlador como listener del LanguageManager
+        LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
+        updateTexts(); // Actualiza los textos inicialmente
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////                  
     }
 
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+    
+    /**
+     * Actualiza los textos de la interfaz en función del idioma.
+     */
+    private void updateTexts() {
+        
+        // Obtiene la instancia única del Singleton
+        LanguageManager languageManager = LanguageManager.getInstance();
+
+        if (languageManager == null) {
+            
+            System.err.println("Error: LanguageManager es nulo. Traducción no aplicada.");
+            return;
+        }
+
+        // Verificación del idioma activo
+        String idiomaActivo = languageManager.getLanguageCode();
+        System.out.println("Idioma activo en updateTexts(): " + idiomaActivo);
+
+        // Traducción de botones
+        btnCreate.setText(languageManager.getTranslation("updateUserSettings"));
+        btnCancel.setText(languageManager.getTranslation("cancel"));
+        btnLoadImage.setText(languageManager.getTranslation("loadImage"));
+
+        System.out.println("Botón 'updateUserSettings': " + btnCreate.getText());
+        System.out.println("Botón 'cancel': " + btnCancel.getText());
+        System.out.println("Botón 'loadImage': " + btnLoadImage.getText());
+
+        // Traducción de campos de texto (`promptText`)
+        System.out.println("Etiqueta 'promptUserName': " + fieldName.getPromptText());
+        System.out.println("Etiqueta 'promptUserSurname': " + fieldSurname.getPromptText());
+        System.out.println("Etiqueta 'promptUserMail': " + fieldMail.getPromptText());
+        System.out.println("Etiqueta 'promptUserPassword': " + fieldPassword.getPromptText());
+
+        // Traducción del `ComboBox` de roles 
+        if (cmbRol != null) {
+            
+            cmbRol.setPromptText(languageManager.getTranslation("promptUserRole"));
+            System.out.println("PromptText de 'cmbRol': " + cmbRol.getPromptText());
+        }
+
+        // Refrescar UI para aplicar los cambios visualmente
+        Platform.runLater(() -> fieldName.getScene().getWindow().sizeToScene());
+
+        System.out.println("Traducciones aplicadas correctamente en CurrentUserSettingsViewController.");
+    }
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////    
+    
     /**
      * Método para cargar la imagen de perfil desde un archivo seleccionado por
      * el usuario o utilizar una imagen predeterminada si no se selecciona
@@ -76,6 +141,7 @@ public class CurrentUserSettingsViewController implements Initializable {
      */
     @FXML
     private void loadImage(ActionEvent event) {
+        
         // Abre un cuadro de diálogo para seleccionar un archivo de imagen
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Seleccionar Imagen");
@@ -85,8 +151,10 @@ public class CurrentUserSettingsViewController implements Initializable {
         File file = fileChooser.showOpenDialog(btnLoadImage.getScene().getWindow());
 
         if (file != null) {
+            
             try {
-                // Carga la imagen seleccionada y guardarla en currentUser
+                
+                // Carga la imagen seleccionada y guarda en currentUser
                 Image image = new Image(file.toURI().toString());
                 imgUser.setImage(image);
 
@@ -94,23 +162,31 @@ public class CurrentUserSettingsViewController implements Initializable {
                 currentUser.setFotoPerfil(fotoPerfil);
 
                 System.out.println("Imagen cargada correctamente: " + file.getName());
+                
             } catch (Exception e) {
-                // Mostrar una alerta si ocurre un error al cargar la imagen
+                
+                // Muestra una alerta si ocurre un error al cargar la imagen
                 System.err.println("Error al cargar la imagen: " + e.getMessage());
                 AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se pudo cargar la imagen seleccionada. Inténtalo de nuevo.");
             }
+            
         } else {
+            
             // Usa una imagen predeterminada si no se seleccionó ningún archivo
             System.out.println("No se seleccionó ningún archivo. Usando imagen predeterminada.");
             imgUser.setImage(new Image(getClass().getResourceAsStream("/images/default-profile.png")));
 
             try {
-                // Convierter la imagen predeterminada y guardarla en currentUser
+                
+                // Convierte la imagen predeterminada y guarda en currentUser
                 Blob defaultFotoPerfil = new javax.sql.rowset.serial.SerialBlob(ImageUtils.convertImageToBlob(
                         new Image(getClass().getResourceAsStream("/images/add-image.png"))
                 ));
+                
                 currentUser.setFotoPerfil(defaultFotoPerfil);
+                
             } catch (Exception e) {
+                
                 System.err.println("Error al cargar la imagen predeterminada: " + e.getMessage());
             }
         }
@@ -124,6 +200,7 @@ public class CurrentUserSettingsViewController implements Initializable {
      */
     @FXML
     private void saveChanges(ActionEvent event) {
+        
         // Valida que los campos obligatorios no estén vacíos
         String nombre = fieldName.getText();
         String apellidos = fieldSurname.getText();
@@ -131,15 +208,20 @@ public class CurrentUserSettingsViewController implements Initializable {
         String contrasenia = fieldPassword.getText();
 
         if (nombre.isEmpty() || apellidos.isEmpty() || correoElectronico.isEmpty() || contrasenia.isEmpty() || imgUser.getImage() == null) {
+            
             AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos", "Por favor, completa todos los campos e incluye una imagen.");
             return;
         }
 
         // Intenta convertir la imagen en un Blob para almacenarla
         Blob fotoPerfil;
+        
         try {
+            
             fotoPerfil = new javax.sql.rowset.serial.SerialBlob(ImageUtils.convertImageToBlob(imgUser.getImage()));
+            
         } catch (Exception e) {
+            
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error en imagen", "No se pudo procesar la imagen.");
             return;
         }
@@ -157,9 +239,12 @@ public class CurrentUserSettingsViewController implements Initializable {
         boolean success = userDAO.updateUser(currentUser);
 
         if (success) {
+            
             // Notifica al usuario que los datos se actualizaron correctamente
             AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Éxito", "Los datos del usuario han sido actualizados correctamente.");
+            
         } else {
+            
             // Muestra mensaje de error si no se pudieron guardar los cambios
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se pudieron guardar los cambios. Verifica los datos e inténtalo nuevamente.");
         }
@@ -172,10 +257,12 @@ public class CurrentUserSettingsViewController implements Initializable {
      * @param userId - ID del usuario actual que se desea cargar.
      */
     public void setUserData(int userId) {
+        
         UserDAO userDAO = new UserDAO(); // Instancia para acceder a los datos del usuario
         User user = userDAO.getUserById(userId); // Obtiuene los datos del usuario desde la base de datos
 
         if (user != null) {
+            
             this.currentUser = user; // Guarda el usuario en la variable global
 
             // Configura los campos de la vista con los datos del usuario
@@ -187,16 +274,24 @@ public class CurrentUserSettingsViewController implements Initializable {
 
             // Intenta cargar la imagen del usuario si existe
             if (user.getFotoPerfil() != null) {
+                
                 try {
+                    
                     Image image = new Image(user.getFotoPerfil().getBinaryStream());
                     imgUser.setImage(image);
+                    
                 } catch (Exception e) {
+                    
                     System.err.println("Error al cargar la imagen del usuario: " + e.getMessage());
                 }
+                
             } else {
+                
                 imgUser.setImage(null); // Establecer como vacío o usar una imagen predeterminada
             }
+            
         } else {
+            
             // Maneja el caso en que el usuario no se encuentra en la base de datos
             System.err.println("El usuario con ID " + userId + " no fue encontrado en la base de datos.");
         }

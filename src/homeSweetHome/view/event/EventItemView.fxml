@@ -15,19 +15,19 @@
          <children>
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
-                  <Label styleClass="font-label" text="Nombre Evento:" />
+                  <Label fx:id="lblNombreEvento" styleClass="font-label" text="Nombre Evento:" />
                   <Label fx:id="lblEventName" prefHeight="25.0" prefWidth="250.0" styleClass="font" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
-                  <Label styleClass="font-label" text="Fecha:" />
+                  <Label fx:id="lblFecha" styleClass="font-label" text="Fecha:" />
                   <Label fx:id="lblDate" prefHeight="25.0" prefWidth="250.0" styleClass="font" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
-                  <Label styleClass="font-label" text="Hora:" />
+                  <Label fx:id="lblHora" styleClass="font-label" text="Hora:" />
                   <Label fx:id="lblTime" prefHeight="25.0" prefWidth="250.0" styleClass="font" />
                </children>
             </HBox>

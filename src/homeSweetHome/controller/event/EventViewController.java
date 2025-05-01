@@ -6,10 +6,12 @@ package homeSweetHome.controller.event;
 
 import homeSweetHome.dataPersistence.EventDAO;
 import homeSweetHome.model.Event;
+import homeSweetHome.utils.LanguageManager;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -37,12 +39,50 @@ public class EventViewController implements Initializable {
     @FXML
     private Button btnOpenCreateNewEvent;
 
+    //private LanguageManager languageManager;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+
+        // Registra este controlador como listener del LanguageManager
+        LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
+        updateTexts(); // Actualiza los textos inicialmente
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////
+
         // Inicializa la vista cargando los eventos existentes
         loadEvents();
+
     }
 
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+    
+    /**
+     * Actualiza los textos de la interfaz en función del idioma.
+     */
+    private void updateTexts() {
+        // Acceder al Singleton para traducciones
+        LanguageManager languageManager = LanguageManager.getInstance();
+
+        if (languageManager == null) {
+            
+            System.err.println("Error: LanguageManager no está disponible.");
+            return;
+        }
+
+        // Actualización del texto del botón
+        btnOpenCreateNewEvent.setText(languageManager.getTranslation("createEvent")); 
+
+        // Actualización dinámica del contenido del ScrollPane si aplica
+        scrollPane.setContent(eventContainer); // Mantener el contenedor dinámico
+
+        // Depuración
+        System.out.println("Traducciones aplicadas correctamente en EventViewController.");
+    }
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
+    
     /**
      * Abre la ventana para crear un nuevo evento.
      *
@@ -50,12 +90,14 @@ public class EventViewController implements Initializable {
      */
     @FXML
     private void openCreateNewEvent(ActionEvent event) {
+        
         try {
+            
             // Carga la vista CreateEventView desde el archivo FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/event/CreateEventView.fxml"));
             Parent root = loader.load();
 
-            // Obtén el controlador de la nueva vista
+            // Obtiene el controlador de la nueva vista
             CreateEventViewController createEventController = loader.getController();
 
             // Pasa la referencia del controlador principal
@@ -68,7 +110,9 @@ public class EventViewController implements Initializable {
             stage.initModality(Modality.WINDOW_MODAL); // Establece la ventana como modal
             stage.initOwner(btnOpenCreateNewEvent.getScene().getWindow()); // Asocia la ventana actual como propietaria
             stage.showAndWait(); // Muestra la ventana y espera a que se cierre
+
         } catch (IOException e) {
+            
             // Registra un error en caso de problemas al cargar la vista
             System.err.println("Error al cargar la vista CreateEventView: " + e.getMessage());
         }
@@ -78,6 +122,7 @@ public class EventViewController implements Initializable {
      * Carga y muestra todos los eventos del grupo actual en la vista.
      */
     public void loadEvents() {
+
         EventDAO eventDAO = new EventDAO();
 
         // Obtiene el ID del grupo del usuario actual desde la sesión
@@ -91,7 +136,9 @@ public class EventViewController implements Initializable {
 
         // Itera sobre los eventos para cargarlos en la vista
         for (Event event : events) {
+
             try {
+
                 // Carga la vista del ítem de evento desde el archivo FXML
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/event/EventItemView.fxml"));
                 Node eventItemNode = loader.load();
@@ -113,6 +160,7 @@ public class EventViewController implements Initializable {
                 eventContainer.getChildren().add(eventItemNode);
 
             } catch (IOException e) {
+                
                 // Muestra un error si no se puede cargar la vista del ítem de evento
                 System.err.println("No se pudo cargar la vista EventItemView para el evento: " + event.getNombreEvento());
                 e.printStackTrace();

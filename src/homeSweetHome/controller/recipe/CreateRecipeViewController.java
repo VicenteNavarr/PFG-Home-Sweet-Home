@@ -6,12 +6,14 @@ import homeSweetHome.dataPersistence.RecipeDAO;
 import homeSweetHome.model.Product;
 import homeSweetHome.model.Recipe;
 import homeSweetHome.utils.AlertUtils;
+import homeSweetHome.utils.LanguageManager;
 import java.io.File;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -63,28 +65,36 @@ public class CreateRecipeViewController implements Initializable {
     private TableColumn<Product, String> colIngredientUnit;
     @FXML
     private TableColumn<Product, Void> deleteColumn;
+    @FXML
+    private ImageView imgRecipe;
 
     private RecipeViewController recipeViewController;
 
     private Recipe recipe;
 
     private byte[] recipeImage; // Para almacenar la imagen de la receta
-    @FXML
-    private ImageView imgRecipe;
 
     /**
      * Inicializa el controlador.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Configurar las columnas de la tabla
+
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+
+        // Registra este controlador como listener del LanguageManager
+        LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
+        updateTexts(); // Actualiza los textos inicialmente
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////  
+
+        // Configura las columnas de la tabla
         colIngredientName.setCellValueFactory(new PropertyValueFactory<>("nombreProducto"));
         colIngredientQuantity.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         colIngredientUnit.setCellValueFactory(new PropertyValueFactory<>("tipo"));
 
-        // Configurar opciones para la categoría de recetas
-        cmbRecipeCategory.getItems().addAll("Carnes", "Pescados", "Verduras", "Legumbres", "Postres", "Otros");
-
+        // Configura opciones para la categoría de recetas
+        //cmbRecipeCategory.getItems().addAll("Carnes", "Pescados", "Verduras", "Legumbres", "Postres", "Otros");
         deleteColumn.setCellFactory(param -> new TableCell<>() {
             private final Button btnDelete = new Button("Eliminar");
 
@@ -110,12 +120,64 @@ public class CreateRecipeViewController implements Initializable {
         });
     }
 
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+
+    /**
+     * Actualiza los textos de la interfaz en función del idioma.
+     */
+    private void updateTexts() {
+        
+        // Accede al Singleton del LanguageManager
+        LanguageManager languageManager = LanguageManager.getInstance();
+
+        if (languageManager == null) {
+            
+            System.err.println("Error: LanguageManager no está disponible.");
+            return;
+        }
+
+        System.out.println("Actualizando textos de la interfaz...");
+
+        // Traducción de los textos de los botones
+        btnAddIngredient.setText(languageManager.getTranslation("addIngredient")); 
+        btnLoadImage.setText(languageManager.getTranslation("loadImage")); 
+        btnCreateNewRecipe.setText(languageManager.getTranslation("createRecipe")); 
+        btnCancel.setText(languageManager.getTranslation("cancel")); 
+
+        // Traducción de los campos de texto
+        fieldRecipeName.setPromptText(languageManager.getTranslation("recipeNamePrompt")); 
+        txtAreaInstructions.setPromptText(languageManager.getTranslation("instructionsPrompt")); 
+
+        // Traducción de encabezados de las columnas en la tabla de ingredientes
+        colIngredientName.setText(languageManager.getTranslation("ingredientName")); 
+        colIngredientQuantity.setText(languageManager.getTranslation("ingredientQuantity")); 
+        colIngredientUnit.setText(languageManager.getTranslation("ingredientUnit")); 
+        deleteColumn.setText(languageManager.getTranslation("delete")); 
+
+        // Traducción del ComboBox de categorías de recetas
+        cmbRecipeCategory.setPromptText(languageManager.getTranslation("recipeCategoryPrompt")); 
+        cmbRecipeCategory.getItems().clear();
+        cmbRecipeCategory.getItems().addAll(
+                languageManager.getTranslation("recipeCategoryMeat"), 
+                languageManager.getTranslation("recipeCategoryFish"), 
+                languageManager.getTranslation("recipeCategoryVegetables"), 
+                languageManager.getTranslation("recipeCategoryLegumes"), 
+                languageManager.getTranslation("recipeCategoryDesserts"), 
+                languageManager.getTranslation("recipeCategoryOthers") 
+        );
+
+        System.out.println("Traducciones aplicadas correctamente en idioma: " + languageManager.getTranslation("currentLanguage"));
+    }
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////  
+    
     /**
      * Establece la referencia al controlador principal de la vista de recetas.
      *
      * @param recipeViewController El controlador principal.
      */
     public void setRecipeViewController(RecipeViewController recipeViewController) {
+
         this.recipeViewController = recipeViewController;
     }
 
@@ -126,23 +188,27 @@ public class CreateRecipeViewController implements Initializable {
      */
     @FXML
     private void addIngredient(ActionEvent event) {
+
         try {
-            // Cargar la vista para añadir ingrediente
+
+            // Carga la vista para añadir ingrediente
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/recipe/AddIngredientView.fxml"));
             Parent root = loader.load();
 
-            // Obtener el controlador de la vista de añadir ingrediente
+            // Obtiene el controlador de la vista de añadir ingrediente
             AddIngredientViewController addIngredientController = loader.getController();
-            addIngredientController.setCreateRecipeController(this); // Pasar referencia al controlador principal
+            addIngredientController.setCreateRecipeController(this); // Pasa referencia al controlador principal
 
-            // Configurar la ventana
+            // Configura la ventana
             Stage stage = new Stage();
             stage.setTitle("Añadir Ingrediente");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnAddIngredient.getScene().getWindow());
-            stage.showAndWait(); // Esperar hasta que se cierre la ventana
+            stage.showAndWait(); // Espera hasta que se cierre la ventana
+
         } catch (Exception e) {
+            
             System.err.println("Error al cargar la vista de añadir ingrediente: " + e.getMessage());
         }
     }
@@ -150,10 +216,12 @@ public class CreateRecipeViewController implements Initializable {
     /**
      * Añade un ingrediente a la tabla de ingredientes.
      *
-     * @param ingredient El objeto Product que representa el ingrediente.
+     * @param ingredient El objeto Product que representa el ingrediente(Siempre
+     * trabaja con la clase product).
      */
     public void addIngredientToTable(Product ingredient) {
-        tableIngredients.getItems().add(ingredient); // Añadir el ingrediente a la tabla
+
+        tableIngredients.getItems().add(ingredient); // Añade el ingrediente a la tabla
     }
 
     /**
@@ -165,29 +233,36 @@ public class CreateRecipeViewController implements Initializable {
      */
     @FXML
     private void loadImage(ActionEvent event) {
-        // Crear un selector de archivos
+
+        // Crea un selector de archivos
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Seleccionar Imagen");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos de Imagen", "*.png", "*.jpg", "*.jpeg"));
 
-        // Abrir el cuadro de diálogo para seleccionar un archivo
+        // Abre el cuadro de diálogo para seleccionar un archivo
         File file = fileChooser.showOpenDialog(btnLoadImage.getScene().getWindow());
 
         if (file != null) {
+
             try {
-                // Cargar la imagen seleccionada y mostrarla en el ImageView
+
+                // Carga la imagen seleccionada y muestraa en el ImageView
                 Image image = new Image(file.toURI().toString());
                 imgRecipe.setImage(image); // Asigna la imagen al ImageView
 
-                // Convertir la imagen a un byte array para almacenarla
+                // Convierte la imagen a un byte array para almacenarla
                 recipeImage = java.nio.file.Files.readAllBytes(file.toPath()); // Almacena los bytes de la imagen
                 System.out.println("Imagen cargada correctamente: " + file.getName());
+
             } catch (Exception e) {
-                // Manejar errores al cargar el archivo
+
+                // Maneja errores al cargar el archivo
                 AlertUtils.showAlert(Alert.AlertType.ERROR, "Error al Cargar Imagen", "No se pudo cargar la imagen. Inténtalo de nuevo.");
                 System.err.println("Error al cargar la imagen: " + e.getMessage());
             }
+            
         } else {
+            
             System.out.println("No se seleccionó ningún archivo.");
         }
     }
@@ -197,63 +272,28 @@ public class CreateRecipeViewController implements Initializable {
      *
      * @param event Evento del botón.
      */
-//    @FXML
-//    private void createNewRecipe(ActionEvent event) {
-//        // Validar los campos de la receta
-//        String recipeName = fieldRecipeName.getText().trim();
-//        String recipeCategory = cmbRecipeCategory.getValue();
-//        String recipeInstructions = txtAreaInstructions.getText().trim();
-//
-//        if (recipeName.isEmpty() || recipeCategory == null || recipeInstructions.isEmpty()) {
-//            AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos Vacíos", "Por favor, completa todos los campos.");
-//            return;
-//        }
-//
-//        // Verificar que haya al menos un ingrediente
-//        if (tableIngredients.getItems().isEmpty()) {
-//            AlertUtils.showAlert(Alert.AlertType.WARNING, "Sin Ingredientes", "Por favor, añade al menos un ingrediente.");
-//            return;
-//        }
-//
-//        // Crear objeto Recipe y asignar los datos
-//        Recipe recipe = new Recipe();
-//        recipe.setNombre(recipeName);
-//        recipe.setTipo(recipeCategory);
-//        recipe.setInstrucciones(recipeInstructions);
-//        recipe.setFoto(recipeImage); // Foto cargada previamente
-//        recipe.setIdGrupo(CurrentSession.getInstance().getUserGroupId()); // Obtener el ID del grupo actual
-//        recipe.setIngredientes(new ArrayList<>(tableIngredients.getItems())); // Ingredientes desde la tabla
-//
-//        // Llamar al DAO para guardar la receta
-//        RecipeDAO recipeDAO = new RecipeDAO();
-//        boolean success = recipeDAO.addRecipe(recipe);
-//
-//        if (success) {
-//            AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Receta Creada", "La receta se creó exitosamente.");
-//            ((Stage) btnCreateNewRecipe.getScene().getWindow()).close(); // Cierra la ventana actual
-//        } else {
-//            AlertUtils.showAlert(Alert.AlertType.ERROR, "Error al Guardar", "No se pudo guardar la receta. Por favor, inténtalo de nuevo.");
-//        }
-//    }
     @FXML
     private void createNewRecipe(ActionEvent event) {
-        // Validar los campos de la receta
+
+        // Valida los campos de la receta
         String recipeName = fieldRecipeName.getText().trim();
         String recipeCategory = cmbRecipeCategory.getValue();
         String recipeInstructions = txtAreaInstructions.getText().trim();
 
         if (recipeName.isEmpty() || recipeCategory == null || recipeInstructions.isEmpty()) {
+            
             AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos Vacíos", "Por favor, completa todos los campos.");
             return;
         }
 
-        // Verificar que haya al menos un ingrediente
+        // Verifica que haya al menos un ingrediente
         if (tableIngredients.getItems().isEmpty()) {
+            
             AlertUtils.showAlert(Alert.AlertType.WARNING, "Sin Ingredientes", "Por favor, añade al menos un ingrediente.");
             return;
         }
 
-        // Crear objeto Recipe y asignar los datos
+        // Crea objeto Recipe y asigna los datos
         Recipe recipe = new Recipe();
         recipe.setNombre(recipeName);
         recipe.setTipo(recipeCategory);
@@ -262,33 +302,41 @@ public class CreateRecipeViewController implements Initializable {
         recipe.setIdGrupo(CurrentSession.getInstance().getUserGroupId()); // Obtener el ID del grupo actual
         recipe.setIngredientes(new ArrayList<>(tableIngredients.getItems())); // Ingredientes desde la tabla
 
-        // Llamar al DAO para guardar la receta y los productos en la tabla temporal
+        // Llama al DAO para guardar la receta y los productos en la tabla temporal
         RecipeDAO recipeDAO = new RecipeDAO();
         boolean success = recipeDAO.addRecipeAndProducts(recipe);
 
         if (success) {
+            
             AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Receta Creada", "La receta y sus productos se crearon exitosamente.");
+            System.out.println("Idioma antes de cerrar: " + LanguageManager.getInstance().getLanguageCode());
             ((Stage) btnCreateNewRecipe.getScene().getWindow()).close(); // Cierra la ventana actual
+            System.out.println("Idioma después de cerrar: " + LanguageManager.getInstance().getLanguageCode());
+            
         } else {
+            
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error al Guardar", "No se pudo guardar la receta. Por favor, inténtalo de nuevo.");
         }
     }
 
     private void deleteProductFromTable(Product product) {
+        
         if (product == null) {
+            
             System.out.println("No se seleccionó ningún producto para eliminar.");
             return;
         }
 
         System.out.println("Eliminando producto de la tabla visual: " + product.getNombreProducto());
 
-        // Eliminar el producto de la tabla visual
+        // Elimina el producto de la tabla visual
         tableIngredients.getItems().remove(product);
-        tableIngredients.refresh(); // Refrescar la tabla para sincronizar los datos
+        tableIngredients.refresh(); // Refresca la tabla para sincronizar los datos
         System.out.println("Producto eliminado de la tabla visual.");
     }
 
     private void refreshTableView() {
+
         ObservableList<Product> currentItems = tableIngredients.getItems();
         tableIngredients.setItems(null); // Rompe el enlace con la tabla
         tableIngredients.setItems(currentItems); // Vuelve a enlazar los datos con la tabla
@@ -302,6 +350,7 @@ public class CreateRecipeViewController implements Initializable {
      */
     @FXML
     private void cancel(ActionEvent event) {
-        ((Stage) btnCancel.getScene().getWindow()).close(); // Cerrar la ventana actual
+        
+        ((Stage) btnCancel.getScene().getWindow()).close(); // Cierra la ventana actual
     }
 }

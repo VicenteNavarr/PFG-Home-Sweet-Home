@@ -6,6 +6,7 @@ import homeSweetHome.dataPersistence.UserDAO;
 import homeSweetHome.model.Event;
 import homeSweetHome.model.User;
 import homeSweetHome.utils.AlertUtils;
+import homeSweetHome.utils.LanguageManager;
 import homeSweetHome.utils.TimeUtils;
 import java.net.URL;
 import java.sql.Date;
@@ -24,6 +25,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import java.sql.Time;
 import java.time.LocalDate;
+import javafx.application.Platform;
 
 /**
  * Controlador de la vista para la creación de eventos.
@@ -56,6 +58,12 @@ public class CreateEventViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+        // Registra este controlador como listener del LanguageManager
+        LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
+        updateTexts(); // Actualiza los textos inicialmente
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////        
         int groupId = CurrentSession.getInstance().getUserGroupId(); // Obtiene el ID del grupo actual
         UserDAO userDAO = new UserDAO();
         List<User> usuarios = userDAO.getUsersByGroup(groupId); // Recupera los usuarios del grupo
@@ -65,19 +73,60 @@ public class CreateEventViewController implements Initializable {
             hourPicker.getItems().add(String.format("%02d", i));
         }
 
-        // Rellenar las opciones del ComboBox para los minutos (00-59)
+        // Rellena las opciones del ComboBox para los minutos (00-59)
         for (int i = 0; i < 60; i += 5) { // Intervalo de 5 minutos
             minutePicker.getItems().add(String.format("%02d", i));
         }
 
     }
 
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+    
+    /**
+     * Actualiza los textos de la interfaz en función del idioma.
+     */
+    private void updateTexts() {
+        // Accede directamente al Singleton del LanguageManager
+        LanguageManager languageManager = LanguageManager.getInstance();
+
+        if (languageManager == null) {
+            
+            System.err.println("Error: LanguageManager no está disponible.");
+            return;
+        }
+
+        // Configuración de los botones
+        btnCancelEvent.setText(languageManager.getTranslation("cancelEvent")); 
+        btnCreateEvent.setText(languageManager.getTranslation("createEvent")); 
+
+        // Configuración de los campos de texto
+        fieldEventName.setPromptText(languageManager.getTranslation("promptEventName")); 
+        fieldEventDescription.setPromptText(languageManager.getTranslation("promptEventDescription")); 
+        
+
+        // Configuración del DatePicker
+        fieldEventDate.setPromptText(languageManager.getTranslation("promptEventDate")); 
+
+        // Configuración de los ComboBox: hora y minutos
+        hourPicker.setPromptText(languageManager.getTranslation("promptHour")); 
+        minutePicker.setPromptText(languageManager.getTranslation("promptMinutes")); 
+
+        // Depuración
+        System.out.println("Traducciones aplicadas correctamente en CreateEventViewController.");
+    }
+    
+    
+
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
+    
     /**
      * Método para establecer la referencia al EventViewController principal.
      *
      * @param eventViewController - Controlador principal
      */
     public void setEventViewController(EventViewController eventViewController) {
+
         this.eventViewController = eventViewController;
     }
 
@@ -88,8 +137,10 @@ public class CreateEventViewController implements Initializable {
      */
     @FXML
     private void createNewEvent(ActionEvent event) {
+
         try {
-            // Recuperar los valores de los campos de entrada
+
+            // Recupera los valores de los campos de entrada
             String nombreEvento = fieldEventName.getText().trim();
             String descripcion = fieldEventDescription.getText().trim();
             java.time.LocalDate fechaActual = java.time.LocalDate.now(); // Fecha actual del sistema
@@ -99,39 +150,47 @@ public class CreateEventViewController implements Initializable {
                     ? Date.valueOf(fieldEventDate.getValue())
                     : null;
 
-            // Validar que los campos no estén vacíos
+            // Valida que los campos no estén vacíos
             if (nombreEvento.isEmpty() || descripcion.isEmpty() || fechaEvento == null) {
+                
                 AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos", "Por favor completa todos los campos, incluida la fecha y hora del evento.");
                 return;
             }
 
-            // Validar que la fecha no sea anterior a la fecha actual
+            // Valida que la fecha no sea anterior a la fecha actual
             if (fieldEventDate.getValue().isBefore(fechaActual)) {
+                
                 AlertUtils.showAlert(Alert.AlertType.WARNING, "Fecha no válida", "La fecha del evento no puede ser anterior a la fecha actual.");
                 return;
             }
 
-            // Recuperar la hora seleccionada del TimePicker
+            // Recupera la hora seleccionada del TimePicker
             String selectedHour = hourPicker.getSelectionModel().getSelectedItem();
             String selectedMinute = minutePicker.getSelectionModel().getSelectedItem();
 
-            // Validar que se haya seleccionado la hora completa
+            // Valida que se haya seleccionado la hora completa
             if (selectedHour == null || selectedMinute == null) {
+                
                 AlertUtils.showAlert(Alert.AlertType.WARNING, "Hora incompleta", "Por favor selecciona tanto la hora como los minutos.");
                 return;
             }
 
             // Convierte la hora usando el utilitario
             Time horaEvento;
+
             try {
+
                 horaEvento = TimeUtils.parseTime(selectedHour, selectedMinute);
+
             } catch (IllegalArgumentException e) {
+
                 AlertUtils.showAlert(Alert.AlertType.WARNING, "Hora inválida", e.getMessage());
                 return;
             }
 
             // Si la fecha del evento es hoy, validar que la hora no sea anterior o igual a la hora actual
             if (fieldEventDate.getValue().isEqual(fechaActual)) {
+                
                 java.time.LocalTime horaSeleccionada = java.time.LocalTime.of(Integer.parseInt(selectedHour), Integer.parseInt(selectedMinute));
                 if (!horaSeleccionada.isAfter(horaActual)) {
                     AlertUtils.showAlert(Alert.AlertType.WARNING, "Hora no válida", "Si la fecha del evento es hoy, la hora debe ser posterior a la hora actual.");
@@ -139,7 +198,7 @@ public class CreateEventViewController implements Initializable {
                 }
             }
 
-            // Crear el nuevo evento
+            // Crea el nuevo evento
             Event nuevoEvento = new Event(
                     0, // ID (se genera automáticamente)
                     nombreEvento,
@@ -150,20 +209,28 @@ public class CreateEventViewController implements Initializable {
                     CurrentSession.getInstance().getUserGroupId()
             );
 
-            // Guardar el evento en la base de datos
+            // Guarda el evento en la base de datos
             EventDAO eventDAO = new EventDAO();
             boolean success = eventDAO.addEvent(nuevoEvento);
 
             if (success) {
+
                 AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Éxito", "El evento se ha creado correctamente.");
+                
                 if (eventViewController != null) {
+                    
                     eventViewController.loadEvents();
                 }
+
                 ((Stage) btnCreateEvent.getScene().getWindow()).close();
+
             } else {
+
                 AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "Hubo un problema al intentar crear el evento.");
             }
+
         } catch (Exception e) {
+            
             e.printStackTrace();
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "Se produjo un error al procesar el evento.");
         }
@@ -176,6 +243,7 @@ public class CreateEventViewController implements Initializable {
      */
     @FXML
     private void cancel(ActionEvent event) {
+
         ((Stage) btnCancelEvent.getScene().getWindow()).close(); // Cierra la ventana actual
     }
 }

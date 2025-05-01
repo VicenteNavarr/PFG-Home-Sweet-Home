@@ -6,6 +6,7 @@ import homeSweetHome.model.User;
 import homeSweetHome.utils.AlertUtils;
 import static homeSweetHome.utils.AlertUtils.showAlert;
 import homeSweetHome.utils.ImageUtils;
+import homeSweetHome.utils.LanguageManager;
 import homeSweetHome.utils.ValidationUtils;
 import java.io.File;
 import java.net.URL;
@@ -20,6 +21,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import java.sql.Blob;
+import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
@@ -52,6 +54,12 @@ public class CreateUserViewController implements Initializable {
 
     private UserViewController userViewController;
 
+    /**
+     * Asigna el controlador de la vista de usuario.
+     *
+     * @param userViewController el controlador de la vista de usuario a
+     * establecer
+     */
     public void setUserViewController(UserViewController userViewController) {
         this.userViewController = userViewController;
     }
@@ -61,9 +69,74 @@ public class CreateUserViewController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        cmbRol.getItems().addAll("Administrador", "Consultor"); // Añadir los roles al ComboBox
+
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+
+        // Registra este controlador como listener del LanguageManager
+        LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
+        updateTexts(); // Actualiza los textos inicialmente
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////                  
+       
     }
 
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+    
+    /**
+     * Actualiza los textos de la interfaz en función del idioma.
+     */
+    private void updateTexts() {
+        
+        // Obtiene la instancia única del Singleton
+        LanguageManager languageManager = LanguageManager.getInstance();
+
+        if (languageManager == null) {
+            
+            System.err.println("Error: LanguageManager es nulo. Traducción no aplicada.");
+            return;
+        }
+
+        // Verificación del idioma activo
+        String idiomaActivo = languageManager.getLanguageCode();
+        System.out.println("Idioma activo en updateTexts(): " + idiomaActivo);
+
+        // Traducción de botones
+        btnCreate.setText(languageManager.getTranslation("createUser"));
+        btnCancel.setText(languageManager.getTranslation("cancel"));
+        btnLoadImage.setText(languageManager.getTranslation("loadImage"));
+
+        System.out.println("Botón 'createUser': " + btnCreate.getText());
+        System.out.println("Botón 'cancel': " + btnCancel.getText());
+        System.out.println("Botón 'loadImage': " + btnLoadImage.getText());
+
+        // Traducción de campos de texto (`promptText`)
+        fieldName.setPromptText(languageManager.getTranslation("promptUserName"));
+        fieldSurname.setPromptText(languageManager.getTranslation("promptUserSurname"));
+        fieldMail.setPromptText(languageManager.getTranslation("promptUserMail"));
+        fieldPassword.setPromptText(languageManager.getTranslation("promptUserPassword"));
+
+        System.out.println("Etiqueta 'promptUserName': " + fieldName.getPromptText());
+        System.out.println("Etiqueta 'promptUserSurname': " + fieldSurname.getPromptText());
+        System.out.println("Etiqueta 'promptUserMail': " + fieldMail.getPromptText());
+        System.out.println("Etiqueta 'promptUserPassword': " + fieldPassword.getPromptText());
+
+        // Traducción del `ComboBox` de roles
+        cmbRol.getItems().setAll(
+                languageManager.getTranslation("roleAdmin"),
+                languageManager.getTranslation("roleConsultant")
+        );
+        cmbRol.setPromptText(languageManager.getTranslation("promptUserRole"));
+
+        System.out.println("Opciones de 'cmbRol': " + cmbRol.getItems());
+
+        // Refrescar UI para aplicar los cambios visualmente
+        Platform.runLater(() -> fieldName.getScene().getWindow().sizeToScene());
+
+        System.out.println("Traducciones aplicadas correctamente en CreateUserViewController.");
+    }
+
+/////////////////////////////////FIN IDIOMAS///////////////////////////////////////////// 
+    
     /**
      * Método para crear un nuevo usuario desde la interfaz del administrador.
      *
@@ -71,6 +144,7 @@ public class CreateUserViewController implements Initializable {
      */
     @FXML
     private void createNewUser(ActionEvent event) {
+        
         // Obtienelos datos de los campos de texto
         String nombre = fieldName.getText();
         String apellidos = fieldSurname.getText();
@@ -80,18 +154,21 @@ public class CreateUserViewController implements Initializable {
 
         // Valida campos obligatorios
         if (nombre.isEmpty() || apellidos.isEmpty() || correoElectronico.isEmpty() || contrasenia.isEmpty() || imgUser.getImage() == null) {
+            
             AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos", "Por favor, completa todos los campos e incluye una imagen.");
             return;
         }
 
         // Validaa el formato del correo electrónico utilizando ValidationUtils
         if (!ValidationUtils.isValidEmail(fieldMail.getText())) {
+            
             showAlert(Alert.AlertType.ERROR, "Error de Registro", "El correo electrónico no tiene un formato válido.");
             return;
         }
 
         // Comprueba si el usuario ya existe utilizando el correo electrónico
         if (UserDAO.userExists(correoElectronico)) {
+            
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error de Registro", "El usuario ya existe.");
             System.out.println("Error: Usuario con el correo ya registrado: " + correoElectronico);
 
@@ -105,9 +182,13 @@ public class CreateUserViewController implements Initializable {
 
         // Convierte la imagen a formato Blob
         Blob fotoPerfil;
+        
         try {
+            
             fotoPerfil = new javax.sql.rowset.serial.SerialBlob(ImageUtils.convertImageToBlob(imgUser.getImage()));
+            
         } catch (Exception e) {
+            
             System.err.println("Error al convertir la imagen: " + e.getMessage());
             return;
         }
@@ -123,6 +204,7 @@ public class CreateUserViewController implements Initializable {
         boolean success = userDAO.addUser(newUser);
 
         if (success) {
+            
             // Usuario creado exitosamente
             System.out.println("Usuario creado exitosamente.");
 
@@ -134,12 +216,15 @@ public class CreateUserViewController implements Initializable {
 
             // Refresca la vista de usuarios si el controlador está disponible
             if (userViewController != null) {
+                
                 userViewController.loadUsers();
             }
 
             // Cierra la ventana actual
             ((Stage) ((Node) event.getSource()).getScene().getWindow()).close();
+            
         } else {
+            
             // Maneja error en la creación del usuario
             System.out.println("Hubo un error al crear el usuario.");
         }
@@ -152,6 +237,7 @@ public class CreateUserViewController implements Initializable {
      */
     @FXML
     private void cancel(ActionEvent event) {
+        
         // Cierra la ventana actual
         ((Button) event.getSource()).getScene().getWindow().hide();
         System.out.println("Ventana cerrada.");
@@ -164,6 +250,7 @@ public class CreateUserViewController implements Initializable {
      */
     @FXML
     private void loadImage(ActionEvent event) {
+        
         // Abre un cuadro de diálogo para seleccionar un archivo de imagen
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Seleccionar Imagen");
@@ -173,11 +260,14 @@ public class CreateUserViewController implements Initializable {
         File file = fileChooser.showOpenDialog(btnLoadImage.getScene().getWindow());
 
         if (file != null) {
+            
             // Carga y muestra la imagen seleccionada
             Image image = new Image(file.toURI().toString());
             imgUser.setImage(image);
             System.out.println("Imagen cargada correctamente: " + file.getName());
+            
         } else {
+            
             // Maneja el caso en que no se seleccionó un archivo
             System.out.println("No se seleccionó ningún archivo.");
         }

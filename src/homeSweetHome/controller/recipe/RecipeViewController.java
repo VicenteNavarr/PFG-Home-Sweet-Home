@@ -4,6 +4,7 @@ import homeSweetHome.dataPersistence.MealDAO;
 import homeSweetHome.model.Recipe;
 import homeSweetHome.dataPersistence.RecipeDAO;
 import homeSweetHome.model.Meal;
+import homeSweetHome.utils.LanguageManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.io.ByteArrayInputStream;
 import java.util.Optional;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -35,7 +37,6 @@ public class RecipeViewController implements Initializable {
 
     @FXML
     private Button btnOpenAddNewRecipe;
-
     @FXML
     private GridPane recipeGrid; // Contenedor para las recetas
 
@@ -43,32 +44,124 @@ public class RecipeViewController implements Initializable {
 
     private MealDAO mealDAO = new MealDAO();
 
+    //private LanguageManager languageManager;
     /**
      * Inicializa el controlador.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+     
         recipeDAO = new RecipeDAO(); // Inicializa el DAO
         loadRecipes(); // Carga las recetas al inicio
 
         mealDAO = new MealDAO(); // Inicialización de MealDAO
         System.out.println("MealDAO inicializado correctamente.");
+        
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+
+        LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
+        updateTexts(); // Asegura que los textos se actualicen desde el inicio
+        System.out.println("Ejecutando initialize() en RecipeViewController. Idioma activo: " + LanguageManager.getInstance().getLanguageCode());
+
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////               
     }
 
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+
+    /**
+     * Actualiza los textos de la interfaz en función del idioma.
+     */
+    private void updateTexts() {
+        
+        // Obtiene la instancia única del Singleton
+        LanguageManager languageManager = LanguageManager.getInstance();
+
+        if (languageManager == null) {
+            
+            System.err.println("Error: LanguageManager es nulo. Traducción no aplicada.");
+            return;
+        }
+
+        // Traducción del botón principal
+        btnOpenAddNewRecipe.setText(languageManager.getTranslation("addNewRecipe")); 
+
+        // Actualizar los textos dentro del GridPane
+        recipeGrid.getChildren().forEach(node -> {
+            
+            if (node instanceof VBox) {
+                
+                VBox recipeCard = (VBox) node;
+
+                recipeCard.getChildren().forEach(child -> {
+                    
+                    if (child instanceof Label) {
+                        
+                        Label label = (Label) child;
+
+                        // Traducción de etiquetas (nombre, categoría, etc.)
+                        String translatedText = languageManager.getTranslation(label.getText());
+                        label.setText(translatedText != null ? translatedText : label.getText());
+                        
+                    } else if (child instanceof HBox) {
+                        
+                        HBox buttonBox = (HBox) child;
+
+                        buttonBox.getChildren().forEach(buttonChild -> {
+                            
+                            if (buttonChild instanceof Button) {
+                                
+                                Button button = (Button) buttonChild;
+
+                                // Traducción de botones basados en textos iniciales
+                                switch (button.getText()) {
+                                    case "Modificar":
+                                    case "Modify":
+                                        button.setText(languageManager.getTranslation("modify"));
+                                        break;
+                                    case "Ver":
+                                    case "View":
+                                        button.setText(languageManager.getTranslation("view"));
+                                        break;
+                                    case "Eliminar":
+                                    case "Delete":
+                                        button.setText(languageManager.getTranslation("delete"));
+                                        break;
+                                    default:
+                                        System.out.println("Texto no reconocido para traducción: " + button.getText());
+                                        break;
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        System.out.println("Traducciones aplicadas correctamente en RecipeViewController.");
+    }
+    
+   
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
+    
     /**
      * Carga todas las recetas desde la base de datos y las muestra en el
      * GridPane.
      */
     private void loadRecipes() {
-        List<Recipe> recipes = recipeDAO.getAllRecipes(); // Obtén todas las recetas
+        
+        List<Recipe> recipes = recipeDAO.getAllRecipes(); // Obtienetodas las recetas
         recipeGrid.getChildren().clear(); // Limpia el GridPane
 
         int row = 0;
         int col = 0;
 
         for (Recipe recipe : recipes) {
+            
             addRecipeToGrid(recipe, row, col);
             col++;
+            
             if (col == 4) { // Cambia de fila después de 3 columnas
                 col = 0;
                 row++;
@@ -76,93 +169,15 @@ public class RecipeViewController implements Initializable {
         }
     }
 
-//    /**
-//     * Añade una receta al GridPane como una tarjeta.
-//     *
-//     * @param recipe La receta a mostrar.
-//     * @param row La fila en la que se añadirá.
-//     * @param col La columna en la que se añadirá.
-//     */
-//    private void addRecipeToGrid(Recipe recipe, int row, int col) {
-//        VBox recipeCard = new VBox();
-//        recipeCard.setAlignment(Pos.CENTER);
-//        recipeCard.setSpacing(10);
-//
-//        // Imagen de la receta
-//        ImageView imageView = new ImageView();
-//        if (recipe.getFoto() != null) {
-//            imageView.setImage(new Image(new ByteArrayInputStream(recipe.getFoto())));
-//        } else {
-//            imageView.setImage(new Image("ruta/a/imagen_por_defecto.jpg")); // Imagen por defecto
-//        }
-//        imageView.setFitWidth(100);
-//        imageView.setFitHeight(100);
-//
-//        // Nombre de la receta
-//        Label recipeName = new Label(recipe.getNombre());
-//        recipeName.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
-//
-//        // Botones de acción
-//        Button btnModify = new Button("Modificar");
-//        btnModify.setOnAction(e -> modifyRecipe(recipe));
-//        Button btnView = new Button("Ver");
-//        btnView.setOnAction(e -> viewRecipe(recipe));
-//        Button btnDelete = new Button("Eliminar");
-//        btnDelete.setOnAction(e -> deleteRecipe(recipe));
-//
-//        HBox buttonBox = new HBox(btnModify, btnView, btnDelete);
-//        buttonBox.setSpacing(5);
-//        buttonBox.setAlignment(Pos.CENTER);
-//
-//        // Añadir todos los elementos a la "card"
-//        recipeCard.getChildren().addAll(imageView, recipeName, buttonBox);
-//
-//        // Añadir la "card" al GridPane
-//        recipeGrid.add(recipeCard, col, row);
-//    }
-//    private void addRecipeToGrid(Recipe recipe, int row, int col) {
-//        VBox recipeCard = new VBox();
-//        recipeCard.setAlignment(Pos.CENTER);
-//        recipeCard.setSpacing(10);
-//
-//        // Imagen de la receta
-//        ImageView imageView = new ImageView();
-//        try {
-//            if (recipe.getFoto() != null && recipe.getFoto().length > 0) {
-//                imageView.setImage(new Image(new ByteArrayInputStream(recipe.getFoto())));
-//            } else {
-//                imageView.setImage(new Image(getClass().getResource("/homeSweetHome/view/images/add-image.jpg").toExternalForm())); // Imagen por defecto
-//            }
-//        } catch (Exception e) {
-//            System.err.println("Error al cargar la imagen: " + e.getMessage());
-//            imageView.setImage(new Image(getClass().getResource("/homeSweetHome/view/images/add-image.jpg").toExternalForm()));
-//        }
-//        imageView.setFitWidth(100);
-//        imageView.setFitHeight(100);
-//
-//        // Nombre de la receta
-//        Label recipeName = new Label(recipe.getNombre());
-//        recipeName.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
-//
-//        // Botones de acción
-//        Button btnModify = new Button("Modificar");
-//        btnModify.setOnAction(e -> modifyRecipe(recipe));
-//        Button btnView = new Button("Ver");
-//        btnView.setOnAction(e -> viewRecipe(recipe));
-//        Button btnDelete = new Button("Eliminar");
-//        btnDelete.setOnAction(e -> deleteRecipe(recipe));
-//
-//        HBox buttonBox = new HBox(btnModify, btnView, btnDelete);
-//        buttonBox.setSpacing(5);
-//        buttonBox.setAlignment(Pos.CENTER);
-//
-//        // Añadir todos los elementos a la "card"
-//        recipeCard.getChildren().addAll(imageView, recipeName, buttonBox);
-//
-//        // Añadir la "card" al GridPane
-//        recipeGrid.add(recipeCard, col, row);
-//    }
+    /**
+     * Añade una receta al GridPane como una tarjeta.
+     *
+     * @param recipe La receta a mostrar.
+     * @param row La fila en la que se añadirá.
+     * @param col La columna en la que se añadirá.
+     */
     private void addRecipeToGrid(Recipe recipe, int row, int col) {
+
         VBox recipeCard = new VBox();
         recipeCard.setAlignment(Pos.CENTER);
         recipeCard.setSpacing(10);
@@ -170,16 +185,24 @@ public class RecipeViewController implements Initializable {
 
         // Imagen de la receta
         ImageView imageView = new ImageView();
+        
         try {
+            
             if (recipe.getFoto() != null && recipe.getFoto().length > 0) {
+                
                 imageView.setImage(new Image(new ByteArrayInputStream(recipe.getFoto())));
+                
             } else {
+                
                 imageView.setImage(new Image(getClass().getResource("/homeSweetHome/view/images/add-image.jpg").toExternalForm())); // Imagen por defecto
             }
+            
         } catch (Exception e) {
+            
             System.err.println("Error al cargar la imagen: " + e.getMessage());
             imageView.setImage(new Image(getClass().getResource("/homeSweetHome/view/images/add-image.jpg").toExternalForm()));
         }
+        
         imageView.setFitWidth(100);
         imageView.setFitHeight(100);
 
@@ -203,10 +226,10 @@ public class RecipeViewController implements Initializable {
         buttonBox.setSpacing(5);
         buttonBox.setAlignment(Pos.CENTER);
 
-        // Añadir todos los elementos a la "card"
+        // Añade todos los elementos a la "card"
         recipeCard.getChildren().addAll(imageView, recipeName, recipeCategory, buttonBox);
 
-        // Añadir la "card" al GridPane
+        // Añade la "card" al GridPane
         recipeGrid.add(recipeCard, col, row);
     }
 
@@ -216,17 +239,19 @@ public class RecipeViewController implements Initializable {
      * @param recipe La receta a modificar.
      */
     private void modifyRecipe(Recipe recipe) {
+        
         try {
-            // Cargar la vista de modificación
+            
+            // Carga la vista de modificación
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/recipe/ModifyRecipeView.fxml"));
             Parent root = loader.load();
 
-            // Obtener el controlador de la vista de modificación
+            // Obtiener el controlador de la vista de modificación
             ModifyRecipeViewController modifyRecipeController = loader.getController();
             modifyRecipeController.setRecipe(recipe);
             modifyRecipeController.setRecipeViewController(this);
 
-            // Configurar la ventana
+            // Configura la ventana
             Stage stage = new Stage();
             stage.setTitle("Modificar Receta");
             stage.setScene(new Scene(root));
@@ -234,9 +259,11 @@ public class RecipeViewController implements Initializable {
             stage.initOwner(btnOpenAddNewRecipe.getScene().getWindow());
             stage.showAndWait(); // Espera a que se cierre la ventana
 
-            // Actualizar las recetas después de la modificación
+            // Actualiza las recetas después de la modificación
             loadRecipes();
+            
         } catch (Exception e) {
+            
             System.err.println("Error al cargar la vista de modificación: " + e.getMessage());
         }
     }
@@ -247,73 +274,88 @@ public class RecipeViewController implements Initializable {
      * @param recipe La receta a visualizar.
      */
     private void viewRecipe(Recipe recipe) {
+        
         try {
-            // Cargar la vista de detalles
+            
+            // Carga la vista de detalles
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/recipe/ViewRecipeView.fxml"));
             Parent root = loader.load();
 
-            // Obtener el controlador de la vista de detalles
+            // Obtiene el controlador de la vista de detalles
             ViewRecipeViewController viewRecipeController = loader.getController();
             viewRecipeController.setRecipe(recipe);
 
-            // Configurar la ventana
+            // Configura la ventana
             Stage stage = new Stage();
             stage.setTitle("Ver Receta");
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnOpenAddNewRecipe.getScene().getWindow());
             stage.showAndWait(); // Espera a que se cierre la ventana
+            
         } catch (Exception e) {
+            
             System.err.println("Error al cargar la vista de detalles: " + e.getMessage());
         }
     }
 
-//    /**
-//     * Acción para el botón "Eliminar".
-//     *
-//     * @param recipe La receta a eliminar.
-//     */
-//    private void deleteRecipe(Recipe recipe) {
-//        System.out.println("Eliminar receta: " + recipe.getNombre());
-//        if (recipeDAO.deleteRecipe(recipe.getId())) {
-//            loadRecipes(); // Actualiza el GridPane
-//        } else {
-//            System.err.println("Error al eliminar la receta.");
-//        }
-//    }
+    /**
+     * Acción para el botón "Eliminar".
+     *
+     * @param recipe La receta a eliminar.
+     */
     private void deleteRecipe(Recipe recipe) {
+        
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmar Eliminación");
         alert.setHeaderText("¿Estás seguro de que deseas eliminar esta receta?");
         alert.setContentText("Receta: " + recipe.getNombre());
 
         Optional<ButtonType> result = alert.showAndWait();
+        
         if (result.isPresent() && result.get() == ButtonType.OK) {
+            
             System.out.println("Confirmación de eliminación recibida para receta: " + recipe.getNombre());
 
             if (recipeDAO.deleteRecipeCascade(recipe.getId())) {
+                
                 System.out.println("Receta eliminada correctamente: " + recipe.getNombre());
-                loadRecipes(); // Refrescar el GridPane o lista
+                loadRecipes(); // Refresca el GridPane o lista
+                
             } else {
+                
                 System.err.println("Error al eliminar la receta y sus relaciones.");
             }
+            
         } else {
+            
             System.out.println("Eliminación cancelada para receta: " + recipe.getNombre());
         }
     }
 
+    /**
+     * Abre una ventana para crear una nueva receta.
+     *
+     * Configura y muestra una nueva vista para añadir recetas. Actualiza la
+     * lista de recetas al cerrar la ventana.
+     *
+     * @param event el evento asociado al clic del botón para añadir nueva
+     * receta
+     */
     @FXML
     private void openAddNewRecipe(ActionEvent event) {
+        
         try {
-            // Cargar la vista para añadir nueva receta
+            
+            // Carga la vista para añadir nueva receta
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/recipe/CreateRecipeView.fxml"));
             Parent root = loader.load();
 
-            // Obtener el controlador de la nueva vista
+            // Obtiene el controlador de la nueva vista
             CreateRecipeViewController createRecipeController = loader.getController();
             createRecipeController.setRecipeViewController(this);
 
-            // Configurar la ventana
+            // Configura la ventana
             Stage stage = new Stage();
             stage.setTitle("Crear Nueva Receta");
             stage.setScene(new Scene(root));
@@ -321,9 +363,11 @@ public class RecipeViewController implements Initializable {
             stage.initOwner(btnOpenAddNewRecipe.getScene().getWindow());
             stage.showAndWait(); // Espera a que se cierre la ventana
 
-            // Actualizar las recetas después de añadir una nueva
+            // Actualiza las recetas después de añadir una nueva
             loadRecipes();
+            
         } catch (Exception e) {
+            
             System.err.println("Error al cargar la vista para añadir nueva receta: " + e.getMessage());
         }
     }

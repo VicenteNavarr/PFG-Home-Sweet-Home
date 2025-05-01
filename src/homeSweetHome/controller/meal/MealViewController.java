@@ -8,6 +8,7 @@ import homeSweetHome.model.Meal;
 import homeSweetHome.model.Product;
 import homeSweetHome.model.Recipe;
 import homeSweetHome.utils.AlertUtils;
+import homeSweetHome.utils.LanguageManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
@@ -46,18 +48,117 @@ public class MealViewController implements Initializable {
 
     private MealDAO mealDAO;
 
+    private LanguageManager languageManager;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
         mealDAO = new MealDAO(); // Inicializa el DAO
         loadWeeklyMeals(); // Carga las comidas al inicio
         btnConfirmMeal.setVisible(false); // Ocultar botón inicialmente
+
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+
+        // Registra este controlador como listener del LanguageManager
+        LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
+        updateTexts(); // Actualiza los textos inicialmente
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////        
     }
 
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+
+    /**
+     * Actualiza los textos de la interfaz en función del idioma.
+     */
+    private void updateTexts() {
+        
+    // Accede directamente al Singleton del LanguageManager
+    LanguageManager languageManager = LanguageManager.getInstance();
+
+    if (languageManager == null) {
+        System.err.println("Error: LanguageManager no está disponible.");
+        return;
+    }
+
+    // Traducir los textos de los botones principales
+    btnGenerateMeal.setText(languageManager.getTranslation("generateMeal")); 
+    btnConfirmMeal.setText(languageManager.getTranslation("confirmMeal"));   
+
+    // Actualizar los textos dentro de MealGrid
+    MealGrid.getChildren().forEach(node -> {
+        
+        if (node instanceof VBox) {
+            
+            VBox mealCard = (VBox) node;
+
+            mealCard.getChildren().forEach(child -> {
+                
+                if (child instanceof Label) {
+                    
+                    Label label = (Label) child;
+
+                    // Traducir días de la semana basados en claves del LanguageManager
+                    if ("Lunes".equals(label.getText()) || "Monday".equals(label.getText())) {
+                        
+                        label.setText(languageManager.getTranslation("monday"));
+                        
+                    } else if ("Martes".equals(label.getText()) || "Tuesday".equals(label.getText())) {
+                        
+                        label.setText(languageManager.getTranslation("tuesday"));
+                        
+                    } else if ("Miércoles".equals(label.getText()) || "Wednesday".equals(label.getText())) {
+                        
+                        label.setText(languageManager.getTranslation("wednesday"));
+                        
+                    } else if ("Jueves".equals(label.getText()) || "Thursday".equals(label.getText())) {
+                        
+                        label.setText(languageManager.getTranslation("thursday"));
+                        
+                    } else if ("Viernes".equals(label.getText()) || "Friday".equals(label.getText())) {
+                        
+                        label.setText(languageManager.getTranslation("friday"));
+                        
+                    } else if ("Sábado".equals(label.getText()) || "Saturday".equals(label.getText())) {
+                        
+                        label.setText(languageManager.getTranslation("saturday"));
+                        
+                    } else if ("Domingo".equals(label.getText()) || "Sunday".equals(label.getText())) {
+                        
+                        label.setText(languageManager.getTranslation("sunday"));
+                        
+                    } else {
+                        
+                        System.out.println("Texto no reconocido para traducción: " + label.getText());
+                    }
+                    
+                } else if (child instanceof Button) {
+                    
+                    Button button = (Button) child;
+
+                    // Traducir el texto del botón de eliminar
+                    if ("Eliminar".equals(button.getText()) || "Delete".equals(button.getText())) {
+                        
+                        button.setText(languageManager.getTranslation("deleteMeal")); 
+                    }
+                }
+            });
+        }
+    });
+
+    // Depuración
+    System.out.println("Traducciones aplicadas correctamente en MealViewController.");
+}
+
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
+    
     /**
      * Carga las comidas semanales desde la base de datos y las muestra en el
      * GridPane.
      */
     private void loadWeeklyMeals() {
+        
         List<Meal> meals = mealDAO.getAllMeals(); // Recupera todas las comidas semanales
         MealGrid.getChildren().clear(); // Limpia el GridPane
 
@@ -65,58 +166,28 @@ public class MealViewController implements Initializable {
         int row = 0; // Comenzamos en la fila 0
 
         for (Meal meal : meals) {
+            
             addMealToGrid(meal, row, col); // Pasamos tanto fila como columna
             col++; // Incrementamos la columna
 
             // Si llegamos a la columna 4, saltamos a la siguiente fila
             if (col == 4) {
+                
                 col = 0; // Reiniciamos la columna
                 row++; // Pasamos a la siguiente fila
             }
         }
     }
 
-//    /**
-//     * Añade una comida semanal al GridPane como una tarjeta.
-//     *
-//     * @param meal La comida a mostrar.
-//     * @param row La fila en la que se añadirá.
-//     */
-//    private void addMealToGrid(Meal meal, int row, int col) {
-//        VBox mealCard = new VBox();
-//        mealCard.setAlignment(Pos.CENTER);
-//        mealCard.setSpacing(15); // Espaciado suficiente entre elementos
-//        mealCard.setStyle("-fx-border-color: lightgray; -fx-padding: 10;");
-//
-//        // Día de la semana
-//        Label dayLabel = new Label(meal.getDayOfWeek());
-//        dayLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333;");
-//
-//        // Imagen de la receta
-//        ImageView imageView = new ImageView();
-//        if (meal.getPhoto() != null) {
-//            imageView.setImage(new Image(new ByteArrayInputStream(meal.getPhoto())));
-//        } else {
-//            imageView.setImage(new Image("/homeSweetHome/view/images/add-image.jpg")); // Imagen por defecto
-//        }
-//        imageView.setFitWidth(100);
-//        imageView.setFitHeight(100);
-//
-//        // Nombre de la receta
-//        Label recipeName = new Label(meal.getRecipeName());
-//        recipeName.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #555;");
-//
-//        // Categoría de la receta
-//        Label recipeCategory = new Label(meal.getCategory());
-//        recipeCategory.setStyle("-fx-font-size: 12px; -fx-text-fill: #777;");
-//
-//        // Añadir todos los elementos a la tarjeta
-//        mealCard.getChildren().addAll(dayLabel, imageView, recipeName, recipeCategory);
-//
-//        // Añadir la tarjeta al GridPane
-//        MealGrid.add(mealCard, col, row); // Columna y fila dinámicas
-//    }
+    /**
+     * Metodo que añade las comidas al grid
+     *
+     * @param meal
+     * @param row
+     * @param col
+     */
     private void addMealToGrid(Meal meal, int row, int col) {
+        
         VBox mealCard = new VBox();
         mealCard.setAlignment(Pos.CENTER);
         mealCard.setSpacing(15); // Espaciado suficiente entre elementos
@@ -128,11 +199,16 @@ public class MealViewController implements Initializable {
 
         // Imagen de la receta
         ImageView imageView = new ImageView();
+        
         if (meal.getPhoto() != null) {
+            
             imageView.setImage(new Image(new ByteArrayInputStream(meal.getPhoto())));
+            
         } else {
+            
             imageView.setImage(new Image("/homeSweetHome/view/images/add-image.jpg")); // Imagen por defecto
         }
+        
         imageView.setFitWidth(100);
         imageView.setFitHeight(100);
 
@@ -147,30 +223,43 @@ public class MealViewController implements Initializable {
         // Botón de eliminar
         Button deleteButton = new Button("Eliminar");
         deleteButton.setStyle("-fx-background-color: #D35C37; -fx-text-fill: white; -fx-font-size: 12px; -fx-background-radius: 5;");
-        deleteButton.setOnAction(event -> deleteMeal(meal)); // Llamar al método deleteMeal al hacer clic
+        deleteButton.setOnAction(event -> deleteMeal(meal)); // Llama al método deleteMeal al hacer clic
 
-        // Añadir todos los elementos a la tarjeta
+
+        // Añade todos los elementos a la tarjeta
         mealCard.getChildren().addAll(dayLabel, imageView, recipeName, recipeCategory, deleteButton);
 
-        // Añadir la tarjeta al GridPane
+        // Añade la tarjeta al GridPane
         MealGrid.add(mealCard, col, row); // Columna y fila dinámicas
     }
 
+    /**
+     * Metodo para eliminar comida
+     *
+     * @param meal
+     */
     private void deleteMeal(Meal meal) {
+
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmar Eliminación");
         alert.setHeaderText("¿Estás seguro de que deseas eliminar esta receta del menú semanal?");
         alert.setContentText("Receta: " + meal.getRecipeName() + "\nDía: " + meal.getDayOfWeek());
 
         Optional<ButtonType> result = alert.showAndWait();
+        
         if (result.isPresent() && result.get() == ButtonType.OK) {
-            // Eliminar la receta del menú en la base de datos
+
+            // Elimina la receta del menú en la base de datos
             boolean success = mealDAO.deleteMeal(meal.getId());
+
             if (success) {
+                
                 System.out.println("Receta eliminada del menú semanal: " + meal.getRecipeName());
-                refreshGrid(); // Refrescar el GridPane tras eliminar la receta
+                refreshGrid(); // Refresca el GridPane tras eliminar la receta
                 AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Eliminación Exitosa", "La receta fue eliminada correctamente.");
+                
             } else {
+                
                 System.err.println("Error al eliminar la receta del menú semanal: " + meal.getRecipeName());
                 AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se pudo eliminar la receta. Por favor, inténtalo nuevamente.");
             }
@@ -178,14 +267,18 @@ public class MealViewController implements Initializable {
     }
 
     private void refreshGrid() {
-        MealGrid.getChildren().clear(); // Limpiar el grid
+        
+        MealGrid.getChildren().clear(); // Limpia el grid
         int column = 0;
         int row = 0;
 
-        List<Meal> weeklyMeals = mealDAO.getAllMeals(); // Recuperar todas las comidas
+        List<Meal> weeklyMeals = mealDAO.getAllMeals(); // Recupera todas las comidas
+        
         for (Meal meal : weeklyMeals) {
+            
             addMealToGrid(meal, row, column);
             column++;
+            
             if (column == 3) { // Máximo 3 columnas por fila
                 column = 0;
                 row++;
@@ -198,318 +291,96 @@ public class MealViewController implements Initializable {
      *
      * @param event Evento del botón.
      */
-//    @FXML
-//    private void generateMeal(ActionEvent event) {
-//        // Eliminar el menú semanal existente
-//        if (!mealDAO.deleteAllMeals()) {
-//            AlertUtils.showAlert(Alert.AlertType.ERROR, "Error al borrar", "No se pudo borrar el menú semanal actual.");
-//            return; // Si falla, detenemos la ejecución
-//        }
-//
-//        RecipeDAO recipeDAO = new RecipeDAO();
-//
-//        // Obtener recetas disponibles desde la base de datos
-//        List<Recipe> availableRecipes = recipeDAO.getAllRecipes();
-//        String[] daysOfWeek = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
-//
-//        if (availableRecipes.size() < daysOfWeek.length) {
-//            AlertUtils.showAlert(Alert.AlertType.WARNING, "Recetas Insuficientes",
-//                    "No hay suficientes recetas para generar un menú semanal.");
-//            return; // Detenemos si no hay suficientes recetas
-//        }
-//
-//        // Generar el nuevo menú semanal
-//        for (int i = 0; i < daysOfWeek.length; i++) {
-//            Recipe recipe = availableRecipes.get(i);
-//
-//            Meal meal = new Meal();
-//            meal.setDayOfWeek(daysOfWeek[i]);
-//            meal.setRecipeId(recipe.getId());
-//            meal.setRecipeName(recipe.getNombre());
-//            meal.setCategory(recipe.getTipo());
-//            meal.setPhoto(recipe.getFoto());
-//            meal.setGroupId(CurrentSession.getInstance().getUserGroupId());
-//
-//            mealDAO.addMeal(meal);
-//        }
-//
-//        // Actualizar el GridPane después de generar el menú
-//        loadWeeklyMeals(); // Recargar la vista
-//
-//        // Mostrar el botón "Confirmar Menú"
-//        btnConfirmMeal.setVisible(true);
-//    }
     @FXML
     private void generateMeal(ActionEvent event) {
-        // Eliminar el menú semanal existente
+
+        // Elimina el menú semanal existente
         if (!mealDAO.deleteAllMeals()) {
+            
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error al borrar", "No se pudo borrar el menú semanal actual.");
             return; // Si falla, detenemos la ejecución
         }
 
         RecipeDAO recipeDAO = new RecipeDAO();
 
-        // Obtener recetas disponibles desde la base de datos
+        // Obtiene recetas disponibles desde la base de datos
         List<Recipe> availableRecipes = recipeDAO.getAllRecipes();
-        String[] daysOfWeek = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
+
+        // Traducción estática de días de la semana (inglés -> español)
+        Map<String, String> daysMap = Map.of(
+                "Monday", "Lunes",
+                "Tuesday", "Martes",
+                "Wednesday", "Miércoles",
+                "Thursday", "Jueves",
+                "Friday", "Viernes",
+                "Saturday", "Sábado",
+                "Sunday", "Domingo"
+        );
+
+        // Días en inglés para iterar
+        String[] daysOfWeek = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 
         if (availableRecipes.isEmpty()) {
+            
             AlertUtils.showAlert(Alert.AlertType.WARNING, "Sin Recetas", "No hay recetas disponibles para generar el menú semanal.");
             return;
         }
 
         if (availableRecipes.size() < daysOfWeek.length) {
+            
             AlertUtils.showAlert(Alert.AlertType.WARNING, "Recetas Insuficientes",
                     "No hay suficientes recetas para generar un menú semanal.");
             return;
         }
 
-        // Crear el nuevo menú semanal con recetas aleatorias
+        // Crea el nuevo menú semanal con recetas aleatorias
         Random random = new Random();
         Set<Integer> usedIndexes = new HashSet<>(); // Para evitar recetas repetidas
 
         for (String day : daysOfWeek) {
+            
             int randomIndex;
+            
             do {
+                
                 randomIndex = random.nextInt(availableRecipes.size());
-            } while (usedIndexes.contains(randomIndex)); // Asegurar que no se repita la receta
+            } while (usedIndexes.contains(randomIndex)); // Asegura que no se repita la receta
+            
             usedIndexes.add(randomIndex);
 
             Recipe recipe = availableRecipes.get(randomIndex);
 
             Meal meal = new Meal();
-            meal.setDayOfWeek(day);
+            meal.setDayOfWeek(daysMap.get(day)); // Traducción garantizada aquí
             meal.setRecipeId(recipe.getId());
             meal.setRecipeName(recipe.getNombre());
             meal.setCategory(recipe.getTipo());
             meal.setPhoto(recipe.getFoto());
             meal.setGroupId(CurrentSession.getInstance().getUserGroupId());
 
-            mealDAO.addMeal(meal); // Agregar la comida a la base de datos
-            System.out.println("Comida asignada: Día " + day + " - Receta: " + recipe.getNombre());
+            mealDAO.addMeal(meal); // Agrega la comida a la base de datos
+            System.out.println("Comida asignada: Día " + daysMap.get(day) + " - Receta: " + recipe.getNombre());
         }
 
-        // Actualizar el GridPane después de generar el menú
-        loadWeeklyMeals(); // Recargar la vista
+        // Actualiza el GridPane después de generar el menú
+        loadWeeklyMeals(); // Recarga la vista
 
-        // Mostrar el botón "Confirmar Menú"
+        // Muestra el botón "Confirmar Menú"
         btnConfirmMeal.setVisible(true);
     }
 
-//    @FXML
-//    private void confirmMeal(ActionEvent event) {
-//        RecipeDAO recipeDAO = new RecipeDAO();
-//        InventoryDAO inventoryDAO = new InventoryDAO();
-//        int groupId = CurrentSession.getInstance().getUserGroupId(); // Obtener el ID del grupo actual
-//
-//        // Listas para almacenar los productos nuevos y los productos actualizados
-//        List<String> nuevosProductos = new ArrayList<>();
-//        List<String> productosModificados = new ArrayList<>();
-//
-//        // Recuperar todas las comidas del menú semanal
-//        List<Meal> weeklyMeals = mealDAO.getAllMeals();
-//        System.out.println("Menú semanal recuperado: " + weeklyMeals.size() + " comidas.");
-//        System.out.println("Grupo de usuario: " + groupId);
-//
-//        for (Meal meal : weeklyMeals) {
-//            System.out.println("Procesando comida: " + meal.getId() + " - Receta: " + meal.getRecipeId());
-//
-//            // Obtener los productos necesarios para la receta
-//            List<Product> products = recipeDAO.getProductsFromRecipe(meal.getRecipeId());
-//            System.out.println("Productos asociados a la receta " + meal.getRecipeId() + ": " + products.size());
-//
-//            for (Product product : products) {
-//                System.out.println("Producto: " + product.getNombreProducto() + ", Cantidad necesaria: " + product.getCantidad());
-//
-//                if (inventoryDAO.isProductInInventory(product.getNombreProducto(), groupId)) {
-//                    // Si el producto ya existe, verificar cantidad
-//                    int productId = inventoryDAO.getInventoryProductIdByName(product.getNombreProducto(), groupId);
-//                    int currentQuantity = inventoryDAO.getCurrentQuantityById(productId);
-//                    int minQuantity = inventoryDAO.getMinQuantity(productId);
-//
-//                    System.out.println("Cantidad actual: " + currentQuantity + ", Cantidad mínima: " + minQuantity);
-//
-//                    if (currentQuantity >= product.getCantidad()) {
-//                        // Hay suficiente cantidad, no se modifica
-//                        System.out.println("Suficientes " + product.getNombreProducto() + ". No se requiere modificación.");
-//                    } else {
-//                        // No hay suficiente cantidad, ajustar la cantidad mínima
-//                        int deficit = product.getCantidad() - currentQuantity;
-//                        int newMinQuantity = Math.max(minQuantity, product.getCantidad());
-//                        System.out.println("Déficit de " + product.getNombreProducto() + ": " + deficit + ". Ajustando cantidad mínima a: " + newMinQuantity);
-//
-//                        Product updatedProduct = new Product(); // Usamos constructor vacío
-//                        updatedProduct.setId(productId);
-//                        updatedProduct.setNombreProducto(product.getNombreProducto());
-//                        updatedProduct.setCantidad(currentQuantity); // No se suma la cantidad
-//                        updatedProduct.setCantidadMinima(newMinQuantity); // Nueva cantidad mínima
-//                        updatedProduct.setCantidadMaxima(0); // Sin cantidad máxima
-//                        updatedProduct.setTipo(product.getTipo());
-//                        updatedProduct.setCategoria(product.getCategoria());
-//                        updatedProduct.setIdGrupo(groupId);
-//                        updatedProduct.setFecha(null); // Usamos null para el campo `fecha`
-//
-//                        if (inventoryDAO.updateInventoryProduct(updatedProduct)) {
-//                            productosModificados.add(product.getNombreProducto() + " - Nueva cantidad mínima: " + newMinQuantity);
-//                        } else {
-//                            System.err.println("Error al ajustar la cantidad mínima de " + product.getNombreProducto());
-//                        }
-//                    }
-//                } else {
-//                    // Producto no existe, añadirlo
-//                    System.out.println("Producto no existe en inventario, añadiéndolo: " + product.getNombreProducto());
-//                    product.setCategoria("Alimentación"); // Valor por defecto
-//                    product.setCantidadMinima(product.getCantidad()); // Ajustar cantidad mínima al necesario
-//                    product.setIdGrupo(groupId); // Asignar grupo actual
-//                    product.setCantidadMaxima(0); // Sin cantidad máxima
-//                    product.setFecha(null); // Usamos null para `fecha`
-//
-//                    if (inventoryDAO.addInventoryProduct(product)) {
-//                        System.out.println("Producto añadido exitosamente: " + product.getNombreProducto());
-//                        nuevosProductos.add(product.getNombreProducto() + " - Cantidad: " + product.getCantidad());
-//                    } else {
-//                        System.err.println("Error al añadir el producto: " + product.getNombreProducto());
-//                    }
-//                }
-//            }
-//        }
-//
-//        // Generar mensajes de confirmación con productos añadidos y modificados
-//        StringBuilder mensaje = new StringBuilder();
-//        if (!nuevosProductos.isEmpty()) {
-//            mensaje.append("Se han añadido nuevos productos al inventario:\n")
-//                    .append(String.join("\n", nuevosProductos))
-//                    .append("\n\n");
-//        }
-//        if (!productosModificados.isEmpty()) {
-//            mensaje.append("Se han modificado los siguientes productos:\n")
-//                    .append(String.join("\n", productosModificados));
-//        }
-//
-//        if (mensaje.length() > 0) {
-//            AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Confirmación Exitosa", mensaje.toString());
-//        } else {
-//            AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Confirmación Exitosa",
-//                    "No hubo cambios en el inventario.");
-//        }
-//    }
-//    @FXML
-//    private void confirmMeal(ActionEvent event) {
-//        RecipeDAO recipeDAO = new RecipeDAO();
-//        InventoryDAO inventoryDAO = new InventoryDAO();
-//        int groupId = CurrentSession.getInstance().getUserGroupId(); // Obtener el ID del grupo actual
-//
-//        // Listas para almacenar los productos nuevos y los productos actualizados
-//        List<String> nuevosProductos = new ArrayList<>();
-//        List<String> productosModificados = new ArrayList<>();
-//
-//        // Recuperar todas las comidas del menú semanal
-//        List<Meal> weeklyMeals = mealDAO.getAllMeals();
-//        System.out.println("Menú semanal recuperado: " + weeklyMeals.size() + " comidas.");
-//        System.out.println("Grupo de usuario: " + groupId);
-//
-//        for (Meal meal : weeklyMeals) {
-//            System.out.println("Procesando comida: " + meal.getId() + " - Receta: " + meal.getRecipeId());
-//
-//            // Obtener los productos necesarios para la receta
-//            List<Product> products = recipeDAO.getProductsFromRecipe(meal.getRecipeId());
-//            System.out.println("Productos asociados a la receta " + meal.getRecipeId() + ": " + products.size());
-//
-//            for (Product product : products) {
-//                System.out.println("Producto: " + product.getNombreProducto() + ", Cantidad necesaria: " + product.getCantidad());
-//
-//                if (inventoryDAO.isProductInInventory(product.getNombreProducto(), groupId)) {
-//                    // Si el producto ya existe, verificar cantidad
-//                    int productId = inventoryDAO.getInventoryProductIdByName(product.getNombreProducto(), groupId);
-//                    int currentQuantity = inventoryDAO.getCurrentQuantityById(productId);
-//                    int minQuantity = inventoryDAO.getMinQuantity(productId);
-//
-//                    System.out.println("Cantidad actual: " + currentQuantity + ", Cantidad mínima: " + minQuantity);
-//
-//                    if (currentQuantity >= product.getCantidad()) {
-//                        // Hay suficiente cantidad, no se modifica
-//                        System.out.println("Suficientes " + product.getNombreProducto() + ". No se requiere modificación.");
-//                    } else {
-//                        // No hay suficiente cantidad, ajustar la cantidad mínima
-//                        int deficit = product.getCantidad() - currentQuantity;
-//                        int newMinQuantity = Math.max(minQuantity, product.getCantidad());
-//                        System.out.println("Déficit de " + product.getNombreProducto() + ": " + deficit + ". Ajustando cantidad mínima a: " + newMinQuantity);
-//
-//                        Product updatedProduct = new Product(); // Usamos constructor vacío
-//                        updatedProduct.setId(productId);
-//                        updatedProduct.setNombreProducto(product.getNombreProducto());
-//                        updatedProduct.setCantidad(currentQuantity); // No se suma la cantidad
-//                        updatedProduct.setCantidadMinima(newMinQuantity); // Nueva cantidad mínima
-//                        updatedProduct.setCantidadMaxima(0); // Sin cantidad máxima
-//                        updatedProduct.setTipo(product.getTipo());
-//                        updatedProduct.setCategoria(product.getCategoria());
-//                        updatedProduct.setIdGrupo(groupId);
-//                        updatedProduct.setFecha(null); // Usamos null para el campo `fecha`
-//
-//                        if (inventoryDAO.updateInventoryProduct(updatedProduct)) {
-//                            productosModificados.add(product.getNombreProducto() + " - Nueva cantidad mínima: " + newMinQuantity);
-//                        } else {
-//                            System.err.println("Error al ajustar la cantidad mínima de " + product.getNombreProducto());
-//                        }
-//                    }
-//                } else {
-//                    // Producto no existe, añadirlo
-//                    System.out.println("Producto no existe en inventario, añadiéndolo: " + product.getNombreProducto());
-//
-//                    // Corrección: Asignar cantidad mínima basada en la receta
-//                    System.out.println(">> DEPURANDO Producto nuevo: ");
-//                    System.out.println("Cantidad Necesaria: " + product.getCantidad());
-//
-//                    // Validación: Si `getCantidad` devuelve 0, asignamos valor correcto explícitamente
-//                    int cantidadNecesaria = product.getCantidad();
-//                    if (cantidadNecesaria <= 0) {
-//                        System.err.println("Error: Cantidad necesaria no válida para el producto " + product.getNombreProducto());
-//                        cantidadNecesaria = 1; // Fallback de seguridad
-//                    }
-//
-//                    product.setCantidad(0); // Cantidad inicial en inventario: 0
-//                    product.setCantidadMinima(cantidadNecesaria); // Cantidad mínima basada en la receta
-//                    product.setIdGrupo(groupId); // Asignar grupo actual
-//                    product.setCantidadMaxima(0); // Sin cantidad máxima
-//                    product.setFecha(null); // Usamos null para `fecha`
-//
-//                    System.out.println("Cantidad Final: " + product.getCantidad());
-//                    System.out.println("Cantidad Mínima Final: " + product.getCantidadMinima());
-//
-//                    if (inventoryDAO.addInventoryProduct(product)) {
-//                        System.out.println("Producto añadido exitosamente: " + product.getNombreProducto());
-//                        nuevosProductos.add(product.getNombreProducto() + " - Cantidad mínima: " + product.getCantidadMinima());
-//                    } else {
-//                        System.err.println("Error al añadir el producto: " + product.getNombreProducto());
-//                    }
-//                }
-//            }
-//        }
-//
-//        // Generar mensajes de confirmación con productos añadidos y modificados
-//        StringBuilder mensaje = new StringBuilder();
-//        if (!nuevosProductos.isEmpty()) {
-//            mensaje.append("Se han añadido nuevos productos al inventario:\n")
-//                    .append(String.join("\n", nuevosProductos))
-//                    .append("\n\n");
-//        }
-//        if (!productosModificados.isEmpty()) {
-//            mensaje.append("Se han modificado los siguientes productos:\n")
-//                    .append(String.join("\n", productosModificados));
-//        }
-//
-//        if (mensaje.length() > 0) {
-//            AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Confirmación Exitosa", mensaje.toString());
-//        } else {
-//            AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Confirmación Exitosa",
-//                    "No hubo cambios en el inventario.");
-//        }
-//    }
+    /**
+     * Evento que confirma la eleccion del menu semanal -> pasa a inventario
+     * inf¡gredientes si necesario
+     *
+     * @param event
+     */
     @FXML
     private void confirmMeal(ActionEvent event) {
+        
         RecipeDAO recipeDAO = new RecipeDAO();
         InventoryDAO inventoryDAO = new InventoryDAO();
-        int groupId = CurrentSession.getInstance().getUserGroupId(); // Obtener el ID del grupo actual
+        int groupId = CurrentSession.getInstance().getUserGroupId(); // Obtiene el ID del grupo actual
 
         // Mapa para acumular las cantidades necesarias por producto
         Map<String, Integer> productoCantidadNecesaria = new HashMap<>();
@@ -518,42 +389,49 @@ public class MealViewController implements Initializable {
         List<String> nuevosProductos = new ArrayList<>();
         List<String> productosModificados = new ArrayList<>();
 
-        // Recuperar todas las comidas del menú semanal
+        // Recupera todas las comidas del menú semanal
         List<Meal> weeklyMeals = mealDAO.getAllMeals();
         System.out.println("Menú semanal recuperado: " + weeklyMeals.size() + " comidas.");
         System.out.println("Grupo de usuario: " + groupId);
 
         for (Meal meal : weeklyMeals) {
+            
             System.out.println("Procesando comida: " + meal.getId() + " - Receta: " + meal.getRecipeId());
 
-            // Obtener los productos necesarios para la receta
+            // Obtiene los productos necesarios para la receta
             List<Product> products = recipeDAO.getProductsFromRecipe(meal.getRecipeId());
             System.out.println("Productos asociados a la receta " + meal.getRecipeId() + ": " + products.size());
 
             for (Product product : products) {
+                
                 String nombreProducto = product.getNombreProducto();
                 int cantidadNecesaria = product.getCantidad();
 
-                // Verificar si el producto ya existe en el mapa y sumar cantidades
+                // Verifica si el producto ya existe en el mapa y sumar cantidades
                 if (productoCantidadNecesaria.containsKey(nombreProducto)) {
+                    
                     int cantidadAcumulada = productoCantidadNecesaria.get(nombreProducto);
                     productoCantidadNecesaria.put(nombreProducto, cantidadAcumulada + cantidadNecesaria);
+                    
                 } else {
+                    
                     productoCantidadNecesaria.put(nombreProducto, cantidadNecesaria);
                 }
             }
         }
 
-        // Procesar acumulaciones y actualizar el inventario
+        // Gestiona acumulaciones y actualiza el inventario
         for (Map.Entry<String, Integer> entry : productoCantidadNecesaria.entrySet()) {
+            
             String nombreProducto = entry.getKey();
             int cantidadTotalNecesaria = entry.getValue();
-            String categoria = "Alimentación"; // Asignar una categoría predeterminada si es necesario
+            String categoria = "Alimentación"; // Asigna una categoría predeterminada si es necesario
 
             System.out.println("Procesando producto acumulado: " + nombreProducto + ", Cantidad total necesaria: " + cantidadTotalNecesaria);
 
             if (inventoryDAO.isProductInInventory(nombreProducto, groupId)) {
-                // Si el producto ya existe, verificar cantidad
+                
+                // Si el producto ya existe, verifica cantidad
                 int productId = inventoryDAO.getInventoryProductIdByName(nombreProducto, groupId);
                 int currentQuantity = inventoryDAO.getCurrentQuantityById(productId);
                 int minQuantity = inventoryDAO.getMinQuantity(productId);
@@ -561,10 +439,13 @@ public class MealViewController implements Initializable {
                 System.out.println("Cantidad actual: " + currentQuantity + ", Cantidad mínima: " + minQuantity);
 
                 if (currentQuantity >= cantidadTotalNecesaria) {
+                    
                     // Hay suficiente cantidad, no se modifica
                     System.out.println("Suficientes " + nombreProducto + ". No se requiere modificación.");
+                    
                 } else {
-                    // Ajustar cantidad mínima
+                    
+                    // Ajusta cantidad mínima
                     int newMinQuantity = Math.max(minQuantity, cantidadTotalNecesaria);
                     System.out.println("Déficit de " + nombreProducto + ". Ajustando cantidad mínima a: " + newMinQuantity);
 
@@ -578,13 +459,18 @@ public class MealViewController implements Initializable {
                     updatedProduct.setIdGrupo(groupId);
 
                     if (inventoryDAO.updateInventoryProduct(updatedProduct)) {
+                        
                         productosModificados.add(nombreProducto + " - Nueva cantidad mínima: " + newMinQuantity);
+                        
                     } else {
+                        
                         System.err.println("Error al ajustar la cantidad mínima de " + nombreProducto);
                     }
                 }
+                
             } else {
-                // Añadir producto nuevo al inventario
+                
+                // Añade producto nuevo al inventario
                 System.out.println("Producto no existe en inventario, añadiéndolo: " + nombreProducto);
 
                 Product newProduct = new Product();
@@ -596,29 +482,39 @@ public class MealViewController implements Initializable {
                 newProduct.setIdGrupo(groupId);
 
                 if (inventoryDAO.addInventoryProduct(newProduct)) {
+                    
                     System.out.println("Producto añadido exitosamente: " + nombreProducto);
                     nuevosProductos.add(nombreProducto + " - Cantidad mínima: " + cantidadTotalNecesaria);
+                    
                 } else {
+                    
                     System.err.println("Error al añadir el producto: " + nombreProducto);
                 }
             }
         }
 
-        // Generar mensajes de confirmación con productos añadidos y modificados
+        // Genera mensajes de confirmación con productos añadidos y modificados
         StringBuilder mensaje = new StringBuilder();
+        
         if (!nuevosProductos.isEmpty()) {
+            
             mensaje.append("Se han añadido nuevos productos al inventario:\n")
                     .append(String.join("\n", nuevosProductos))
                     .append("\n\n");
         }
+        
         if (!productosModificados.isEmpty()) {
+            
             mensaje.append("Se han modificado los siguientes productos:\n")
                     .append(String.join("\n", productosModificados));
         }
 
         if (mensaje.length() > 0) {
+            
             AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Confirmación Exitosa", mensaje.toString());
+            
         } else {
+            
             AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Confirmación Exitosa",
                     "No hubo cambios en el inventario.");
         }

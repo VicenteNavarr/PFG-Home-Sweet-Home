@@ -48,58 +48,6 @@ public class RecipeDAO {
     }
 
     /**
-     * Guarda una receta en la base de datos y registra los ingredientes en la
-     * tabla `Receta_producto`.
-     *
-     * @param recipe La receta que se desea guardar.
-     * @return True si la operación fue exitosa, False en caso contrario.
-     */
-    /**
-     * Guarda una receta en la base de datos y registra los ingredientes en la
-     * tabla `Receta_producto`.
-     *
-     * @param recipe La receta que se desea guardar.
-     * @return True si la operación fue exitosa, False en caso contrario.
-     */
-//    public boolean addRecipe(Recipe recipe) {
-//        String recipeQuery = "INSERT INTO Recetas (nombre, tipo, descripcion, foto, id_grupo) VALUES (?, ?, ?, ?, ?)";
-//        String ingredientQuery = "INSERT INTO Receta_producto (id_receta, id_producto, cantidad_necesaria) VALUES (?, ?, ?)";
-//
-//        try (Connection conn = MySQLConnection.getConnection()) {
-//            // Guardar la receta
-//            try (PreparedStatement recipeStmt = conn.prepareStatement(recipeQuery, Statement.RETURN_GENERATED_KEYS)) {
-//                recipeStmt.setString(1, recipe.getNombre());
-//                recipeStmt.setString(2, recipe.getTipo());
-//                recipeStmt.setString(3, recipe.getInstrucciones());
-//                recipeStmt.setBytes(4, recipe.getFoto());
-//                recipeStmt.setInt(5, recipe.getIdGrupo());
-//                recipeStmt.executeUpdate();
-//
-//                // Obtener el ID generado de la receta
-//                ResultSet rs = recipeStmt.getGeneratedKeys();
-//                if (rs.next()) {
-//                    int recipeId = rs.getInt(1);
-//
-//                    // Registrar los ingredientes en `Receta_producto`
-//                    try (PreparedStatement ingredientStmt = conn.prepareStatement(ingredientQuery)) {
-//                        for (Product ingredient : recipe.getIngredientes()) {
-//                            ingredientStmt.setInt(1, recipeId);
-//                            ingredientStmt.setInt(2, ingredient.getId());
-//                            ingredientStmt.setInt(3, ingredient.getCantidad());
-//                            ingredientStmt.addBatch();
-//                        }
-//                        ingredientStmt.executeBatch();
-//                    }
-//                }
-//            }
-//            return true;
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.err.println("Error al guardar la receta y sus ingredientes.");
-//            return false;
-//        }
-//    }
-    /**
      * Recupera todas las recetas de la tabla Recetas.
      *
      * @return Lista de recetas.
@@ -160,103 +108,12 @@ public class RecipeDAO {
         return null;
     }
 
-//    /**
-//     * Actualiza los datos de una receta existente y sus ingredientes asociados.
-//     *
-//     * @param recipe La receta con los datos actualizados.
-//     * @return True si la operación fue exitosa, False en caso contrario.
-//     */
-//    public boolean updateRecipe(Recipe recipe) {
-//        String query = "UPDATE Recetas SET nombre = ?, instrucciones = ?, tipo = ?, foto = ?, id_grupo = ? WHERE id = ?";
-//
-//        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-//
-//            stmt.setString(1, recipe.getNombre());
-//            stmt.setString(2, recipe.getInstrucciones());
-//            stmt.setString(3, recipe.getTipo());
-//            stmt.setBytes(4, recipe.getFoto());
-//            stmt.setInt(5, recipe.getIdGrupo());
-//            stmt.setInt(6, recipe.getId());
-//
-//            int rowsAffected = stmt.executeUpdate();
-//            if (rowsAffected > 0) {
-//                // Primero elimina los productos asociados actuales
-//                deleteProductsFromRecipe(recipe.getId());
-//                // Luego añade los productos actualizados
-//                return addProductsToRecipe(recipe.getId(), recipe.getIngredientes());
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.err.println("Error al actualizar la receta.");
-//        }
-//        return false;
-//    }
-//    public boolean updateRecipe(Recipe recipe) {
-//        String queryUpdateRecipe = "UPDATE Recetas SET nombre = ?, instrucciones = ?, tipo = ?, foto = ?, id_grupo = ? WHERE id = ?";
-//        String queryRecipeProduct = "INSERT INTO Receta_producto (id_receta, nombre_producto, cantidad_necesaria, tipo, categoria) VALUES (?, ?, ?, ?, ?)";
-//
-//        Connection conn = null;
-//        PreparedStatement stmtRecipe = null;
-//        PreparedStatement stmtProduct = null;
-//
-//        try {
-//            conn = MySQLConnection.getConnection();
-//            conn.setAutoCommit(false); // Iniciar transacción
-//
-//            // Actualizar la receta en la tabla Recetas
-//            stmtRecipe = conn.prepareStatement(queryUpdateRecipe);
-//            stmtRecipe.setString(1, recipe.getNombre());
-//            stmtRecipe.setString(2, recipe.getInstrucciones());
-//            stmtRecipe.setString(3, recipe.getTipo());
-//            stmtRecipe.setBytes(4, recipe.getFoto());
-//            stmtRecipe.setInt(5, recipe.getIdGrupo());
-//            stmtRecipe.setInt(6, recipe.getId());
-//            int rowsAffected = stmtRecipe.executeUpdate();
-//
-//            System.out.println("Filas actualizadas en Recetas: " + rowsAffected);
-//
-//            // Insertar ingredientes nuevos en Receta_producto
-//            stmtProduct = conn.prepareStatement(queryRecipeProduct);
-//            for (Product product : recipe.getIngredientes()) {
-//                stmtProduct.setInt(1, recipe.getId()); // ID existente de la receta
-//                stmtProduct.setString(2, product.getNombreProducto());
-//                stmtProduct.setInt(3, product.getCantidad());
-//                stmtProduct.setString(4, product.getTipo());
-//                stmtProduct.setString(5, product.getCategoria());
-//                stmtProduct.addBatch(); // Añadir al batch para una inserción más eficiente
-//                System.out.println("Producto preparado para insertar: " + product.getNombreProducto());
-//            }
-//            stmtProduct.executeBatch(); // Ejecutar las inserciones
-//
-//            conn.commit(); // Confirmar la transacción
-//            return true;
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            if (conn != null) {
-//                try {
-//                    conn.rollback(); // Revertir la transacción en caso de error
-//                } catch (SQLException rollbackEx) {
-//                    rollbackEx.printStackTrace();
-//                }
-//            }
-//            return false;
-//        } finally {
-//            try {
-//                if (stmtRecipe != null) {
-//                    stmtRecipe.close();
-//                }
-//                if (stmtProduct != null) {
-//                    stmtProduct.close();
-//                }
-//                if (conn != null) {
-//                    conn.close();
-//                }
-//            } catch (SQLException closeEx) {
-//                closeEx.printStackTrace();
-//            }
-//        }
-//    }
+    /**
+     * Actualiza los datos de una receta existente y sus ingredientes asociados.
+     *
+     * @param recipe La receta con los datos actualizados.
+     * @return True si la operación fue exitosa, False en caso contrario.
+     */
     public boolean updateRecipe(Recipe recipe) {
         String queryUpdateRecipe = "UPDATE Recetas SET nombre = ?, instrucciones = ?, tipo = ?, foto = ?, id_grupo = ? WHERE id = ?";
         String queryCheckProduct = "SELECT COUNT(*) FROM Receta_producto WHERE id_receta = ? AND nombre_producto = ?";
@@ -274,7 +131,7 @@ public class RecipeDAO {
             conn = MySQLConnection.getConnection();
             conn.setAutoCommit(false); // Iniciar transacción
 
-            // Actualizar la receta en la tabla Recetas
+            // Actualiza la receta en la tabla Recetas
             stmtRecipe = conn.prepareStatement(queryUpdateRecipe);
             stmtRecipe.setString(1, recipe.getNombre());
             stmtRecipe.setString(2, recipe.getInstrucciones());
@@ -286,21 +143,21 @@ public class RecipeDAO {
 
             System.out.println("Filas actualizadas en Recetas: " + rowsAffected);
 
-            // Procesar cada ingrediente
+            // Procesa cada ingrediente
             for (Product product : recipe.getIngredientes()) {
-                // Verificar si el producto ya existe
+                // Verifica si el producto ya existe
                 stmtCheck = conn.prepareStatement(queryCheckProduct);
                 stmtCheck.setInt(1, recipe.getId());
                 stmtCheck.setString(2, product.getNombreProducto());
                 rsCheck = stmtCheck.executeQuery();
 
                 if (rsCheck.next() && rsCheck.getInt(1) > 0) {
-                    // Asignar valor predeterminado para 'tipo' si está vacío o nulo
+                    // Asigna valor predeterminado para 'tipo' si está vacío o nulo
                     if (product.getTipo() == null || product.getTipo().trim().isEmpty()) {
                         product.setTipo("Alimentación");
                         System.out.println("Asignado 'Alimentación' como tipo para el producto actualizado: " + product.getNombreProducto());
                     }
-                    // Actualizar el producto existente
+                    // Actualiza el producto existente
                     stmtUpdateProduct = conn.prepareStatement(queryUpdateProduct);
                     stmtUpdateProduct.setInt(1, product.getCantidad());
                     stmtUpdateProduct.setString(2, product.getTipo());
@@ -310,12 +167,12 @@ public class RecipeDAO {
                     stmtUpdateProduct.executeUpdate();
                     System.out.println("Producto actualizado: " + product.getNombreProducto());
                 } else {
-                    // Asignar valor predeterminado para 'tipo' si está vacío o nulo
+                    // Asigna valor predeterminado para 'tipo' si está vacío o nulo
                     if (product.getTipo() == null || product.getTipo().trim().isEmpty()) {
                         product.setTipo("Alimentación");
                         System.out.println("Asignado 'Alimentación' como tipo para el producto nuevo: " + product.getNombreProducto());
                     }
-                    // Insertar el nuevo producto
+                    // Inserta el nuevo producto
                     stmtInsertProduct = conn.prepareStatement(queryInsertProduct);
                     stmtInsertProduct.setInt(1, recipe.getId());
                     stmtInsertProduct.setString(2, product.getNombreProducto());
@@ -327,14 +184,14 @@ public class RecipeDAO {
                 }
             }
 
-            conn.commit(); // Confirmar la transacción
+            conn.commit(); // Confirma la transacción
             return true;
 
         } catch (SQLException e) {
             e.printStackTrace();
             if (conn != null) {
                 try {
-                    conn.rollback(); // Revertir la transacción en caso de error
+                    conn.rollback(); // Revertir!!
                 } catch (SQLException rollbackEx) {
                     rollbackEx.printStackTrace();
                 }
@@ -373,26 +230,13 @@ public class RecipeDAO {
      * @param recipeId El ID de la receta a eliminar.
      * @return True si la operación fue exitosa, False en caso contrario.
      */
-//    public boolean deleteRecipe(int recipeId) {
-//        String query = "DELETE FROM Recetas WHERE id = ?";
-//
-//        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-//
-//            stmt.setInt(1, recipeId);
-//            return stmt.executeUpdate() > 0;
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.err.println("Error al eliminar la receta.");
-//        }
-//        return false;
-//    }
     public boolean deleteRecipe(int recipeId) {
         MealDAO mealDAO = new MealDAO();
 
-        // Eliminar comidas que referencian esta receta
+        // Elimina comidas que referencian esta receta
         if (!mealDAO.deleteMealsByRecipeId(recipeId)) {
             System.err.println("Error al eliminar las comidas relacionadas con la receta.");
-            return false; // Detener si no se pudieron borrar las referencias
+            return false; // Detienesi no se pudieron borrar las referencias
         }
 
         String query = "DELETE FROM Recetas WHERE id = ?";
@@ -406,20 +250,31 @@ public class RecipeDAO {
         return false;
     }
 
+    /**
+     * Elimina una receta y todas sus comidas asociadas de forma cascada.
+     *
+     * Realiza una eliminación en la base de datos para garantizar que tanto las
+     * comidas como la receta sean eliminadas correctamente. Si ocurre un error,
+     * revierte.
+     *
+     * @param recipeId el ID de la receta a eliminar
+     * @return {@code true} si la receta se eliminó correctamente, {@code false}
+     * en caso de error
+     */
     public boolean deleteRecipeCascade(int recipeId) {
         String deleteMealsQuery = "DELETE FROM Comidas WHERE id_receta = ?";
         String deleteRecipeQuery = "DELETE FROM Recetas WHERE id = ?";
         try (Connection conn = MySQLConnection.getConnection()) {
             conn.setAutoCommit(false); // Inicia la transacción
 
-            // Eliminar comidas relacionadas
+            // Elimina comidas relacionadas
             try (PreparedStatement deleteMealsStmt = conn.prepareStatement(deleteMealsQuery)) {
                 deleteMealsStmt.setInt(1, recipeId);
                 int mealsDeleted = deleteMealsStmt.executeUpdate();
                 System.out.println("Comidas eliminadas: " + mealsDeleted);
             }
 
-            // Eliminar la receta
+            // Elimina la receta
             try (PreparedStatement deleteRecipeStmt = conn.prepareStatement(deleteRecipeQuery)) {
                 deleteRecipeStmt.setInt(1, recipeId);
                 int recipeDeleted = deleteRecipeStmt.executeUpdate();
@@ -446,69 +301,6 @@ public class RecipeDAO {
      * @param recipeId El ID de la receta.
      * @return Lista de productos necesarios para la receta.
      */
-//    public List<Product> getProductsByRecipeId(int recipeId) {
-//        String query = "SELECT p.id, p.nombreProducto, rp.cantidad_necesaria, p.categoria, p.medida "
-//                + "FROM inventario p "
-//                + "JOIN Receta_producto rp ON p.id = rp.id_producto "
-//                + "WHERE rp.id_receta = ?";
-//        List<Product> products = new ArrayList<>();
-//
-//        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-//
-//            stmt.setInt(1, recipeId);
-//            try (ResultSet rs = stmt.executeQuery()) {
-//                while (rs.next()) {
-//                    Product product = new Product(
-//                            rs.getInt("id"),
-//                            rs.getString("nombreProducto"),
-//                            rs.getInt("cantidad_necesaria"), // Cantidad requerida para la receta
-//                            0, // Cantidad mínima no relevante
-//                            0, // Cantidad máxima no relevante
-//                            rs.getString("medida"),
-//                            rs.getString("categoria"),
-//                            0, // ID del grupo no relevante aquí
-//                            null // Fecha no relevante
-//                    );
-//                    products.add(product);
-//                }
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.err.println("Error al recuperar los productos de la receta.");
-//        }
-//        return products;
-//    }
-//    public List<Product> getProductsByRecipeId(int recipeId) {
-//        String query = "SELECT p.id, p.nombre_producto, rp.cantidad_necesaria, p.categoria, p.tipo "
-//                + "FROM inventario p "
-//                + "JOIN Receta_producto rp ON p.id = rp.id_producto "
-//                + "WHERE rp.id_receta = ?";
-//        List<Product> products = new ArrayList<>();
-//
-//        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-//            stmt.setInt(1, recipeId);
-//            try (ResultSet rs = stmt.executeQuery()) {
-//                while (rs.next()) {
-//                    Product product = new Product(
-//                            rs.getInt("id"),
-//                            rs.getString("nombre_producto"),
-//                            rs.getInt("cantidad_necesaria"),
-//                            0, // Cantidad mínima por defecto
-//                            0, // Cantidad máxima por defecto
-//                            null, // Columna 'medida' eliminada o no utilizada
-//                            rs.getString("categoria"),
-//                            0, // ID del grupo por defecto
-//                            null // Fecha por defecto
-//                    );
-//                    products.add(product);
-//                }
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.err.println("Error al recuperar los productos de la receta.");
-//        }
-//        return products;
-//    }
     public List<Product> getProductsByRecipeId(int recipeId) {
         String query = "SELECT rp.nombre_producto, rp.cantidad_necesaria, rp.categoria, rp.tipo "
                 + "FROM Receta_producto rp "
@@ -553,37 +345,6 @@ public class RecipeDAO {
      * @param recipeId El ID de la receta.
      * @return Lista de productos necesarios para la receta.
      */
-//    public List<Product> getProductsFromRecipe(int recipeId) {
-//        String query = "SELECT rp.id_producto, i.nombre_producto, rp.cantidad_necesaria, i.categoria, i.tipo "
-//                + "FROM Receta_producto rp "
-//                + "JOIN Inventario i ON rp.id_producto = i.id "
-//                + "WHERE rp.id_receta = ?";
-//        List<Product> products = new ArrayList<>();
-//
-//        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-//            stmt.setInt(1, recipeId);
-//            try (ResultSet rs = stmt.executeQuery()) {
-//                while (rs.next()) {
-//                    Product product = new Product(
-//                            rs.getInt("id_producto"),
-//                            rs.getString("nombre_producto"),
-//                            rs.getInt("cantidad_necesaria"),
-//                            0, // Cantidad mínima por defecto
-//                            0, // Cantidad máxima por defecto
-//                            null, // Medida no relevante
-//                            rs.getString("categoria"),
-//                            0, // ID del grupo por defecto
-//                            null // Fecha por defecto
-//                    );
-//                    products.add(product);
-//                }
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.err.println("Error al recuperar los productos de la receta.");
-//        }
-//        return products;
-//    }
     public List<Product> getProductsFromRecipe(int recipeId) {
         String query = "SELECT rp.nombre_producto, rp.cantidad_necesaria, rp.tipo, rp.categoria "
                 + "FROM Receta_producto rp "
@@ -639,25 +400,6 @@ public class RecipeDAO {
      * @param productos Lista de productos necesarios para la receta.
      * @return True si la operación fue exitosa, False en caso contrario.
      */
-//    public boolean addProductsToRecipe(int recipeId, List<Product> productos) {
-//        String query = "INSERT INTO Receta_producto (id_receta, id_producto, cantidad_necesaria) VALUES (?, ?, ?)";
-//
-//        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-//            for (Product product : productos) {
-//                stmt.setInt(1, recipeId);
-//                stmt.setInt(2, product.getId());
-//                stmt.setInt(3, product.getCantidad());
-//                stmt.addBatch(); // Añadir al lote
-//            }
-//
-//            stmt.executeBatch(); // Ejecutar lote
-//            return true;
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.err.println("Error al añadir los ingredientes a la receta.");
-//        }
-//        return false;
-//    }
     public boolean addProductsToRecipe(int recipeId, List<Product> productos) {
         String query = "INSERT INTO Receta_producto (id_receta, id_producto, cantidad_necesaria) VALUES (?, ?, ?)";
 
@@ -683,6 +425,18 @@ public class RecipeDAO {
         return false;
     }
 
+    /**
+     * Inserta una receta y sus productos asociados en la base de datos.
+     *
+     * Utiliza una transacción para insertar los datos de la receta en la tabla
+     * `Recetas` y los ingredientes en la tabla `Receta_producto`. Revierte la
+     * transacción si ocurre un error.
+     *
+     * @param recipe el objeto con la información de la receta y
+     * sus ingredientes
+     * @return  true si la receta y los productos fueron insertados
+     * correctamente, false si ocurrió algún error
+     */
     public boolean addRecipeAndProducts(Recipe recipe) {
         String queryRecipe = "INSERT INTO Recetas (nombre, instrucciones, tipo, foto, id_grupo) VALUES (?, ?, ?, ?, ?)";
         String queryRecipeProduct = "INSERT INTO Receta_producto (id_receta, nombre_producto, cantidad_necesaria, tipo, categoria) VALUES (?, ?, ?, ?, ?)";
@@ -694,7 +448,7 @@ public class RecipeDAO {
             conn = MySQLConnection.getConnection();
             conn.setAutoCommit(false); // Iniciar transacción
 
-            // Guardar la receta en la tabla Recetas
+            // Guarda la receta en la tabla Recetas
             stmtRecipe = conn.prepareStatement(queryRecipe, Statement.RETURN_GENERATED_KEYS);
             stmtRecipe.setString(1, recipe.getNombre());
             stmtRecipe.setString(2, recipe.getInstrucciones());
@@ -703,7 +457,7 @@ public class RecipeDAO {
             stmtRecipe.setInt(5, recipe.getIdGrupo());
             stmtRecipe.executeUpdate();
 
-            // Obtener el ID generado para la receta
+            // Obtiene el ID generado para la receta
             ResultSet rs = stmtRecipe.getGeneratedKeys();
             int recipeId = 0;
             if (rs.next()) {
@@ -711,7 +465,7 @@ public class RecipeDAO {
             }
             System.out.println("Receta insertada con ID: " + recipeId);
 
-            // Insertar los productos en Receta_producto sin el ID del producto
+            // Inserta los productos en Receta_producto sin el ID del producto
             stmtProduct = conn.prepareStatement(queryRecipeProduct);
             for (Product product : recipe.getIngredientes()) {
                 stmtProduct.setInt(1, recipeId); // ID de la receta
@@ -722,15 +476,15 @@ public class RecipeDAO {
                 stmtProduct.addBatch(); // Añadir al batch
                 System.out.println("Producto preparado para insertar: " + product.getNombreProducto());
             }
-            stmtProduct.executeBatch(); // Ejecutar las inserciones
+            stmtProduct.executeBatch(); // Ejecuta las inserciones
 
-            conn.commit(); // Confirmar la transacción
+            conn.commit(); // Confirma la transacción
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
             if (conn != null) {
                 try {
-                    conn.rollback(); // Revertir la transacción en caso de error
+                    conn.rollback(); // Revertir
                 } catch (SQLException rollbackEx) {
                     rollbackEx.printStackTrace();
                 }

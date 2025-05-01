@@ -4,11 +4,21 @@
  */
 package homeSweetHome.controller;
 
+import homeSweetHome.controller.budget.BudgetViewController;
+import homeSweetHome.controller.event.EventItemViewController;
+import homeSweetHome.controller.event.EventViewController;
+import homeSweetHome.controller.meal.MealViewController;
+import homeSweetHome.controller.purchase.PurchaseViewController;
+import homeSweetHome.controller.recipe.RecipeViewController;
+import homeSweetHome.controller.task.TaskViewController;
 import homeSweetHome.controller.user.CurrentUserSettingsViewController;
+import homeSweetHome.controller.user.UserViewController;
 import homeSweetHome.dataPersistence.CurrentSession;
 import homeSweetHome.dataPersistence.UserDAO;
 import homeSweetHome.model.User;
 import homeSweetHome.socket.Server;
+import homeSweetHome.utils.ImageUtils;
+import homeSweetHome.utils.LanguageManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -21,6 +31,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
@@ -58,14 +69,8 @@ public class MainViewController implements Initializable {
     private Button btnLoadBudgetView;
     @FXML
     private Label lblHola;
-
-    private Server server; // Referencia al servidor
-
-    private Thread serverThread; // Referencia al hilo del servidor
     @FXML
     private ImageView userImage;
-
-    private User user; // Referencia al usuario actual
     @FXML
     private MenuItem btnSettings;
     @FXML
@@ -74,6 +79,19 @@ public class MainViewController implements Initializable {
     private MenuItem btnExitApp;
     @FXML
     private Button btnLoadRecipes;
+    @FXML
+    private ComboBox<String> languageSelector;
+
+    private Server server; // Referencia al servidor
+
+    private Thread serverThread; // Referencia al hilo del servidor
+
+    private User user; // Referencia al usuario actual
+
+    private String userName;
+
+    // Utiliza el Singleton para obtener la instancia del LanguageManager
+    private final LanguageManager languageManager = LanguageManager.getInstance();
 
     /**
      * Initializes the controller class.
@@ -81,12 +99,61 @@ public class MainViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        // Crear instancia de UserDAO
+        // Carga la imagen del usuario actual desde la base de datos
         UserDAO userDAO = new UserDAO();
-        // Llamar al método para cargar la imagen del usuario actual
         setUserImageFromDatabase(userDAO);
 
+        int currentUserId = CurrentSession.getInstance().getUserId();
+        User currentUser = userDAO.getUserById(currentUserId);
+
+        // Inicializa idioma y textos dinámicos
+        setupLanguageSelector(currentUser);
     }
+
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////    
+    
+    /**
+     * Configura el ComboBox de selección de idioma y actualiza los textos.
+     */
+    private void setupLanguageSelector(User currentUser) {
+        
+        // Agrega opciones de idiomas al ComboBox
+        languageSelector.getItems().addAll("Español", "English");
+        languageSelector.setValue("Español"); // Idioma predeterminado
+
+        // Configura el idioma inicial en el LanguageManager
+        languageManager.setLanguage("es");
+        updateTexts(currentUser);
+
+        // Listener para cambios en el ComboBox de idiomas
+        languageSelector.setOnAction(event -> {
+            String selectedLanguage = languageSelector.getValue().equals("English") ? "en" : "es";
+            languageManager.setLanguage(selectedLanguage);
+            updateTexts(currentUser); // Actualiza los textos de la interfaz
+        });
+    }
+
+    /**
+     * Actualiza los textos de la interfaz en función del idioma.
+     */
+    private void updateTexts(User currentUser) {
+        lblHola.setText(languageManager.getTranslation("greeting") + " " + currentUser.getNombre());
+        btnLoadControlPanelView.setText(languageManager.getTranslation("panel"));
+        btnLoadUserView.setText(languageManager.getTranslation("users"));
+        btnLoadMealView.setText(languageManager.getTranslation("meals"));
+        btnLoadPurchaseView.setText(languageManager.getTranslation("purchase"));
+        btnLoadTaskView.setText(languageManager.getTranslation("tasks"));
+        btnLoadEventView.setText(languageManager.getTranslation("events"));
+        btnLoadBudgetView.setText(languageManager.getTranslation("budget"));
+        btnLoadRecipes.setText(languageManager.getTranslation("recipes"));
+        btnSettings.setText(languageManager.getTranslation("settings"));
+        btnCloseSession.setText(languageManager.getTranslation("closeSession"));
+        btnExitApp.setText(languageManager.getTranslation("exit"));
+    }
+    
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////    
+    
+
 
 ///////////////CARGA DE VISTAS -> ACCIÓN BOTONES/////////////////////////////////////////////
     /**
@@ -126,17 +193,22 @@ public class MainViewController implements Initializable {
     private void loadUserView(ActionEvent event) {
 
         try {
+            
+            // Crea una instancia explícita de FXMLLoader
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/user/UserView.fxml"));
 
-            AnchorPane root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/user/UserView.fxml"));
-            viewContainer.getChildren().setAll(root);
+            // Carga la vista y obtiene el nodo raíz
+            AnchorPane root = loader.load();
+
+            // Obtiene el controlador asociado a la vista cargada
+            UserViewController userController = loader.getController();
 
             // Establece la vista cargada en el centro del BorderPane
             rootPane.setCenter(root);
 
         } catch (IOException ex) {
-
+            
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
-
         }
 
     }
@@ -151,17 +223,22 @@ public class MainViewController implements Initializable {
     private void LoadMealView(ActionEvent event) {
 
         try {
+            
+            // Crea una instancia explícita de FXMLLoader
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/meal/MealView.fxml"));
 
-            AnchorPane root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/meal/MealView.fxml"));
-            viewContainer.getChildren().setAll(root);
+            // Carga la vista y obtiene el nodo raíz
+            AnchorPane root = loader.load();
+
+            // Obtiene el controlador asociado a la vista cargada
+            MealViewController mealController = loader.getController();
 
             // Establece la vista cargada en el centro del BorderPane
             rootPane.setCenter(root);
 
         } catch (IOException ex) {
-
+            
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
-
         }
 
     }
@@ -176,17 +253,22 @@ public class MainViewController implements Initializable {
     private void LoadPurchaseView(ActionEvent event) {
 
         try {
+            
+            // Crea una instancia explícita de FXMLLoader
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/purchase/PurchaseView.fxml"));
 
-            AnchorPane root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/purchase/PurchaseView.fxml"));
-            viewContainer.getChildren().setAll(root);
+            // Carga la vista y obtiene el nodo raíz
+            AnchorPane root = loader.load();
+
+            // Obtiene el controlador asociado a la vista cargada
+            PurchaseViewController purchaseController = loader.getController();
 
             // Establece la vista cargada en el centro del BorderPane
             rootPane.setCenter(root);
 
         } catch (IOException ex) {
-
+            
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
-
         }
 
     }
@@ -201,17 +283,22 @@ public class MainViewController implements Initializable {
     private void LoadTaskView(ActionEvent event) {
 
         try {
+            
+            // Crea una instancia explícita de FXMLLoader
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/task/TaskView.fxml"));
 
-            AnchorPane root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/task/TaskView.fxml"));
-            viewContainer.getChildren().setAll(root);
+            // Carga la vista y obtiene el nodo raíz
+            AnchorPane root = loader.load();
+
+            // Obtiene el controlador asociado a la vista cargada
+            TaskViewController taskController = loader.getController();
 
             // Establece la vista cargada en el centro del BorderPane
             rootPane.setCenter(root);
 
         } catch (IOException ex) {
-
+            
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
-
         }
 
     }
@@ -226,17 +313,22 @@ public class MainViewController implements Initializable {
     private void LoadEventView(ActionEvent event) {
 
         try {
+            
+            // Crea una instancia explícita de FXMLLoader
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/event/EventView.fxml"));
 
-            AnchorPane root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/event/EventView.fxml"));
-            viewContainer.getChildren().setAll(root);
+            // Carga la vista y obtiene el nodo raíz
+            AnchorPane root = loader.load();
+
+            // Obtiene el controlador asociado a la vista cargada
+            EventViewController eventController = loader.getController();
 
             // Establece la vista cargada en el centro del BorderPane
             rootPane.setCenter(root);
 
         } catch (IOException ex) {
-
+            
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
-
         }
 
     }
@@ -251,22 +343,26 @@ public class MainViewController implements Initializable {
     private void LoadBudgetView(ActionEvent event) {
 
         try {
+            
+            // Crea una instancia explícita de FXMLLoader
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/budget/BudgetView.fxml"));
 
-            AnchorPane root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/budget/BudgetView.fxml"));
-            viewContainer.getChildren().setAll(root);
+            // Carga la vista y obtiene el nodo raíz
+            AnchorPane root = loader.load();
+
+            // Obtiene el controlador asociado a la vista cargada
+            BudgetViewController budgetController = loader.getController();
 
             // Establece la vista cargada en el centro del BorderPane
             rootPane.setCenter(root);
 
         } catch (IOException ex) {
-
+            
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
-
         }
 
     }
-    
-    
+
     /**
      * Método llamado cuando se hace clic en el botón "btnLoadBudgetView". Carga
      * y muestra la vista BudgetView.fxml en el centro del BorderPane.
@@ -277,36 +373,27 @@ public class MainViewController implements Initializable {
     private void LoadRecipeView(ActionEvent event) {
 
         try {
+            
+            // Crea una instancia explícita de FXMLLoader
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/recipe/RecipeView.fxml"));
 
-            AnchorPane root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/recipe/RecipeView.fxml"));
-            viewContainer.getChildren().setAll(root);
+            // Carga la vista y obtiene el nodo raíz
+            AnchorPane root = loader.load();
+
+            // Obtiene el controlador asociado a la vista cargada
+            RecipeViewController recipeController = loader.getController();
 
             // Establece la vista cargada en el centro del BorderPane
             rootPane.setCenter(root);
 
         } catch (IOException ex) {
-
+            
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
-
         }
 
     }
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Metodo para darle forma circular a las imagenes
-     *
-     * @param imageView - ImageView
-     */
-    private void setClipToCircle(ImageView imageView) {
-
-        javafx.scene.shape.Circle clip = new javafx.scene.shape.Circle();
-        clip.setRadius(Math.min(imageView.getFitWidth(), imageView.getFitHeight()) / 2); // Radio del círculo
-        clip.setCenterX(imageView.getFitWidth() / 2); // Centrar en X
-        clip.setCenterY(imageView.getFitHeight() / 2); // Centrar en Y
-        imageView.setClip(clip); // Aplicar el clip al ImageView
-    }
-
     /**
      * Método para cargar y establecer la imagen de perfil del usuario actual
      * desde la base de datos.
@@ -315,33 +402,39 @@ public class MainViewController implements Initializable {
      * usuario.
      */
     public void setUserImageFromDatabase(UserDAO userDAO) {
+        
         // Obtener el ID del usuario actual desde la sesión
         int currentUserId = CurrentSession.getInstance().getUserId();
         System.out.println("Obteniendo usuario con ID: " + currentUserId);
 
         try {
-            // Obtener el usuario desde la base de datos
+            // Obtiene el usuario desde la base de datos
             User currentUser = userDAO.getUserById(currentUserId);
 
             if (currentUser != null && currentUser.getFotoPerfil() != null) {
-                // Cargar la imagen desde el Blob
+                
+                // Carga la imagen desde el Blob
                 InputStream inputStream = currentUser.getFotoPerfil().getBinaryStream();
                 Image userImg = new Image(inputStream);
-                userImage.setImage(userImg); // Mostrar la imagen
+                userImage.setImage(userImg); // Muestra la imagen
                 System.out.println("Imagen cargada correctamente para el usuario: " + currentUser.getNombre());
+                
             } else {
+                
                 // Imagen predeterminada si no hay foto de perfil
                 System.out.println("El usuario actual no tiene una imagen de perfil.");
                 userImage.setImage(new Image(getClass().getResourceAsStream("/images/add-image.png")));
             }
+            
         } catch (Exception e) {
+            
             System.err.println("Error al cargar la imagen del usuario: " + e.getMessage());
-            // Cargar imagen predeterminada si hay un error
+            // Carga imagen predeterminada si hay un error
             userImage.setImage(new Image(getClass().getResourceAsStream("/images/add-image.png")));
         }
 
-        // Aplicar recorte circular a la imagen
-        setClipToCircle(userImage);
+        // Aplica recorte circular a la imagen
+        ImageUtils.setClipToCircle(userImage);
     }
 
     /**
@@ -351,7 +444,9 @@ public class MainViewController implements Initializable {
      * @param userName
      */
     public void setUserName(String userName) {
+
         lblHola.setText("Hola, " + userName + "!");
+
     }
 
     /**
@@ -362,37 +457,26 @@ public class MainViewController implements Initializable {
     @FXML
     private void settings(ActionEvent event) {
 
-        /*try {
+        try {
+            
+            // Crea una instancia explícita de FXMLLoader
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/user/CurrentUserSettingsView.fxml"));
 
-            AnchorPane root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/CurrentUserSettingsView.fxml"));
-            viewContainer.getChildren().setAll(root);
+            // Carga la vista y obtener el nodo raíz
+            AnchorPane root = loader.load();
+
+            // Obtieneel controlador de la vista cargada
+            CurrentUserSettingsViewController controller = loader.getController();
+
+            // Pasa el ID del usuario actual al controlador
+            int currentUserId = CurrentSession.getInstance().getUserId(); // Obtiene el ID desde la sesión actual
+            controller.setUserData(currentUserId); // Método en CurrentUserSettingsViewController
 
             // Establece la vista cargada en el centro del BorderPane
             rootPane.setCenter(root);
 
         } catch (IOException ex) {
-
-            Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
-
-        }*/
-        try {
-            // Crear una instancia explícita de FXMLLoader
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/user/CurrentUserSettingsView.fxml"));
-
-            // Cargar la vista y obtener el nodo raíz
-            AnchorPane root = loader.load();
-
-            // Obtener el controlador de la vista cargada
-            CurrentUserSettingsViewController controller = loader.getController();
-
-            // Pasar el ID del usuario actual al controlador
-            int currentUserId = CurrentSession.getInstance().getUserId(); // Obtener el ID desde la sesión actual
-            controller.setUserData(currentUserId); // Método en CurrentUserSettingsViewController
-
-            // Establecer la vista cargada en el centro del BorderPane
-            rootPane.setCenter(root);
-
-        } catch (IOException ex) {
+            
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -406,21 +490,23 @@ public class MainViewController implements Initializable {
     @FXML
     private void closeSession(ActionEvent event) {
         try {
-            // Cargar el archivo FXML de la nueva vista
+            
+            // Carga el archivo FXML de la nueva vista
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/LoginView.fxml"));
             Parent root = loader.load();
 
-            // Crear una nueva escena y asignarla a un nuevo Stage
+            // Crea una nueva escena y asigna a un nuevo Stage
             Stage newStage = new Stage();
             newStage.setScene(new javafx.scene.Scene(root));
             newStage.setTitle("Inicio de Sesión");
             newStage.show();
 
-            // Cerrar la ventana actual
+            // Cierra la ventana actual
             Stage currentStage = (Stage) rootPane.getScene().getWindow();
             currentStage.close();
 
         } catch (IOException ex) {
+            
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -437,8 +523,6 @@ public class MainViewController implements Initializable {
         System.exit(0);
     }
 
-    @FXML
-    private void LoadRecipesView(ActionEvent event) {
-    }
+   
 
 }

@@ -44,12 +44,25 @@ public class ImageUtils {
      * @param imageView - ImageView
      */
     public static void setClipToCircle(ImageView imageView) {
+    // Ajusta el tamaño del ImageView a un tamaño uniforme
+    imageView.setFitWidth(100);
+    imageView.setFitHeight(100);
+    imageView.setPreserveRatio(false); // Desactiva la relación de aspecto para llenar completamente el espacio
 
+    // Espera a que se calcule el tamaño real del ImageView
+    imageView.layoutBoundsProperty().addListener((obs, oldBounds, newBounds) -> {
+        double centerX = newBounds.getWidth() / 2; // Calcular el centro X
+        double centerY = newBounds.getHeight() / 2; // Calcular el centro Y
+
+        // Crea y centra el círculo de recorte
         javafx.scene.shape.Circle clip = new javafx.scene.shape.Circle();
-        clip.setRadius(Math.min(imageView.getFitWidth(), imageView.getFitHeight()) / 2); // Radio del círculo
-        clip.setCenterX(imageView.getFitWidth() / 2); // Centrar en X
-        clip.setCenterY(imageView.getFitHeight() / 2); // Centrar en Y
-        imageView.setClip(clip); // Aplicar el clip al ImageView
-    }
+        clip.setRadius(Math.min(newBounds.getWidth(), newBounds.getHeight()) / 2);
+        clip.setCenterX(centerX);
+        clip.setCenterY(centerY);
+
+        // Aplica el clip al ImageView
+        imageView.setClip(clip);
+    });
+}
 
 }

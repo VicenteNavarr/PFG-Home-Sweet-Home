@@ -36,19 +36,19 @@ public class UserDAO {
             // Inicia una transacción para asegurar que las operaciones se realicen en conjunto
             conn.setAutoCommit(false);
 
-            // Crear un nuevo grupo en la base de datos
+            // Crea un nuevo grupo en la base de datos
             PreparedStatement groupStmt = conn.prepareStatement(sqlGroup, PreparedStatement.RETURN_GENERATED_KEYS);
             groupStmt.setString(1, "Grupo de " + user.getNombre()); // Nombre del grupo basado en el nombre del usuario
             groupStmt.executeUpdate();
 
-            // Obtener el ID del grupo recién creado
+            // Obtiene el ID del grupo recién creado
             ResultSet rs = groupStmt.getGeneratedKeys();
             int groupId = 0;
             if (rs.next()) {
-                groupId = rs.getInt(1); // Recuperar el ID generado por la base de datos
+                groupId = rs.getInt(1); // Recupera el ID generado por la base de datos
             }
 
-            // Insertar el usuario y asociarlo al grupo recién creado
+            // Inserta el usuario y asocia al grupo recién creado
             PreparedStatement userStmt = conn.prepareStatement(sqlUser);
             userStmt.setString(1, user.getNombre()); // Nombre del usuario
             userStmt.setString(2, user.getApellidos()); // Apellidos del usuario
@@ -89,7 +89,7 @@ public class UserDAO {
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            // Asignar parámetros al PreparedStatement
+            // Asigna parámetros al PreparedStatement
             pstmt.setString(1, user.getNombre()); // Nombre del usuario
             pstmt.setString(2, user.getApellidos()); // Apellidos del usuario
             pstmt.setString(3, user.getCorreoElectronico()); // Correo electrónico del usuario
@@ -98,12 +98,12 @@ public class UserDAO {
             pstmt.setBlob(6, user.getFotoPerfil()); // Foto de perfil (almacenada como Blob en la base de datos)
             pstmt.setInt(7, user.getIdGrupo()); // ID del grupo al que pertenece el usuario
 
-            // Ejecutar la consulta y verificar si se afectaron filas
+            // Ejecuta la consulta y verificar si se afectaron filas
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0; // Retorna true si la operación fue exitosa
 
         } catch (SQLException e) {
-            // Capturar y mostrar cualquier error que ocurra durante la operación
+            // Captura y muestra cualquier error que ocurra durante la operación
             System.err.println("Error al registrar usuario: " + e.getMessage());
             return false; // Retorna false si ocurre un error
         }
@@ -122,19 +122,19 @@ public class UserDAO {
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            // Asignar el ID del usuario al parámetro de la consulta
+            // Asigna el ID del usuario al parámetro de la consulta
             pstmt.setInt(1, userId);
 
-            // Ejecutar la consulta SQL
+            // Ejecuta la consulta SQL
             int rowsAffected = pstmt.executeUpdate();
 
-            // Retornar true si se eliminó al menos una fila
+            // Retorna true si se eliminó al menos una fila
             return rowsAffected > 0;
 
         } catch (SQLException e) {
-            // Capturar y registrar cualquier error que ocurra
+            // Captura y registra cualquier error que ocurra
             System.err.println("Error al eliminar el usuario: " + e.getMessage());
-            return false; // Retornar false si ocurrió un error
+            return false; // Retorna false si ocurrió un error
         }
     }
 
@@ -164,16 +164,16 @@ public class UserDAO {
             ResultSet currentEmailRs = currentEmailStmt.executeQuery();
 
             if (currentEmailRs.next()) {
-                // Recuperar el correo actual y el nuevo correo ingresado
+                // Recupera el correo actual y el nuevo correo ingresado
                 String currentEmail = currentEmailRs.getString("correo_electronico").trim();
                 String newEmail = user.getCorreoElectronico().trim();
 
-                // LOG: Mostrar correos para depuración
+                // LOG: Muestra correos para depuración
                 System.out.println("Correo actual en la base de datos: " + currentEmail);
                 System.out.println("Correo ingresado: " + newEmail);
 
                 if (!currentEmail.equalsIgnoreCase(newEmail)) {
-                    // Verificar si el nuevo correo ya está en uso por otro usuario
+                    // Verifica si el nuevo correo ya está en uso por otro usuario
                     PreparedStatement checkStmt = conn.prepareStatement(sqlCheck);
                     checkStmt.setString(1, newEmail); // Nuevo correo ingresado
                     checkStmt.setInt(2, user.getId()); // Excluir al usuario actual
@@ -182,12 +182,12 @@ public class UserDAO {
                     if (rs.next()) {
                         // LOG: El correo ya está en uso
                         System.err.println("El correo ya está en uso por otro usuario.");
-                        return false; // Retornar false si hay conflicto con el correo
+                        return false; // Retorna false si hay conflicto con el correo
                     }
                 }
             }
 
-            // Proceder con la actualización si no hay conflictos
+            // Procede con la actualización si no hay conflictos
             PreparedStatement updateStmt = conn.prepareStatement(sqlUpdate);
             updateStmt.setString(1, user.getNombre()); // Nombre del usuario
             updateStmt.setString(2, user.getApellidos()); // Apellidos
@@ -197,15 +197,15 @@ public class UserDAO {
             updateStmt.setBlob(6, user.getFotoPerfil()); // Foto de perfil (Blob)
             updateStmt.setInt(7, user.getId()); // ID del usuario
 
-            // Ejecutar la consulta SQL de actualización
+            // Ejecuta la consulta SQL de actualización
             int rowsAffected = updateStmt.executeUpdate();
-            // LOG: Mostrar el número de filas afectadas
+            // LOG: Muestra el número de filas afectadas
             System.out.println("Filas afectadas en la actualización: " + rowsAffected);
 
-            return rowsAffected > 0; // Retornar true si se afectaron filas
+            return rowsAffected > 0; // Retorna true si se afectaron filas
 
         } catch (SQLException e) {
-            // Capturar y registrar cualquier error que ocurra
+            // Captura y registra cualquier error que ocurra
             System.err.println("Error al actualizar el usuario: " + e.getMessage());
             return false; // Retornar false si ocurre un error
         }
@@ -228,15 +228,15 @@ public class UserDAO {
 
         try (Connection connection = MySQLConnection.getConnection(); PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
-            // Asignar parámetros al PreparedStatement
+            // Asigna parámetros al PreparedStatement
             pstmt.setString(1, username); // Correo electrónico
             pstmt.setString(2, password); // Contraseña
 
-            // Ejecutar la consulta
+            // Ejecuta la consulta
             ResultSet resultSet = pstmt.executeQuery();
 
             if (resultSet.next()) {
-                // Crear un objeto `User` con los datos del usuario autenticado
+                // Crea un objeto `User` con los datos del usuario autenticado
                 User user = new User();
                 user.setId(resultSet.getInt("id")); // ID del usuario
                 user.setNombre(resultSet.getString("nombre")); // Nombre del usuario
@@ -248,7 +248,7 @@ public class UserDAO {
             }
 
         } catch (SQLException e) {
-            // Capturar y registrar cualquier error que ocurra durante la operación
+            // Captura y registra cualquier error que ocurra 
             System.err.println("Error al autenticar usuario: " + e.getMessage());
         }
 
@@ -269,18 +269,18 @@ public class UserDAO {
         // Consulta SQL para recuperar los usuarios que pertenecen al grupo especificado
         String sql = "SELECT u.id, u.nombre, u.apellidos, u.correo_electronico, u.id_rol, u.foto_perfil FROM Usuarios u WHERE u.id_grupo = ?";
 
-        // Inicializar una lista para almacenar los usuarios
+        // Inicializa una lista para almacenar los usuarios
         List<User> users = new ArrayList<>();
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // Asignar el ID del grupo como parámetro de la consulta SQL
+            // Asigna el ID del grupo como parámetro de la consulta SQL
             pstmt.setInt(1, groupId);
 
-            // Ejecutar la consulta y obtener los resultados
+            // Ejecuta la consulta y obtiene los resultados
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                // Crear un objeto `User` para cada registro obtenido
+                // Crea un objeto `User` para cada registro obtenido
                 User user = new User();
                 user.setId(rs.getInt("id")); // ID del usuario
                 user.setNombre(rs.getString("nombre")); // Nombre del usuario
@@ -289,16 +289,16 @@ public class UserDAO {
                 user.setIdRol(rs.getInt("id_rol")); // Rol del usuario
                 user.setFotoPerfil(rs.getBlob("foto_perfil")); // Foto de perfil (almacenada como Blob)
 
-                // Agregar el objeto `User` a la lista de usuarios
+                // Agrega el objeto `User` a la lista de usuarios
                 users.add(user);
             }
 
         } catch (SQLException e) {
-            // Capturar y registrar cualquier error que ocurra durante la operación
+            // Captura y registra cualquier error que ocurra durante la operación
             System.err.println("Error al obtener usuarios por grupo: " + e.getMessage());
         }
 
-        // Retornar la lista de usuarios (vacía si no se encontraron registros)
+        // Retorna la lista de usuarios (vacía si no se encontraron registros)
         return users;
     }
 
@@ -316,14 +316,14 @@ public class UserDAO {
         String sql = "SELECT COUNT(*) FROM Usuarios WHERE correo_electronico = ?";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // Asignar el correo electrónico como parámetro para la consulta
+            // Asigna el correo electrónico como parámetro para la consulta
             pstmt.setString(1, correoElectronico);
 
-            // Ejecutar la consulta y obtener el resultado
+            // Ejecutala consulta y obtener el resultado
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                // Retornar true si el conteo de usuarios es mayor que 0
+                // Retorna true si el conteo de usuarios es mayor que 0
                 return rs.getInt(1) > 0;
             }
 
@@ -332,7 +332,7 @@ public class UserDAO {
             System.err.println("Error al comprobar si el usuario existe: " + e.getMessage());
         }
 
-        // Retornar false por defecto si ocurre un error o el usuario no existe
+        // Retorna false por defecto si ocurre un error o el usuario no existe
         return false;
     }
 
@@ -351,23 +351,23 @@ public class UserDAO {
         String sql = "SELECT nombre_rol FROM Roles WHERE id = ?";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            // Asignar el ID del rol como parámetro de la consulta
+            // Asigna el ID del rol como parámetro de la consulta
             pstmt.setInt(1, idRol);
 
-            // Ejecutar la consulta y obtener el resultado
+            // Ejecuta la consulta y obtener el resultado
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                // Retornar el nombre del rol encontrado
+                // Retorna el nombre del rol encontrado
                 return rs.getString("nombre_rol");
             }
 
         } catch (SQLException e) {
-            // Capturar y registrar cualquier error que ocurra durante la operación
+            // Captura y registra cualquier error que ocurra durante la operación
             System.err.println("Error al obtener el nombre del rol: " + e.getMessage());
         }
 
-        // Retornar "Desconocido" si no se encuentra el rol o ocurre un error
+        // Retorna "Desconocido" si no se encuentra el rol o ocurre un error
         return "Desconocido";
     }
 
@@ -386,33 +386,33 @@ public class UserDAO {
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            // Asignar el ID del usuario al parámetro de la consulta
+            // Asigna el ID del usuario al parámetro de la consulta
             pstmt.setInt(1, userId);
 
-            // Ejecutar la consulta y obtener los resultados
+            // Ejecuta la consulta y obtener los resultados
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                // Crear un objeto `User` y asignar los datos obtenidos del ResultSet
+                // Crea un objeto `User` y asignar los datos obtenidos del ResultSet
                 User user = new User();
                 user.setId(rs.getInt("id")); // ID del usuario
                 user.setNombre(rs.getString("nombre")); // Nombre del usuario
                 user.setApellidos(rs.getString("apellidos")); // Apellidos
                 user.setCorreoElectronico(rs.getString("correo_electronico")); // Correo electrónico
                 user.setContrasenia(rs.getString("contrasenia")); // Contraseña
-                // LOG: Mostrar la contraseña recuperada para verificar
+                // LOG: Muestra la contraseña recuperada para verificar
                 System.out.println("Contraseña recuperada: " + rs.getString("contrasenia"));
                 user.setIdRol(rs.getInt("id_rol")); // Rol del usuario
                 user.setFotoPerfil(rs.getBlob("foto_perfil")); // Foto de perfil en formato Blob
-                return user; // Retornar el objeto `User` con los datos del usuario
+                return user; // Retorna el objeto `User` con los datos del usuario
             }
 
         } catch (SQLException e) {
-            // Capturar y registrar cualquier error que ocurra durante la operación
+            // Captura y registra cualquier error que ocurra durante la operación
             System.err.println("Error al obtener el usuario por ID: " + e.getMessage());
         }
 
-        // Retornar null si no se encuentra al usuario o ocurre un error
+        // Retorna null si no se encuentra al usuario o ocurre un error
         return null;
     }
 

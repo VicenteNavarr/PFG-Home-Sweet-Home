@@ -5,10 +5,12 @@ import homeSweetHome.dataPersistence.CurrentSession;
 import homeSweetHome.dataPersistence.InventoryDAO;
 import homeSweetHome.model.Product;
 import homeSweetHome.utils.AlertUtils;
+import homeSweetHome.utils.LanguageManager;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -52,20 +54,84 @@ public class AddIngredientViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        // Configurar las opciones de medida
-        Measure.getItems().addAll("Cantidad", "Gramos");
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
 
-        // Configurar las opciones de categoría
-        category.getItems().addAll("Carnes", "Pescados", "Verduras", "Frutas", "Lácteos", "Otros");
+        // Registra este controlador como listener del LanguageManager
+        LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
+        updateTexts(); // Actualiza los textos inicialmente
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////                   
 
     }
 
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+    
+    /**
+     * Actualiza los textos de la interfaz en función del idioma.
+     */
+    private void updateTexts() {
+        
+        // Obtiene la instancia única del Singleton
+        LanguageManager languageManager = LanguageManager.getInstance();
+
+        if (languageManager == null) {
+            
+            System.err.println("Error: LanguageManager es nulo. Traducción no aplicada.");
+            return;
+        }
+
+        // Verificación del idioma activo
+        String idiomaActivo = languageManager.getLanguageCode();
+        System.out.println("Idioma activo en updateTexts(): " + idiomaActivo);
+
+        // Traducción de etiquetas y botones
+        fieldIngredientName.setPromptText(languageManager.getTranslation("ingredientNamePrompt"));
+        fieldIngredientQuantity.setPromptText(languageManager.getTranslation("ingredientQuantityPrompt"));
+        btnAddIngredient.setText(languageManager.getTranslation("addIngredient"));
+        btnCancel.setText(languageManager.getTranslation("cancel"));
+
+        System.out.println("Etiqueta 'ingredientNamePrompt': " + fieldIngredientName.getPromptText());
+        System.out.println("Etiqueta 'ingredientQuantityPrompt': " + fieldIngredientQuantity.getPromptText());
+        System.out.println("Botón 'addIngredient': " + btnAddIngredient.getText());
+        System.out.println("Botón 'cancel': " + btnCancel.getText());
+
+        // Traducción y promptText de ComboBox de medidas
+        Measure.getItems().setAll(
+                languageManager.getTranslation("measureQuantity"),
+                languageManager.getTranslation("measureGrams")
+        );
+        Measure.setPromptText(languageManager.getTranslation("measurePrompt"));
+
+        System.out.println("Opciones de 'Measure': " + Measure.getItems());
+
+        // Traducción y promptText de ComboBox de categorías
+        category.getItems().setAll(
+                languageManager.getTranslation("recipeCategoryMeat"),
+                languageManager.getTranslation("recipeCategoryFish"),
+                languageManager.getTranslation("recipeCategoryVegetables"),
+                languageManager.getTranslation("recipeCategoryLegumes"),
+                languageManager.getTranslation("recipeCategoryDesserts"),
+                languageManager.getTranslation("recipeCategoryOthers")
+        );
+        category.setPromptText(languageManager.getTranslation("categoryPrompt"));
+
+        System.out.println("Opciones de 'category': " + category.getItems());
+
+        // Refresca UI para aplicar los cambios visualmente
+        Platform.runLater(() -> fieldIngredientName.getScene().getWindow().sizeToScene());
+
+        System.out.println("Traducciones aplicadas correctamente en AddIngredientViewController.");
+    }
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
+    
     /**
      * Establece la referencia al controlador de modificación de recetas.
      *
      * @param modifyRecipeController El controlador de modificación de recetas.
      */
     public void setModifyRecipeController(ModifyRecipeViewController modifyRecipeController) {
+        
         this.modifyRecipeController = modifyRecipeController;
     }
 
@@ -76,6 +142,7 @@ public class AddIngredientViewController implements Initializable {
      * vista.
      */
     public void setCreateRecipeController(CreateRecipeViewController controller) {
+        
         this.createRecipeController = controller;
     }
 
@@ -86,232 +153,93 @@ public class AddIngredientViewController implements Initializable {
      */
     @FXML
     private void cancel(ActionEvent event) {
+        
         ((Stage) btnCancel.getScene().getWindow()).close(); // Cierra la ventana actual
     }
 
     /**
      * Maneja la creación de un nuevo ingrediente en la vista de añadir
      * ingredientes. Este método valida los datos introducidos por el usuario,
-     * crea un objeto {@code Product} con los detalles del ingrediente y lo
-     * envía al controlador principal para ser añadido a la tabla de
-     * ingredientes en la vista de creación de recetas.
+     * crea un objeto con los detalles del ingrediente y lo envía al controlador
+     * principal para ser añadido a la tabla de ingredientes en la vista de
+     * creación de recetas.
      *
      * @param event Evento del botón "Crear Ingrediente".
      */
-//    @FXML
-//    private void createAddIngredient(ActionEvent event) {
-//        // Obtener y validar los valores introducidos por el usuario
-//        String ingredientName = fieldIngredientName.getText().trim();
-//        String ingredientQuantityStr = fieldIngredientQuantity.getText().trim();
-//        String ingredientMeasure = Measure.getValue();
-//        String ingredientCategory = category.getValue();
-//
-//        // Verificar si alguno de los campos está vacío
-//        if (ingredientName.isEmpty() || ingredientQuantityStr.isEmpty() || ingredientMeasure == null || ingredientCategory == null) {
-//            AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos Vacíos", "Por favor, completa todos los campos.");
-//            return;
-//        }
-//
-//        // Validar que la cantidad sea un número positivo
-//        int ingredientQuantity;
-//        try {
-//            ingredientQuantity = Integer.parseInt(ingredientQuantityStr);
-//            if (ingredientQuantity <= 0) {
-//                throw new NumberFormatException();
-//            }
-//        } catch (NumberFormatException e) {
-//            AlertUtils.showAlert(Alert.AlertType.ERROR, "Cantidad Inválida", "La cantidad debe ser un número positivo.");
-//            return;
-//        }
-//
-//        // Crear el objeto Product con los datos del ingrediente
-//        Product ingredient = new Product();
-//        ingredient.setNombreProducto(ingredientName);  // Nombre del ingrediente
-//        ingredient.setCantidad(ingredientQuantity);   // Cantidad requerida
-//        ingredient.setTipo(ingredientMeasure);      // Unidad de medida (gramos, litros, etc.)
-//        ingredient.setCategoria(ingredientCategory);  // Categoría del ingrediente (Carnes, Verduras, etc.)
-//
-//        // Enviar el ingrediente al controlador principal para añadirlo a la tabla
-//        if (createRecipeController != null) {
-//            createRecipeController.addIngredientToTable(ingredient);
-//        }
-//
-//        // Cerrar la ventana después de añadir el ingrediente
-//        ((Stage) btnAddIngredient.getScene().getWindow()).close();
-//    }
-//    @FXML
-//    private void createAddIngredient(ActionEvent event) {
-//        // Validar los campos introducidos por el usuario
-//        String ingredientName = fieldIngredientName.getText().trim();
-//        String ingredientQuantityStr = fieldIngredientQuantity.getText().trim();
-//        String ingredientMeasure = Measure.getValue();
-//        String ingredientCategory = category.getValue();
-//
-//        if (ingredientName.isEmpty() || ingredientQuantityStr.isEmpty() || ingredientMeasure == null || ingredientCategory == null) {
-//            AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos Vacíos", "Por favor, completa todos los campos.");
-//            return;
-//        }
-//
-//        // Validar la cantidad como número positivo
-//        int ingredientQuantity;
-//        try {
-//            ingredientQuantity = Integer.parseInt(ingredientQuantityStr);
-//            if (ingredientQuantity <= 0) {
-//                throw new NumberFormatException();
-//            }
-//        } catch (NumberFormatException e) {
-//            AlertUtils.showAlert(Alert.AlertType.ERROR, "Cantidad Inválida", "La cantidad debe ser un número positivo.");
-//            return;
-//        }
-//
-//        // Crear el objeto Product con los datos del ingrediente
-//        Product ingredient = new Product();
-//        ingredient.setNombreProducto(ingredientName);
-//        ingredient.setCantidad(ingredientQuantity);
-//        ingredient.setTipo(ingredientMeasure);
-//        ingredient.setCategoria(ingredientCategory);
-//
-//        // Añadir el ingrediente a la tabla en el controlador principal
-//        if (createRecipeController != null) {
-//            createRecipeController.addIngredientToTable(ingredient);
-//        }
-//
-//        // Preguntar si desea añadir más ingredientes
-//        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION, "¿Deseas añadir otro ingrediente?");
-//        confirmationAlert.setTitle("Añadir Más Ingredientes");
-//        confirmationAlert.setHeaderText(null);
-//
-//        // Mostrar la alerta y manejar la respuesta
-//        ButtonType buttonYes = new ButtonType("Sí", ButtonBar.ButtonData.YES);
-//        ButtonType buttonNo = new ButtonType("No", ButtonBar.ButtonData.NO);
-//        confirmationAlert.getButtonTypes().setAll(buttonYes, buttonNo);
-//
-//        Optional<ButtonType> result = confirmationAlert.showAndWait();
-//        if (result.isPresent() && result.get() == buttonNo) {
-//            // Cerrar la ventana si el usuario selecciona "No"
-//            ((Stage) btnAddIngredient.getScene().getWindow()).close();
-//        } else {
-//            // Limpiar los campos si el usuario selecciona "Sí"
-//            fieldIngredientName.clear();
-//            fieldIngredientQuantity.clear();
-//            Measure.getSelectionModel().clearSelection();
-//            category.getSelectionModel().clearSelection();
-//        }
-//    }
-//    @FXML
-//    private void createAddIngredient(ActionEvent event) {
-//        // Validar los campos introducidos por el usuario
-//        String ingredientName = fieldIngredientName.getText().trim();
-//        String ingredientQuantityStr = fieldIngredientQuantity.getText().trim();
-//        String ingredientMeasure = Measure.getValue();
-//
-//        if (ingredientName.isEmpty() || ingredientQuantityStr.isEmpty() || ingredientMeasure == null) {
-//            AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos Vacíos", "Por favor, completa todos los campos.");
-//            return;
-//        }
-//
-//        // Validar la cantidad como número positivo
-//        int ingredientQuantity;
-//        try {
-//            ingredientQuantity = Integer.parseInt(ingredientQuantityStr);
-//            if (ingredientQuantity <= 0) {
-//                throw new NumberFormatException();
-//            }
-//        } catch (NumberFormatException e) {
-//            AlertUtils.showAlert(Alert.AlertType.ERROR, "Cantidad Inválida", "La cantidad debe ser un número positivo.");
-//            return;
-//        }
-//
-//        // Crear el objeto Product con los datos del ingrediente
-//        Product ingredient = new Product();
-//        ingredient.setNombreProducto(ingredientName);
-//        ingredient.setCantidad(ingredientQuantity);
-//        ingredient.setTipo(ingredientMeasure);
-//        ingredient.setCategoria("Alimentación"); // Asignar categoría por defecto
-//
-//        // Añadir el ingrediente a la tabla en el controlador principal
-//        if (createRecipeController != null) {
-//            createRecipeController.addIngredientToTable(ingredient);
-//        }
-//
-//        // Preguntar si desea añadir más ingredientes
-//        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION, "¿Deseas añadir otro ingrediente?");
-//        confirmationAlert.setTitle("Añadir Más Ingredientes");
-//        confirmationAlert.setHeaderText(null);
-//
-//        // Mostrar la alerta y manejar la respuesta
-//        ButtonType buttonYes = new ButtonType("Sí", ButtonBar.ButtonData.YES);
-//        ButtonType buttonNo = new ButtonType("No", ButtonBar.ButtonData.NO);
-//        confirmationAlert.getButtonTypes().setAll(buttonYes, buttonNo);
-//
-//        Optional<ButtonType> result = confirmationAlert.showAndWait();
-//        if (result.isPresent() && result.get() == buttonNo) {
-//            // Cerrar la ventana si el usuario selecciona "No"
-//            ((Stage) btnAddIngredient.getScene().getWindow()).close();
-//        } else {
-//            // Limpiar los campos si el usuario selecciona "Sí"
-//            fieldIngredientName.clear();
-//            fieldIngredientQuantity.clear();
-//            Measure.getSelectionModel().clearSelection();
-//        }
-//    }
     @FXML
     private void createAddIngredient(ActionEvent event) {
-        // Validar los campos introducidos por el usuario
+
+        // Valida los campos introducidos por el usuario
         String ingredientName = fieldIngredientName.getText().trim();
         String ingredientQuantityStr = fieldIngredientQuantity.getText().trim();
         String ingredientMeasure = Measure.getValue();
 
         if (ingredientName.isEmpty() || ingredientQuantityStr.isEmpty() || ingredientMeasure == null) {
+            
             AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos Vacíos", "Por favor, completa todos los campos.");
             return;
         }
 
-        // Validar la cantidad como número positivo
+        // Valida la cantidad como número positivo
         int ingredientQuantity;
+        
         try {
+            
             ingredientQuantity = Integer.parseInt(ingredientQuantityStr);
+            
             if (ingredientQuantity <= 0) {
+                
                 throw new NumberFormatException();
             }
+            
         } catch (NumberFormatException e) {
+            
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Cantidad Inválida", "La cantidad debe ser un número positivo.");
             return;
         }
 
-        // Crear el objeto Product con los datos del ingrediente
+        // Crea el objeto Product con los datos del ingrediente
         Product ingredient = new Product();
         ingredient.setNombreProducto(ingredientName);
         ingredient.setCantidad(ingredientQuantity);
         ingredient.setTipo(ingredientMeasure);
-        ingredient.setCategoria("Alimentación"); // Asignar categoría por defecto
+        ingredient.setCategoria("Alimentación"); // Asigna categoría por defecto
 
-        // Determinar el controlador principal (creación o modificación)
+        // Determina el controlador principal (creación o modificación)
         if (createRecipeController != null) {
+            
             createRecipeController.addIngredientToTable(ingredient);
+            
         } else if (modifyRecipeController != null) {
+            
             modifyRecipeController.addIngredientToTable(ingredient);
+            
         } else {
+            
             System.err.println("No se ha establecido un controlador principal.");
             return;
         }
 
-        // Preguntar si desea añadir más ingredientes
+        // Pregunta si quiere añadir más ingredientes
         Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION, "¿Deseas añadir otro ingrediente?");
         confirmationAlert.setTitle("Añadir Más Ingredientes");
         confirmationAlert.setHeaderText(null);
 
-        // Mostrar la alerta y manejar la respuesta
+        // Muestra la alerta - respuestas
         ButtonType buttonYes = new ButtonType("Sí", ButtonBar.ButtonData.YES);
         ButtonType buttonNo = new ButtonType("No", ButtonBar.ButtonData.NO);
         confirmationAlert.getButtonTypes().setAll(buttonYes, buttonNo);
 
         Optional<ButtonType> result = confirmationAlert.showAndWait();
+
         if (result.isPresent() && result.get() == buttonNo) {
-            // Cerrar la ventana si el usuario selecciona "No"
+            
+            // Cierra la ventana si el usuario selecciona "No"
             ((Stage) btnAddIngredient.getScene().getWindow()).close();
+            
         } else {
-            // Limpiar los campos si el usuario selecciona "Sí"
+            
+            // Limpia los campos si el usuario selecciona "Sí"
             fieldIngredientName.clear();
             fieldIngredientQuantity.clear();
             Measure.getSelectionModel().clearSelection();

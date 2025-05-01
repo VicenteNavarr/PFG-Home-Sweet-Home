@@ -4,6 +4,7 @@ import homeSweetHome.dataPersistence.CurrentSession;
 import homeSweetHome.dataPersistence.EventDAO;
 import homeSweetHome.model.Event;
 import homeSweetHome.utils.AlertUtils;
+import homeSweetHome.utils.LanguageManager;
 import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,6 +24,7 @@ import javafx.stage.Stage;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
+import javafx.application.Platform;
 
 /**
  * Controlador para la vista de ítem de evento.
@@ -33,14 +35,8 @@ public class EventItemViewController implements Initializable {
     private BorderPane borderPaneContainer;
     @FXML
     private Button btnDelete;
-    //@FXML
-    //private Button btnComplete;
     @FXML
     private TextArea fieldEventDescription;
-
-    private int eventId;
-
-    private EventViewController eventViewController;
     @FXML
     private Label lblEventName;
     @FXML
@@ -48,15 +44,68 @@ public class EventItemViewController implements Initializable {
     @FXML
     private Label lblTime;
     @FXML
+    private Label lblHora;
+    @FXML
+    private Label lblFecha;
+    @FXML
+    private Label lblNombreEvento;
+    @FXML
     private Button btnOpenUpdateEvent;
     @FXML
     private Button btnComplete;
 
+    private int eventId;
+
+    private EventViewController eventViewController;
+
+    //private LanguageManager languageManager;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Configuración inicial si es necesaria
+
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+
+        // Registra este controlador como listener del LanguageManager
+        LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
+        updateTexts(); // Actualiza los textos inicialmente
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////
     }
 
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+    
+    /**
+     * Actualiza los textos de la interfaz en función del idioma.
+     */
+    private void updateTexts() {
+        
+        // Accede directamente al Singleton del LanguageManager
+        LanguageManager languageManager = LanguageManager.getInstance();
+
+        if (languageManager == null) {
+            System.err.println("Error: LanguageManager no está disponible.");
+            return;
+        }
+
+        // Configurar textos de los botones
+        btnDelete.setText(languageManager.getTranslation("deleteEvent")); 
+        btnOpenUpdateEvent.setText(languageManager.getTranslation("updateEvent")); 
+        btnComplete.setText(languageManager.getTranslation("completeEvent")); 
+
+        // Configurar el PromptText de la descripción del evento
+        fieldEventDescription.setPromptText(languageManager.getTranslation("promptEventDescription")); 
+
+        // Configurar etiquetas dinámicas
+        lblNombreEvento.setText(languageManager.getTranslation("eventNameLabel")); 
+        lblFecha.setText(languageManager.getTranslation("eventDateLabel")); 
+        lblHora.setText(languageManager.getTranslation("eventTimeLabel")); 
+        fieldEventDescription.setPromptText(languageManager.getTranslation("promptEventDescription"));
+
+        // Depuración
+        System.out.println("Traducciones aplicadas correctamente en EventItemViewController.");
+    }
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////
+    
     /**
      * Configura los datos de un evento en los elementos de la vista.
      *
@@ -67,6 +116,7 @@ public class EventItemViewController implements Initializable {
      * @param descripcion - Descripción del evento.
      */
     public void setEventData(int id, String nombre, String fecha, String hora, String descripcion) {
+
         this.eventId = id;
         lblEventName.setText(nombre); // Muestra el nombre del evento.
         lblDate.setText(fecha); // Muestra la fecha del evento.
@@ -80,6 +130,7 @@ public class EventItemViewController implements Initializable {
      * @param eventViewController - Referencia al controlador principal.
      */
     public void setEventViewController(EventViewController eventViewController) {
+
         this.eventViewController = eventViewController; // Guarda la referencia al controlador principal.
     }
 
@@ -90,31 +141,39 @@ public class EventItemViewController implements Initializable {
      */
     @FXML
     private void openUpdateEvent(ActionEvent event) {
+
         try {
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/event/UpdateEventView.fxml"));
             Parent root = loader.load();
 
-            // Obtén el controlador asociado a la vista de actualización
+            // Obtiene el controlador asociado a la vista de actualización
             UpdateEventViewController updateEventController = loader.getController();
 
             // Configura la referencia al controlador principal
             if (eventViewController != null) {
+                
                 updateEventController.setEventViewController(eventViewController);
             }
 
-            // Validar y convertir tiempo
+            // Valida y convierte tiempo
             String timeText = lblTime.getText();
             Time timeValue = null;
 
             if (timeText != null && !timeText.isEmpty() && timeText.matches("\\d{2}:\\d{2}:\\d{2}")) {
+                
                 timeValue = Time.valueOf(timeText);
+                
             } else if (timeText != null && !timeText.isEmpty() && timeText.matches("\\d{2}:\\d{2}")) {
+                
                 timeValue = Time.valueOf(timeText + ":00");
+                
             } else {
+                
                 System.err.println("El formato de tiempo no es válido: " + timeText);
             }
 
-            // Crear un objeto Event con los datos actuales
+            // Crea un objeto Event con los datos actuales
             Event currentEvent = new Event(
                     eventId, // ID del evento
                     lblEventName.getText(), // Nombre del evento
@@ -125,7 +184,7 @@ public class EventItemViewController implements Initializable {
                     CurrentSession.getInstance().getUserGroupId() // ID del grupo del usuario actual
             );
 
-            // Pasar el objeto Event al controlador de la vista de actualización
+            // Pasa el objeto Event al controlador de la vista de actualización
             updateEventController.setEventData(currentEvent);
 
             // Crea y configura una nueva ventana para la vista de actualización
@@ -135,9 +194,11 @@ public class EventItemViewController implements Initializable {
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnOpenUpdateEvent.getScene().getWindow());
             stage.showAndWait(); // Muestra la ventana y espera a que se cierre
+
         } catch (IOException e) {
+
             System.err.println("Error al cargar la vista UpdateEventView: " + e.getMessage());
-            e.printStackTrace(); // Ayuda a depurar errores
+            e.printStackTrace();
         }
     }
 
@@ -148,16 +209,20 @@ public class EventItemViewController implements Initializable {
      */
     @FXML
     private void deleteEvent(ActionEvent event) {
+        
         EventDAO eventDAO = new EventDAO();
         boolean success = eventDAO.deleteEvent(eventId);
 
         if (success) {
+            
             // Elimina visualmente el evento del contenedor
             eventViewController.getEventContainer().getChildren().remove(borderPaneContainer);
 
             // Muestra un mensaje de éxito
             AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Evento Eliminado", "El evento se eliminó correctamente.");
+            
         } else {
+            
             // Muestra un mensaje de error si algo falla
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se pudo eliminar el evento.");
         }
@@ -172,18 +237,22 @@ public class EventItemViewController implements Initializable {
      */
     @FXML
     private void completeEvent(ActionEvent event) {
+        
         EventDAO eventDAO = new EventDAO();
         int groupId = CurrentSession.getInstance().getUserGroupId();
 
         boolean success = eventDAO.moveEventToHistory(eventId, groupId);
 
         if (success) {
+
             // Elimina visualmente el evento completado de la vista actual
             eventViewController.getEventContainer().getChildren().remove(borderPaneContainer);
 
             // Muestra un mensaje de éxito
             AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Evento Completado", "El evento ha sido movido al historial.");
+
         } else {
+
             // Muestra un mensaje de error si algo falla
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se pudo completar el evento. Puede que no pertenezca a tu grupo.");
         }

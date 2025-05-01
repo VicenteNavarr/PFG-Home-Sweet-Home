@@ -6,6 +6,7 @@ import homeSweetHome.model.User;
 import homeSweetHome.utils.ValidationUtils;
 import java.io.IOException;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -104,7 +105,7 @@ public class LoginViewController {
     @FXML
     private void signUp(ActionEvent event) {
 
-        // Validar que los campos no estén vacíos
+        // Valida que los campos no estén vacíos
         if (nombre.getText().isEmpty() || apellidos.getText().isEmpty() || mail.getText().isEmpty() || contrasenia.getText().isEmpty()) {
 
             showAlert(Alert.AlertType.ERROR, "Error de Registro", "Todos los campos son obligatorios.");
@@ -117,7 +118,7 @@ public class LoginViewController {
             return;
         }
 
-        // Crear un nuevo usuario con los datos ingresados
+        // Crea un nuevo usuario con los datos ingresados
         User newUser = new User();
         newUser.setNombre(nombre.getText());
         newUser.setApellidos(apellidos.getText());
@@ -125,7 +126,7 @@ public class LoginViewController {
         newUser.setContrasenia(contrasenia.getText());
         newUser.setIdRol(1); // Por defecto, el rol es Administrador (ID: 1)
 
-        // Intentar registrar al usuario utilizando el DAO
+        // Intenta registrar al usuario utilizando el DAO
         UserDAO userDAO = new UserDAO();
 
         if (userDAO.addFirstUser(newUser)) {
@@ -191,6 +192,7 @@ public class LoginViewController {
                 stage.setMinHeight(768);
                 stage.setMinWidth(1280);
                 stage.setTitle("Sweet Home - Vista Principal");
+                stage.setResizable(true);
                 stage.centerOnScreen();
                 stage.show();
 
@@ -224,6 +226,7 @@ public class LoginViewController {
      * @param message - String
      */
     private void showAlert(Alert.AlertType alertType, String title, String message) {
+        
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -262,13 +265,15 @@ public class LoginViewController {
             Scene mainScene = new Scene(mainView);
 
             // Obtiene el escenario actual desde el evento
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Stage mainStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
             // Establece la nueva escena en el escenario
-            stage.setScene(mainScene);
-            stage.setTitle("Sweet Home - Vista Principal");
-            stage.centerOnScreen();
-            stage.show();
+            mainStage.setScene(mainScene);
+            mainStage.setTitle("Sweet Home - Vista Principal");
+            mainStage.centerOnScreen();
+            mainStage.setResizable(true);
+            mainStage.show();
+
 
         } catch (IOException e) {
 

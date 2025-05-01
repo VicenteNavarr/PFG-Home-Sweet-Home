@@ -85,27 +85,6 @@ public class InventoryDAO {
      * @return True si el producto fue agregado correctamente, False en caso
      * contrario.
      */
-//    public boolean addInventoryProduct(Product product) {
-//        String query = "INSERT INTO Inventario (nombre_producto, cantidad, cantidad_minima, cantidad_maxima, categoria, tipo, id_grupo) VALUES (?, ?, ?, ?, ?, ?, ?)";
-//
-//        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-//
-//            stmt.setString(1, product.getNombreProducto());
-//            stmt.setInt(2, product.getCantidad());
-//            stmt.setInt(3, product.getCantidadMinima());
-//            stmt.setInt(4, product.getCantidadMaxima());
-//            stmt.setString(5, product.getCategoria());
-//            stmt.setString(6, product.getTipo());
-//            stmt.setInt(7, product.getIdGrupo());
-//
-//            return stmt.executeUpdate() > 0;
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.err.println("Error al agregar el producto al inventario.");
-//        }
-//        return false;
-//    }
     public boolean addInventoryProduct(Product product) {
         String query = "INSERT INTO Inventario (nombre_producto, cantidad, cantidad_minima, cantidad_maxima, categoria, tipo, id_grupo) VALUES (?, ?, ?, ?, ?, ?, ?)";
 

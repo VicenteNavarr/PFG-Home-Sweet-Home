@@ -164,17 +164,16 @@ public class MealDAO {
         }
     }
 
-//    public boolean deleteMealsByRecipeId(int recipeId) {
-//        String query = "DELETE FROM Comidas WHERE id_receta = ?";
-//        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
-//            stmt.setInt(1, recipeId);
-//            return stmt.executeUpdate() > 0;
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            System.err.println("Error al eliminar las comidas relacionadas con la receta.");
-//        }
-//        return false;
-//    }
+    /**
+     * Elimina todas las comidas asociadas a una receta específica.
+     *
+     * Ejecuta una consulta SQL para eliminar las comidas vinculadas al ID de la
+     * receta proporcionado.
+     *
+     * @param recipeId el ID de la receta cuyas comidas se desean eliminar
+     * @return {@code true} si se eliminaron filas, {@code false} en caso
+     * contrario o si ocurre un error
+     */
     public boolean deleteMealsByRecipeId(int recipeId) {
         String query = "DELETE FROM Comidas WHERE id_receta = ?";
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -186,6 +185,15 @@ public class MealDAO {
         }
     }
 
+    /**
+     * Obtiene una lista de comidas asociadas a una receta específica.
+     *
+     * Ejecuta una consulta SQL para recuperar las comidas vinculadas al ID de
+     * la receta y las convierte en objetos {@code Meal}.
+     *
+     * @param recipeId el ID de la receta cuyas comidas se desean obtener
+     * @return una lista de objetos {@code Meal} asociados con la receta
+     */
     public List<Meal> getMealsByRecipeId(int recipeId) {
         List<Meal> meals = new ArrayList<>();
         String query = "SELECT * FROM Comidas WHERE id_receta = ?";

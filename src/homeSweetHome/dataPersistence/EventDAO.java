@@ -131,9 +131,9 @@ public class EventDAO {
 
         try (Connection connection = MySQLConnection.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
-            preparedStatement.setBoolean(1, true); // Marcar como completado
+            preparedStatement.setBoolean(1, true); // Marca como completado
             preparedStatement.setInt(2, eventId); // ID del evento
-            preparedStatement.setInt(3, groupId); // Validar el grupo
+            preparedStatement.setInt(3, groupId); // Valida el grupo
 
             int rowsUpdated = preparedStatement.executeUpdate();
             return rowsUpdated > 0; // Retorna true si se actualizó al menos una fila

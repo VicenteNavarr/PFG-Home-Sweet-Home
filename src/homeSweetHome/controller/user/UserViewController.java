@@ -6,10 +6,12 @@ package homeSweetHome.controller.user;
 
 import homeSweetHome.dataPersistence.UserDAO;
 import homeSweetHome.model.User;
+import homeSweetHome.utils.LanguageManager;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +20,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -35,10 +38,6 @@ public class UserViewController implements Initializable {
     @FXML
     private Button btnOpenCreateUser;
     @FXML
-    private Button btnUpdateUser;
-    @FXML
-    private Button btnDeleteUser;
-    @FXML
     private ScrollPane scrollPane; // ScrollPane que envuelve el contenedor
 
     /**
@@ -46,9 +45,50 @@ public class UserViewController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+
+        // Registra este controlador como listener del LanguageManager
+        LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
+        updateTexts(); // Actualiza los textos inicialmente
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////             
         loadUsers();//Carga el metodo de listar usuarios y mostrar en el scrollpane
     }
 
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+    
+    /**
+     * Actualiza los textos de la interfaz en función del idioma.
+     */
+    private void updateTexts() {
+        
+        // Obtiene la instancia única del Singleton
+        LanguageManager languageManager = LanguageManager.getInstance();
+
+        if (languageManager == null) {
+            
+            System.err.println("Error: LanguageManager es nulo. Traducción no aplicada.");
+            return;
+        }
+
+        // Verificación del idioma activo
+        String idiomaActivo = languageManager.getLanguageCode();
+        System.out.println("Idioma activo en updateTexts(): " + idiomaActivo);
+
+        // Traducción del botón de creación de usuario
+        btnOpenCreateUser.setText(languageManager.getTranslation("createUser"));
+
+        System.out.println("Botón 'createUser': " + btnOpenCreateUser.getText());
+
+        // Refrescar UI para aplicar los cambios visualmente
+        Platform.runLater(() -> btnOpenCreateUser.getScene().getWindow().sizeToScene());
+
+        System.out.println("Traducciones aplicadas correctamente en UserViewController.");
+    }
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////     
+    
     /**
      * Metodo para crear un nuevo usuario - abre el pop up CreateUserView
      *

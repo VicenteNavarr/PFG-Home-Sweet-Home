@@ -2,10 +2,12 @@ package homeSweetHome.controller.task;
 
 import homeSweetHome.dataPersistence.TaskDAO;
 import homeSweetHome.model.Task;
+import homeSweetHome.utils.LanguageManager;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,7 +16,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -31,8 +35,28 @@ public class TaskViewController implements Initializable {
     @FXML
     private Button btnOpenCreateNewTask;
 
+
+    /**
+     * Inicializa la vista de tareas y configura los elementos necesarios.
+     *
+     * Ajusta el ancho del ScrollPane, verifica que el contenedor de tareas esté
+     * inicializado, y carga las tareas en la interfaz al comenzar.
+     *
+     * @param url la ubicación utilizada para resolver recursos relacionados
+     * @param rb el paquete de recursos utilizado para localizar elementos de la
+     * interfaz
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+
+        // Registra este controlador como listener del LanguageManager
+        LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
+        updateTexts(); // Actualiza los textos inicialmente
+
+/////////////////////////////////FIN IDIOMAS///////////////////////////////////////////// 
+
         // Ajusta el ScrollPane para que el VBox se ajuste al ancho del ScrollPane
         scrollPane.setFitToWidth(true);
 
@@ -41,9 +65,35 @@ public class TaskViewController implements Initializable {
             return;
         }
 
-        loadTasks(); // Cargar las tareas al inicializar la vista
+        loadTasks(); // Carga las tareas al inicializar la vista
     }
 
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+    
+    /**
+     * Actualiza los textos de la interfaz en función del idioma.
+     */
+    private void updateTexts() {
+
+        LanguageManager languageManager = LanguageManager.getInstance();
+
+        if (languageManager == null) {
+            System.err.println("Error: LanguageManager no está disponible.");
+            return;
+        }
+
+        // Actualización del texto del botón
+        btnOpenCreateNewTask.setText(languageManager.getTranslation("createTask")); 
+
+        // Actualización dinámica del contenido del ScrollPane si aplica
+        scrollPane.setContent(taskContainer); // Manteniene el contenedor dinámico
+
+        // Depuración
+        System.out.println("Traducciones aplicadas correctamente en EventViewController.");
+    }
+
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////  
+    
     /**
      * Abre la ventana para crear una nueva tarea.
      *
@@ -51,7 +101,9 @@ public class TaskViewController implements Initializable {
      */
     @FXML
     private void openCreateNewTask(ActionEvent event) {
+
         try {
+
             // Carga la vista CreateTaskView desde su archivo FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/task/CreateTaskView.fxml"));
             Parent root = loader.load();
@@ -69,7 +121,9 @@ public class TaskViewController implements Initializable {
             stage.initModality(Modality.WINDOW_MODAL); // Establece la ventana como modal
             stage.initOwner(btnOpenCreateNewTask.getScene().getWindow()); // Asocia la ventana actual como propietaria
             stage.showAndWait(); // Muestra la ventana y espera a que se cierre
+            
         } catch (IOException e) {
+            
             // Muestra un error si ocurre un problema al cargar la vista
             System.err.println("Error al cargar la vista CreateTaskView: " + e.getMessage());
         }
@@ -79,10 +133,12 @@ public class TaskViewController implements Initializable {
      * Carga y muestra todas las tareas del grupo actual en la vista.
      */
     public void loadTasks() {
+        
         TaskDAO taskDAO = new TaskDAO();
 
         // Obtiene el ID del grupo del usuario actual desde la sesión
         int userGroupId = homeSweetHome.dataPersistence.CurrentSession.getInstance().getUserGroupId();
+        
         // Obtiene la lista de tareas asociadas al grupo
         List<Task> tasks = taskDAO.getTasksByGroup(userGroupId);
 
@@ -91,7 +147,9 @@ public class TaskViewController implements Initializable {
 
         // Itera sobre las tareas para cargarlas en la vista
         for (Task task : tasks) {
+            
             try {
+                
                 // Carga la vista del ítem de tarea desde el archivo FXML
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/task/TaskItemView.fxml"));
                 Node taskItemNode = loader.load();
@@ -113,6 +171,7 @@ public class TaskViewController implements Initializable {
                 taskContainer.getChildren().add(taskItemNode);
 
             } catch (IOException e) {
+                
                 // Muestra un error si no se puede cargar la vista del ítem de tarea
                 System.err.println("No se pudo cargar la vista TaskItemView para la tarea: " + task.getNombreTarea());
                 e.printStackTrace();
@@ -121,6 +180,7 @@ public class TaskViewController implements Initializable {
     }
 
     public VBox getTaskContainer() {
+        
         return taskContainer;
     }
 }
