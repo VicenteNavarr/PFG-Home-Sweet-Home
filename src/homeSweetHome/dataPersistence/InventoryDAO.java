@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Data Access Object (DAO) para gestionar el inventario en la base de datos.
+ * gestionar el inventario en la base de datos.
  * Proporciona métodos para realizar operaciones CRUD y recuperar datos
  * específicos del inventario utilizando el modelo `Product`.
  */
@@ -21,6 +21,7 @@ public class InventoryDAO {
      * especificado.
      */
     public List<Product> getAllInventoryProducts(int groupId) {
+        
         List<Product> products = new ArrayList<>();
         String query = "SELECT * FROM Inventario WHERE id_grupo = ?";
 
@@ -30,6 +31,7 @@ public class InventoryDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+                
                 Product product = new Product(
                         rs.getInt("id"),
                         rs.getString("nombre_producto"),
@@ -41,13 +43,16 @@ public class InventoryDAO {
                         rs.getInt("id_grupo"),
                         null // Fecha no aplica para inventario
                 );
+                
                 products.add(product);
             }
 
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al recuperar los productos del inventario.");
         }
+        
         return products;
     }
 
@@ -59,18 +64,23 @@ public class InventoryDAO {
      * @return True si el producto ya existe, False en caso contrario.
      */
     public boolean isProductInInventory(String nombreProducto, int groupId) {
+        
         String query = "SELECT COUNT(*) FROM Inventario WHERE LOWER(nombre_producto) = LOWER(?) AND id_grupo = ?";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             stmt.setString(1, nombreProducto);
             stmt.setInt(2, groupId);
 
             try (ResultSet rs = stmt.executeQuery()) {
+                
                 if (rs.next()) {
                     return rs.getInt(1) > 0; // Si el conteo es mayor que 0, el producto ya existe
                 }
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al verificar si el producto ya existe en el inventario.");
         }
@@ -86,6 +96,7 @@ public class InventoryDAO {
      * contrario.
      */
     public boolean addInventoryProduct(Product product) {
+        
         String query = "INSERT INTO Inventario (nombre_producto, cantidad, cantidad_minima, cantidad_maxima, categoria, tipo, id_grupo) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -111,9 +122,11 @@ public class InventoryDAO {
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al agregar el producto al inventario.");
         }
+        
         return false;
     }
 
@@ -125,6 +138,7 @@ public class InventoryDAO {
      * contrario.
      */
     public boolean updateInventoryProduct(Product product) {
+        
         String query = "UPDATE Inventario SET nombre_producto = ?, cantidad = ?, cantidad_minima = ?, cantidad_maxima = ?, categoria = ?, tipo = ? WHERE id = ?";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -140,6 +154,7 @@ public class InventoryDAO {
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al actualizar el producto en el inventario.");
         }
@@ -154,6 +169,7 @@ public class InventoryDAO {
      * contrario.
      */
     public boolean deleteInventoryProduct(int id) {
+        
         String query = "DELETE FROM Inventario WHERE id = ?";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -163,9 +179,11 @@ public class InventoryDAO {
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al eliminar el producto del inventario.");
         }
+        
         return false;
     }
 
@@ -179,6 +197,7 @@ public class InventoryDAO {
      * reabastecimiento.
      */
     public List<Product> getReplenishmentProducts(int groupId) {
+        
         List<Product> products = new ArrayList<>();
         String query = "SELECT * FROM Inventario WHERE cantidad < cantidad_minima AND id_grupo = ?";
 
@@ -188,6 +207,7 @@ public class InventoryDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+                
                 Product product = new Product(
                         rs.getInt("id"),
                         rs.getString("nombre_producto"),
@@ -199,13 +219,16 @@ public class InventoryDAO {
                         rs.getInt("id_grupo"),
                         null // Fecha no aplica para inventario
                 );
+                
                 products.add(product);
             }
 
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al recuperar los productos que necesitan reabastecimiento.");
         }
+        
         return products;
     }
 
@@ -217,20 +240,28 @@ public class InventoryDAO {
      * @return El ID del producto si existe, o 0 si no se encuentra.
      */
     public int getInventoryProductIdByName(String nombreProducto, int groupId) {
+        
         String query = "SELECT id FROM Inventario WHERE LOWER(nombre_producto) = LOWER(?) AND id_grupo = ?";
+        
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             stmt.setString(1, nombreProducto);
             stmt.setInt(2, groupId);
 
             try (ResultSet rs = stmt.executeQuery()) {
+                
                 if (rs.next()) {
+                    
                     return rs.getInt("id"); // Retorna el ID del producto si existe
                 }
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al obtener el ID del producto del inventario.");
         }
+        
         return 0; // Retorna 0 si no se encuentra el producto
     }
 
@@ -241,15 +272,22 @@ public class InventoryDAO {
      * Inventario.
      */
     public int generateNewInventoryId() {
+        
         String query = "SELECT MAX(id) FROM Inventario";
+        
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+            
             if (rs.next()) {
+                
                 return rs.getInt(1) + 1; // Devuelve el ID siguiente al máximo actual
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al generar un nuevo ID para el inventario.");
         }
+        
         return 1; // Si no hay productos en la tabla, retorna 1 como el primer ID
     }
 
@@ -261,9 +299,11 @@ public class InventoryDAO {
      * @return True si la actualización fue exitosa, False en caso contrario.
      */
     public boolean updateInventoryQuantity(int idInventario, int nuevaCantidad) {
+        
         String query = "UPDATE inventario SET cantidad = ? WHERE id = ?"; // Usamos la columna 'cantidad'
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             System.out.println("Ejecutando actualización para ID: " + idInventario + ", nueva cantidad: " + nuevaCantidad);
 
             stmt.setInt(1, nuevaCantidad);
@@ -272,7 +312,9 @@ public class InventoryDAO {
             int rowsAffected = stmt.executeUpdate();
             System.out.println("Filas afectadas: " + rowsAffected);
             return rowsAffected > 0; // Devuelve True si al menos una fila fue actualizada
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al actualizar la cantidad del producto en el inventario.");
         }
@@ -287,17 +329,22 @@ public class InventoryDAO {
      * @return La cantidad actual del producto, o -1 si ocurre un error.
      */
     public int getCurrentQuantityById(int idInventario) {
+        
         String query = "SELECT cantidad FROM inventario WHERE id = ?";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, idInventario);
 
             try (ResultSet rs = stmt.executeQuery()) {
+                
                 if (rs.next()) {
+                    
                     return rs.getInt("cantidad"); // Usamos la columna 'cantidad'
                 }
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al obtener la cantidad actual del producto con ID: " + idInventario);
         }
@@ -312,18 +359,27 @@ public class InventoryDAO {
      * @return True si el ID existe, False en caso contrario.
      */
     public boolean isInventoryIdExists(int inventoryId) {
+        
         String query = "SELECT COUNT(*) FROM inventario WHERE id = ?";
+        
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             stmt.setInt(1, inventoryId);
+            
             try (ResultSet rs = stmt.executeQuery()) {
+                
                 if (rs.next()) {
+                    
                     return rs.getInt(1) > 0; // Verifica si hay al menos una coincidencia
                 }
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al verificar si el ID de inventario existe: " + inventoryId);
         }
+        
         return false;
     }
 
@@ -338,19 +394,27 @@ public class InventoryDAO {
      * contrario.
      */
     public boolean productExistsInInventory(int productId) {
+        
         String query = "SELECT COUNT(*) FROM Inventario WHERE id = ?";
+        
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             stmt.setInt(1, productId);
 
             try (ResultSet rs = stmt.executeQuery()) {
+                
                 if (rs.next() && rs.getInt(1) > 0) {
+                    
                     return true; // El producto existe
                 }
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al verificar si el producto existe en el inventario: " + productId);
         }
+        
         return false; // El producto no existe
     }
 
@@ -361,37 +425,52 @@ public class InventoryDAO {
      * @return La cantidad actual si el producto existe, o 0 si no se encuentra.
      */
     public int getProductQuantity(int productId) {
+        
         String query = "SELECT cantidad FROM inventario WHERE id_producto = ?";
+        
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             stmt.setInt(1, productId);
 
             try (ResultSet rs = stmt.executeQuery()) {
+                
                 if (rs.next()) {
+                    
                     return rs.getInt("cantidad"); // Devuelve la cantidad encontrada
                 }
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al obtener la cantidad del producto en el inventario.");
         }
+        
         return 0; // Devuelve 0 si el producto no existe o si ocurre un error
     }
 
     public int getMinQuantity(int productId) {
+        
         String query = "SELECT cantidad_minima FROM Inventario WHERE id = ?";
+        
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, productId);
 
             try (ResultSet rs = stmt.executeQuery()) {
+                
                 if (rs.next()) {
+                    
                     return rs.getInt("cantidad_minima");
                 }
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al obtener la cantidad mínima para el producto con ID: " + productId);
         }
+        
         return 0; // Valor por defecto si no se encuentra el producto
     }
 

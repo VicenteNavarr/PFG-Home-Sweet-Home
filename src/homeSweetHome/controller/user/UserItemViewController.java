@@ -1,7 +1,9 @@
 package homeSweetHome.controller.user;
 
+import homeSweetHome.dataPersistence.CurrentSession;
 import homeSweetHome.dataPersistence.UserDAO;
 import homeSweetHome.model.User;
+import homeSweetHome.utils.AlertUtils;
 import homeSweetHome.utils.ImageUtils;
 import homeSweetHome.utils.LanguageManager;
 import java.io.IOException;
@@ -10,9 +12,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -20,6 +22,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -39,7 +43,10 @@ public class UserItemViewController implements Initializable {
     private User user; // Referencia al usuario actual
 
     private UserViewController userViewController;
+    
+    int role = CurrentSession.getInstance().getUserRole(); // Tomamos rol para control de permisos
 
+    // Paso del controlador
     public void setUserViewController(UserViewController userViewController) {
 
         this.userViewController = userViewController;
@@ -47,6 +54,15 @@ public class UserItemViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        
+        //Si el usuario tiene rol consultor, desactivamos botones
+        if (role==2){
+        
+            //btnOpenCreateUser.setVisible(false);
+            btnOpenUpdate.setDisable(true);
+            btnDelete.setDisable(true);
+        
+        }
 
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
 
@@ -54,21 +70,22 @@ public class UserItemViewController implements Initializable {
         LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
         updateTexts(); // Actualiza los textos inicialmente
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////        
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
+
     }
 
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
-
+    
     /**
      * Actualiza los textos de la interfaz en función del idioma.
      */
     private void updateTexts() {
-        
+
         // Obtiene la instancia única del Singleton
         LanguageManager languageManager = LanguageManager.getInstance();
 
         if (languageManager == null) {
-            
+
             System.err.println("Error: LanguageManager es nulo. Traducción no aplicada.");
             return;
         }
@@ -87,7 +104,7 @@ public class UserItemViewController implements Initializable {
         // Traducción del rol del usuario
         String rolOriginal = lblRol.getText();
         String rolTraducido = switch (rolOriginal) {
-            
+
             case "Administrador", "Administrator" ->
                 languageManager.getTranslation("roleAdmin");
             case "Consultor", "Consultant" ->
@@ -95,26 +112,26 @@ public class UserItemViewController implements Initializable {
             default ->
                 rolOriginal; // Mantiene el rol si no se encuentra una traducción
         };
-        
+
         lblRol.setText(rolTraducido);
 
         System.out.println("Etiqueta 'userNameLabel': " + lblUserName.getText());
         System.out.println("Rol original: " + rolOriginal + " → Traducción: " + rolTraducido);
 
         // Refresca UI para aplicar los cambios visualmente
-        Platform.runLater(() -> lblUserName.getScene().getWindow().sizeToScene());
-
+        //Platform.runLater(() -> lblUserName.getScene().getWindow().sizeToScene());
         System.out.println("Traducciones aplicadas correctamente en UserItemViewController.");
     }
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////        
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////    
+    
     /**
      * Metodo que setea los datos de la vista para mostrar usuario
      *
      * @param user - User
      */
     public void setUserData(User user) {
-        
+
         this.user = user;
 
         // Configura el nombre del usuario
@@ -123,7 +140,7 @@ public class UserItemViewController implements Initializable {
         // Traducción del rol al momento de establecer los datos
         String rolOriginal = user.getNombreRol();
         String rolTraducido = switch (rolOriginal) {
-            
+
             case "Administrador", "Administrator" ->
                 LanguageManager.getInstance().getTranslation("roleAdmin");
             case "Consultor", "Consultant" ->
@@ -131,29 +148,29 @@ public class UserItemViewController implements Initializable {
             default ->
                 rolOriginal;
         };
-        
+
         lblRol.setText(rolTraducido);
 
         System.out.println("Rol original: " + rolOriginal + " → Traducción: " + rolTraducido);
 
         // Intenta cargar la imagen de perfil
         if (user.getFotoPerfil() != null) {
-            
+
             try {
-                
+
                 InputStream inputStream = user.getFotoPerfil().getBinaryStream();
                 System.out.println("Cargando imagen para el usuario: " + user.getNombre());
                 Image userImg = new Image(inputStream);
                 userImage.setImage(userImg); // Mostrar la imagen
-                
+
             } catch (Exception e) {
-                
+
                 System.err.println("Error al cargar la imagen de perfil: " + e.getMessage());
                 userImage.setImage(new Image(getClass().getResourceAsStream("/images/add-image.png")));
             }
-            
+
         } else {
-            
+
             System.out.println("Sin imagen de perfil para el usuario: " + user.getNombre());
             userImage.setImage(new Image(getClass().getResourceAsStream("/images/add-image.png")));
         }
@@ -170,9 +187,9 @@ public class UserItemViewController implements Initializable {
      */
     @FXML
     private void openUpdateUser(ActionEvent event) {
-        
+
         try {
-            
+
             UserDAO userDAO = new UserDAO();
             // Recupera datos completos del usuario por su ID
             User updatedUser = userDAO.getUserById(user.getId());
@@ -185,15 +202,16 @@ public class UserItemViewController implements Initializable {
 
             // Pasa el controlador principal y el usuario actualizado
             if (userViewController != null) {
-                
+
                 updateUserController.setUserViewController(userViewController);
             }
-            
+
             updateUserController.setUserData(updatedUser);
 
             // Crea un Stage (ventana) para el popup
             Stage stage = new Stage();
             stage.setTitle("Actualizar Usuario");
+            stage.setResizable(false);
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnOpenUpdate.getScene().getWindow());
@@ -202,7 +220,7 @@ public class UserItemViewController implements Initializable {
             stage.showAndWait();
 
         } catch (IOException e) {
-            
+
             System.err.println("Error al cargar la vista UpdateUserView: " + e.getMessage());
         }
     }
@@ -216,36 +234,94 @@ public class UserItemViewController implements Initializable {
     private void deleteUser(ActionEvent event) {
 
         if (user == null) {
-
             System.out.println("Error: No hay usuario seleccionado para eliminar.");
             return;
         }
 
-        // Confirma la eliminación del usuario 
-        System.out.println("Eliminando usuario: " + user.getNombre());
+        // Confirmación con alerta según el idioma
+        if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+            
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());//Revisar!!
+            alert.setTitle("Confirmación");
+            alert.setHeaderText("Eliminar usuario");
+            alert.setContentText("¿Seguro que desea eliminar al usuario " + user.getNombre() + "?");
 
-        // Llama al DAO para eliminar el usuario
-        UserDAO userDAO = new UserDAO();
-        boolean success = userDAO.deleteUserById(user.getId());
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
 
-        if (success) {
+                // Si el usuario confirma, se procede con la eliminación
+                System.out.println("Eliminando usuario: " + user.getNombre());
 
-            System.out.println("Usuario eliminado exitosamente.");
+                UserDAO userDAO = new UserDAO();
+                boolean success = userDAO.deleteUserById(user.getId());
 
-            // Refresca la lista en el UserViewController() para ver los cambios en tiempo real)
-            if (userViewController != null) {
+                if (success) {
+                    
+                    Alert alertSuccess = new Alert(Alert.AlertType.INFORMATION);
+                    alertSuccess.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());//Revisar!!
+                    alertSuccess.setTitle("Éxito");
+                    alertSuccess.setHeaderText(null);
+                    alertSuccess.setContentText("Usuario eliminado exitosamente.");
+                    alertSuccess.showAndWait();
 
-                System.out.println("Llamando a loadUsers desde deleteUser...");
-                userViewController.loadUsers();
-
-            } else {
-
-                System.out.println("Error: userViewController es null.");
+                    if (userViewController != null) {
+                        
+                        userViewController.loadUsers();
+                    }
+                    
+                } else {
+                    
+                    Alert alertError = new Alert(Alert.AlertType.ERROR);
+                    alertError.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());//Revisar!!
+                    alertError.setTitle("Error");
+                    alertError.setHeaderText(null);
+                    alertError.setContentText("Error al eliminar el usuario.");
+                    alertError.showAndWait();
+                }
             }
+            
+        } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+            
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());//Revisar!!
+            alert.setTitle("Confirmation");
+            alert.setHeaderText("Delete user");
+            alert.setContentText("Are you sure you want to delete user " + user.getNombre() + "?");
 
-        } else {
+            Optional<ButtonType> result = alert.showAndWait();
+            
+            if (result.isPresent() && result.get() == ButtonType.OK) {
 
-            System.out.println("Error al eliminar el usuario.");
+                System.out.println("Deleting user: " + user.getNombre());
+
+                UserDAO userDAO = new UserDAO();
+                boolean success = userDAO.deleteUserById(user.getId());
+
+                if (success) {
+                    
+                    Alert alertSuccess = new Alert(Alert.AlertType.INFORMATION);
+                    alertSuccess.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());//Revisar!!
+                    alertSuccess.setTitle("Success");
+                    alertSuccess.setHeaderText(null);
+                    alertSuccess.setContentText("User successfully deleted.");
+                    alertSuccess.showAndWait();
+
+                    if (userViewController != null) {
+                        
+                        userViewController.loadUsers();
+                    }
+                    
+                } else {
+                    
+                    Alert alertError = new Alert(Alert.AlertType.ERROR);
+                    alertError.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());//Revisar!!
+                    alertError.setTitle("Error");
+                    alertError.setHeaderText(null);
+                    alertError.setContentText("Error deleting user.");
+                    alertError.showAndWait();
+                }
+            }
         }
     }
 

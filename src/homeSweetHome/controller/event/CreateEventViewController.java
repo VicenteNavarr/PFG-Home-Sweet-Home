@@ -26,6 +26,8 @@ import javafx.stage.Stage;
 import java.sql.Time;
 import java.time.LocalDate;
 import javafx.application.Platform;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 
 /**
  * Controlador de la vista para la creación de eventos.
@@ -39,15 +41,15 @@ public class CreateEventViewController implements Initializable {
     @FXML
     private DatePicker fieldEventDate; // Selector de fecha para el evento
     @FXML
-    private TextField fieldEventDescription; // Campo de texto para la descripción del evento
+    private TextArea fieldEventDescription; // Campo de texto para la descripción del evento
     @FXML
     private Button btnCreateEvent; // Botón para crear el evento
-    @FXML
-    private TextField fieldEventTime;
     @FXML
     private ComboBox<String> hourPicker; // Selector de horas
     @FXML
     private ComboBox<String> minutePicker; // Selector de minutos
+    @FXML
+    private Label newEventTitle;
 
     //private Map<String, Integer> userMap = new HashMap<>(); // Map para usuarios: nombre -> ID
     private EventViewController eventViewController; // Referencia al controlador principal
@@ -59,11 +61,13 @@ public class CreateEventViewController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
 
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
+
         // Registra este controlador como listener del LanguageManager
         LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
         updateTexts(); // Actualiza los textos inicialmente
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////        
+/////////////////////////////////FIN IDIOMAS///////////////////////////////////////////// 
+
         int groupId = CurrentSession.getInstance().getUserGroupId(); // Obtiene el ID del grupo actual
         UserDAO userDAO = new UserDAO();
         List<User> usuarios = userDAO.getUsersByGroup(groupId); // Recupera los usuarios del grupo
@@ -86,37 +90,36 @@ public class CreateEventViewController implements Initializable {
      * Actualiza los textos de la interfaz en función del idioma.
      */
     private void updateTexts() {
+        
         // Accede directamente al Singleton del LanguageManager
         LanguageManager languageManager = LanguageManager.getInstance();
 
         if (languageManager == null) {
-            
+
             System.err.println("Error: LanguageManager no está disponible.");
             return;
         }
 
         // Configuración de los botones
-        btnCancelEvent.setText(languageManager.getTranslation("cancelEvent")); 
-        btnCreateEvent.setText(languageManager.getTranslation("createEvent")); 
+        btnCancelEvent.setText(languageManager.getTranslation("cancelEvent"));
+        btnCreateEvent.setText(languageManager.getTranslation("createEvent"));
+
+        newEventTitle.setText(languageManager.getTranslation("newEventTitle"));
 
         // Configuración de los campos de texto
-        fieldEventName.setPromptText(languageManager.getTranslation("promptEventName")); 
-        fieldEventDescription.setPromptText(languageManager.getTranslation("promptEventDescription")); 
-        
+        fieldEventName.setPromptText(languageManager.getTranslation("promptEventName"));
+        fieldEventDescription.setPromptText(languageManager.getTranslation("promptEventDescription"));
 
         // Configuración del DatePicker
-        fieldEventDate.setPromptText(languageManager.getTranslation("promptEventDate")); 
+        fieldEventDate.setPromptText(languageManager.getTranslation("promptEventDate"));
 
         // Configuración de los ComboBox: hora y minutos
-        hourPicker.setPromptText(languageManager.getTranslation("promptHour")); 
-        minutePicker.setPromptText(languageManager.getTranslation("promptMinutes")); 
+        hourPicker.setPromptText(languageManager.getTranslation("promptHour"));
+        minutePicker.setPromptText(languageManager.getTranslation("promptMinutes"));
 
         // Depuración
         System.out.println("Traducciones aplicadas correctamente en CreateEventViewController.");
     }
-    
-    
-
 
 /////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
     
@@ -152,15 +155,33 @@ public class CreateEventViewController implements Initializable {
 
             // Valida que los campos no estén vacíos
             if (nombreEvento.isEmpty() || descripcion.isEmpty() || fechaEvento == null) {
-                
-                AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos", "Por favor completa todos los campos, incluida la fecha y hora del evento.");
+
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos", "Por favor completa todos los campos, incluida la fecha y hora del evento.");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Incomplete Fields", "Please complete all fields, including the date and time of the event.");
+
+                }
+
                 return;
             }
 
             // Valida que la fecha no sea anterior a la fecha actual
             if (fieldEventDate.getValue().isBefore(fechaActual)) {
-                
-                AlertUtils.showAlert(Alert.AlertType.WARNING, "Fecha no válida", "La fecha del evento no puede ser anterior a la fecha actual.");
+
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Fecha no válida", "La fecha del evento no puede ser anterior a la fecha actual.");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Invalid Date", "The event date cannot be earlier than the current date.");
+
+                }
+
                 return;
             }
 
@@ -170,12 +191,21 @@ public class CreateEventViewController implements Initializable {
 
             // Valida que se haya seleccionado la hora completa
             if (selectedHour == null || selectedMinute == null) {
-                
-                AlertUtils.showAlert(Alert.AlertType.WARNING, "Hora incompleta", "Por favor selecciona tanto la hora como los minutos.");
+
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Hora incompleta", "Por favor selecciona tanto la hora como los minutos.");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Incomplete Time", "Please select both the hour and the minutes.");
+
+                }
+
                 return;
             }
 
-            // Convierte la hora usando el utilitario
+            // Convierte la hora 
             Time horaEvento;
 
             try {
@@ -190,10 +220,20 @@ public class CreateEventViewController implements Initializable {
 
             // Si la fecha del evento es hoy, validar que la hora no sea anterior o igual a la hora actual
             if (fieldEventDate.getValue().isEqual(fechaActual)) {
-                
+
                 java.time.LocalTime horaSeleccionada = java.time.LocalTime.of(Integer.parseInt(selectedHour), Integer.parseInt(selectedMinute));
                 if (!horaSeleccionada.isAfter(horaActual)) {
-                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Hora no válida", "Si la fecha del evento es hoy, la hora debe ser posterior a la hora actual.");
+                    if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                        AlertUtils.showAlert(Alert.AlertType.WARNING, "Hora no válida", "Si la fecha del evento es hoy, la hora debe ser posterior a la hora actual.");
+
+                    } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                        AlertUtils.showAlert(Alert.AlertType.WARNING, "Invalid Time", "If the event date is today, the time must be later than the current time.");
+
+                    }
+                    
+                    //AlertUtils.showAlert(Alert.AlertType.WARNING, "Hora no válida", "Si la fecha del evento es hoy, la hora debe ser posterior a la hora actual.");
                     return;
                 }
             }
@@ -215,10 +255,18 @@ public class CreateEventViewController implements Initializable {
 
             if (success) {
 
-                AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Éxito", "El evento se ha creado correctamente.");
-                
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Éxito", "El evento se ha creado correctamente.");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Success", "The event has been created successfully.");
+
+                }
+
                 if (eventViewController != null) {
-                    
+
                     eventViewController.loadEvents();
                 }
 
@@ -230,7 +278,7 @@ public class CreateEventViewController implements Initializable {
             }
 
         } catch (Exception e) {
-            
+
             e.printStackTrace();
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "Se produjo un error al procesar el evento.");
         }

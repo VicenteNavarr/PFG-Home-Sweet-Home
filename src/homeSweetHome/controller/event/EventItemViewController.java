@@ -24,7 +24,9 @@ import javafx.stage.Stage;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.util.Optional;
 import javafx.application.Platform;
+import javafx.scene.control.ButtonType;
 
 /**
  * Controlador para la vista de ítem de evento.
@@ -58,9 +60,20 @@ public class EventItemViewController implements Initializable {
 
     private EventViewController eventViewController;
 
+    int role = CurrentSession.getInstance().getUserRole(); // Tomamos rol para control de permisos
+
     //private LanguageManager languageManager;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        //Si el usuario tiene rol consultor, desactivamos botones
+        if (role == 2) {
+
+            btnOpenUpdateEvent.setDisable(true);
+            btnComplete.setDisable(true);
+            btnDelete.setDisable(true);
+
+        }
 
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
 
@@ -69,6 +82,7 @@ public class EventItemViewController implements Initializable {
         updateTexts(); // Actualiza los textos inicialmente
 
 /////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////
+
     }
 
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
@@ -77,7 +91,7 @@ public class EventItemViewController implements Initializable {
      * Actualiza los textos de la interfaz en función del idioma.
      */
     private void updateTexts() {
-        
+
         // Accede directamente al Singleton del LanguageManager
         LanguageManager languageManager = LanguageManager.getInstance();
 
@@ -87,17 +101,17 @@ public class EventItemViewController implements Initializable {
         }
 
         // Configurar textos de los botones
-        btnDelete.setText(languageManager.getTranslation("deleteEvent")); 
-        btnOpenUpdateEvent.setText(languageManager.getTranslation("updateEvent")); 
-        btnComplete.setText(languageManager.getTranslation("completeEvent")); 
+        btnDelete.setText(languageManager.getTranslation("deleteEvent"));
+        btnOpenUpdateEvent.setText(languageManager.getTranslation("updateEvent"));
+        btnComplete.setText(languageManager.getTranslation("completeEvent"));
 
         // Configurar el PromptText de la descripción del evento
-        fieldEventDescription.setPromptText(languageManager.getTranslation("promptEventDescription")); 
+        fieldEventDescription.setPromptText(languageManager.getTranslation("promptEventDescription"));
 
         // Configurar etiquetas dinámicas
-        lblNombreEvento.setText(languageManager.getTranslation("eventNameLabel")); 
-        lblFecha.setText(languageManager.getTranslation("eventDateLabel")); 
-        lblHora.setText(languageManager.getTranslation("eventTimeLabel")); 
+        lblNombreEvento.setText(languageManager.getTranslation("eventNameLabel"));
+        lblFecha.setText(languageManager.getTranslation("eventDateLabel"));
+        lblHora.setText(languageManager.getTranslation("eventTimeLabel"));
         fieldEventDescription.setPromptText(languageManager.getTranslation("promptEventDescription"));
 
         // Depuración
@@ -152,7 +166,7 @@ public class EventItemViewController implements Initializable {
 
             // Configura la referencia al controlador principal
             if (eventViewController != null) {
-                
+
                 updateEventController.setEventViewController(eventViewController);
             }
 
@@ -161,15 +175,15 @@ public class EventItemViewController implements Initializable {
             Time timeValue = null;
 
             if (timeText != null && !timeText.isEmpty() && timeText.matches("\\d{2}:\\d{2}:\\d{2}")) {
-                
+
                 timeValue = Time.valueOf(timeText);
-                
+
             } else if (timeText != null && !timeText.isEmpty() && timeText.matches("\\d{2}:\\d{2}")) {
-                
+
                 timeValue = Time.valueOf(timeText + ":00");
-                
+
             } else {
-                
+
                 System.err.println("El formato de tiempo no es válido: " + timeText);
             }
 
@@ -190,6 +204,7 @@ public class EventItemViewController implements Initializable {
             // Crea y configura una nueva ventana para la vista de actualización
             Stage stage = new Stage();
             stage.setTitle("Actualizar Evento");
+            stage.setResizable(false);
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnOpenUpdateEvent.getScene().getWindow());
@@ -209,22 +224,63 @@ public class EventItemViewController implements Initializable {
      */
     @FXML
     private void deleteEvent(ActionEvent event) {
+
+        // Primero, aseguramos que se confirme la eliminación
+        // Inicializamos la variable `alert`
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         
-        EventDAO eventDAO = new EventDAO();
-        boolean success = eventDAO.deleteEvent(eventId);
-
-        if (success) {
+        if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
             
-            // Elimina visualmente el evento del contenedor
-            eventViewController.getEventContainer().getChildren().remove(borderPaneContainer);
+            alert = new Alert(Alert.AlertType.CONFIRMATION, "¿Seguro que desea eliminar este evento?", ButtonType.OK, ButtonType.CANCEL);
+            alert.setTitle("Confirmación");
+            alert.setHeaderText("Eliminar evento");
+            
+        } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+            
+            alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this event?", ButtonType.OK, ButtonType.CANCEL);
+            alert.setTitle("Confirmation");
+            alert.setHeaderText("Delete Event");
+        }
 
-            // Muestra un mensaje de éxito
-            AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Evento Eliminado", "El evento se eliminó correctamente.");
+        //alert.getDialogPane().getStylesheets().add(getClass().getResource("src/homeSweetHome/utils/alertsCss.css").toExternalForm());
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+
+            // Instancia del DAO para gestionar la eliminación en la base de datos
+            EventDAO eventDAO = new EventDAO();
+            boolean success = eventDAO.deleteEvent(eventId);
+
+            if (success) {
+                
+                // Elimina visualmente el evento del contenedor
+                eventViewController.getEventContainer().getChildren().remove(borderPaneContainer);
+
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+                    
+                    AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Evento Eliminado", "El evento se eliminó correctamente.");
+                    
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+                    
+                    AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Event Deleted", "The event was successfully deleted.");
+                }
+
+            } else {
+                
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+                    
+                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se pudo eliminar el evento.");
+                    
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+                    
+                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "The event could not be deleted.");
+                }
+            }
             
         } else {
             
-            // Muestra un mensaje de error si algo falla
-            AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se pudo eliminar el evento.");
+            System.out.println(LanguageManager.getInstance().getLanguageCode().equals("es") ? "Eliminación cancelada por el usuario." : "Deletion canceled by user.");
         }
     }
 
@@ -237,7 +293,7 @@ public class EventItemViewController implements Initializable {
      */
     @FXML
     private void completeEvent(ActionEvent event) {
-        
+
         EventDAO eventDAO = new EventDAO();
         int groupId = CurrentSession.getInstance().getUserGroupId();
 
@@ -248,8 +304,17 @@ public class EventItemViewController implements Initializable {
             // Elimina visualmente el evento completado de la vista actual
             eventViewController.getEventContainer().getChildren().remove(borderPaneContainer);
 
-            // Muestra un mensaje de éxito
-            AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Evento Completado", "El evento ha sido movido al historial.");
+            if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                // Muestra un mensaje de éxito
+                AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Evento Completado", "El evento ha sido movido al historial.");
+
+            } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                // Muestra un mensaje de éxito
+                AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Event Completed", "The event has been moved to the history.");
+
+            }
 
         } else {
 

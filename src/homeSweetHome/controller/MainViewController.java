@@ -99,6 +99,17 @@ public class MainViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+        // Carga automáticamente la vista del panel de control al iniciar
+        try {
+            
+            AnchorPane root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/ControlPanelView.fxml"));
+            rootPane.setCenter(root);
+            
+        } catch (IOException ex) {
+            
+            Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, "Error al cargar ControlPanelView", ex);
+        }
+
         // Carga la imagen del usuario actual desde la base de datos
         UserDAO userDAO = new UserDAO();
         setUserImageFromDatabase(userDAO);
@@ -110,13 +121,13 @@ public class MainViewController implements Initializable {
         setupLanguageSelector(currentUser);
     }
 
-/////////////////////////////////IDIOMAS/////////////////////////////////////////////    
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////   
     
     /**
      * Configura el ComboBox de selección de idioma y actualiza los textos.
      */
     private void setupLanguageSelector(User currentUser) {
-        
+
         // Agrega opciones de idiomas al ComboBox
         languageSelector.getItems().addAll("Español", "English");
         languageSelector.setValue("Español"); // Idioma predeterminado
@@ -150,12 +161,13 @@ public class MainViewController implements Initializable {
         btnCloseSession.setText(languageManager.getTranslation("closeSession"));
         btnExitApp.setText(languageManager.getTranslation("exit"));
     }
-    
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////    
-    
 
-
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////  
+    
+    
+    
 ///////////////CARGA DE VISTAS -> ACCIÓN BOTONES/////////////////////////////////////////////
+    
     /**
      * Método llamado cuando se hace clic en el botón "btnLoadControlPanelView".
      * Carga y muestra la vista ControlPanelView.fxml en el centro del
@@ -193,7 +205,7 @@ public class MainViewController implements Initializable {
     private void loadUserView(ActionEvent event) {
 
         try {
-            
+
             // Crea una instancia explícita de FXMLLoader
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/user/UserView.fxml"));
 
@@ -207,7 +219,7 @@ public class MainViewController implements Initializable {
             rootPane.setCenter(root);
 
         } catch (IOException ex) {
-            
+
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -223,7 +235,7 @@ public class MainViewController implements Initializable {
     private void LoadMealView(ActionEvent event) {
 
         try {
-            
+
             // Crea una instancia explícita de FXMLLoader
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/meal/MealView.fxml"));
 
@@ -237,7 +249,7 @@ public class MainViewController implements Initializable {
             rootPane.setCenter(root);
 
         } catch (IOException ex) {
-            
+
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -253,7 +265,7 @@ public class MainViewController implements Initializable {
     private void LoadPurchaseView(ActionEvent event) {
 
         try {
-            
+
             // Crea una instancia explícita de FXMLLoader
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/purchase/PurchaseView.fxml"));
 
@@ -267,7 +279,7 @@ public class MainViewController implements Initializable {
             rootPane.setCenter(root);
 
         } catch (IOException ex) {
-            
+
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -283,7 +295,7 @@ public class MainViewController implements Initializable {
     private void LoadTaskView(ActionEvent event) {
 
         try {
-            
+
             // Crea una instancia explícita de FXMLLoader
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/task/TaskView.fxml"));
 
@@ -297,7 +309,7 @@ public class MainViewController implements Initializable {
             rootPane.setCenter(root);
 
         } catch (IOException ex) {
-            
+
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -313,7 +325,7 @@ public class MainViewController implements Initializable {
     private void LoadEventView(ActionEvent event) {
 
         try {
-            
+
             // Crea una instancia explícita de FXMLLoader
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/event/EventView.fxml"));
 
@@ -327,7 +339,7 @@ public class MainViewController implements Initializable {
             rootPane.setCenter(root);
 
         } catch (IOException ex) {
-            
+
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -343,7 +355,7 @@ public class MainViewController implements Initializable {
     private void LoadBudgetView(ActionEvent event) {
 
         try {
-            
+
             // Crea una instancia explícita de FXMLLoader
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/budget/BudgetView.fxml"));
 
@@ -357,7 +369,7 @@ public class MainViewController implements Initializable {
             rootPane.setCenter(root);
 
         } catch (IOException ex) {
-            
+
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -373,7 +385,7 @@ public class MainViewController implements Initializable {
     private void LoadRecipeView(ActionEvent event) {
 
         try {
-            
+
             // Crea una instancia explícita de FXMLLoader
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/recipe/RecipeView.fxml"));
 
@@ -387,13 +399,15 @@ public class MainViewController implements Initializable {
             rootPane.setCenter(root);
 
         } catch (IOException ex) {
-            
+
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    
     /**
      * Método para cargar y establecer la imagen de perfil del usuario actual
      * desde la base de datos.
@@ -402,32 +416,33 @@ public class MainViewController implements Initializable {
      * usuario.
      */
     public void setUserImageFromDatabase(UserDAO userDAO) {
-        
+
         // Obtener el ID del usuario actual desde la sesión
         int currentUserId = CurrentSession.getInstance().getUserId();
         System.out.println("Obteniendo usuario con ID: " + currentUserId);
 
         try {
+            
             // Obtiene el usuario desde la base de datos
             User currentUser = userDAO.getUserById(currentUserId);
 
             if (currentUser != null && currentUser.getFotoPerfil() != null) {
-                
+
                 // Carga la imagen desde el Blob
                 InputStream inputStream = currentUser.getFotoPerfil().getBinaryStream();
                 Image userImg = new Image(inputStream);
                 userImage.setImage(userImg); // Muestra la imagen
                 System.out.println("Imagen cargada correctamente para el usuario: " + currentUser.getNombre());
-                
+
             } else {
-                
+
                 // Imagen predeterminada si no hay foto de perfil
                 System.out.println("El usuario actual no tiene una imagen de perfil.");
                 userImage.setImage(new Image(getClass().getResourceAsStream("/images/add-image.png")));
             }
-            
+
         } catch (Exception e) {
-            
+
             System.err.println("Error al cargar la imagen del usuario: " + e.getMessage());
             // Carga imagen predeterminada si hay un error
             userImage.setImage(new Image(getClass().getResourceAsStream("/images/add-image.png")));
@@ -458,7 +473,7 @@ public class MainViewController implements Initializable {
     private void settings(ActionEvent event) {
 
         try {
-            
+
             // Crea una instancia explícita de FXMLLoader
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/user/CurrentUserSettingsView.fxml"));
 
@@ -468,6 +483,9 @@ public class MainViewController implements Initializable {
             // Obtieneel controlador de la vista cargada
             CurrentUserSettingsViewController controller = loader.getController();
 
+            // Pasar la referencia de MainViewController
+            controller.setMainViewController(this);
+
             // Pasa el ID del usuario actual al controlador
             int currentUserId = CurrentSession.getInstance().getUserId(); // Obtiene el ID desde la sesión actual
             controller.setUserData(currentUserId); // Método en CurrentUserSettingsViewController
@@ -476,7 +494,7 @@ public class MainViewController implements Initializable {
             rootPane.setCenter(root);
 
         } catch (IOException ex) {
-            
+
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -489,8 +507,9 @@ public class MainViewController implements Initializable {
      */
     @FXML
     private void closeSession(ActionEvent event) {
+        
         try {
-            
+
             // Carga el archivo FXML de la nueva vista
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/LoginView.fxml"));
             Parent root = loader.load();
@@ -506,7 +525,7 @@ public class MainViewController implements Initializable {
             currentStage.close();
 
         } catch (IOException ex) {
-            
+
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -522,7 +541,5 @@ public class MainViewController implements Initializable {
         System.out.println("Saliendo del programa");
         System.exit(0);
     }
-
-   
 
 }

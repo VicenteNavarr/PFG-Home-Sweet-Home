@@ -4,13 +4,14 @@ import homeSweetHome.dataPersistence.BudgetDAO;
 import homeSweetHome.dataPersistence.CurrentSession;
 import homeSweetHome.dataPersistence.InventoryDAO;
 import homeSweetHome.dataPersistence.PurchaseDAO;
+import homeSweetHome.dataPersistence.UserDAO;
 import homeSweetHome.model.Budget;
-import homeSweetHome.model.Inventory;
 import homeSweetHome.model.Product;
-import homeSweetHome.model.Purchase;
 import homeSweetHome.utils.AlertUtils;
 import homeSweetHome.utils.LanguageManager;
-import java.io.IOException;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -39,8 +40,18 @@ import javafx.util.converter.IntegerStringConverter;
 import java.sql.SQLException;
 import java.util.Arrays;
 import javafx.application.Platform;
+import javafx.geometry.Pos;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.TextInputDialog;
+import java.nio.file.*;
+import java.io.IOException;
+import javax.mail.PasswordAuthentication;
+import java.util.Properties;
+import javax.mail.Message;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 /**
  * Controlador para gestionar la vista de compras. Permite visualizar y
@@ -77,6 +88,10 @@ public class PurchaseViewController {
     private Button btnOpenAddNewProduct; // Botón para añadir productos
     @FXML
     private Button btnCompletePurchase; // Botón para completar la compra
+    @FXML
+    private Label purchasesTitle;
+    @FXML
+    private Button btnSendPurchase;
 
     // Lista interna que contiene los datos del inventario
     private ObservableList<Product> inventoryList = FXCollections.observableArrayList();
@@ -84,6 +99,7 @@ public class PurchaseViewController {
     // Lista interna que contiene los datos de la lista de compras
     private ObservableList<Product> shoppingList = FXCollections.observableArrayList();
 
+    int role = CurrentSession.getInstance().getUserRole(); // Tomamos rol para control de permisos
 
     /**
      * Carga los productos del inventario pertenecientes al grupo especificado.
@@ -134,14 +150,21 @@ public class PurchaseViewController {
      */
     public void initialize() {
 
-/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+        //Si el usuario tiene rol consultor, desactivamos botones
+        if (role == 2) {
 
+            btnOpenAddNewProduct.setDisable(true);
+            btnCompletePurchase.setDisable(true);
+            btnSendPurchase.setDisable(true);
+
+        }
+
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
         // Registra este controlador como listener del LanguageManager
         LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
         updateTexts(); // Actualiza los textos inicialmente
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
-
+/////////////////////////////////FIN IDIOMAS///////////////////////////////////////////// 
         // Configura las columnas principales de inventario
         colProductName.setCellValueFactory(new PropertyValueFactory<>("nombreProducto"));
         colCategory.setCellValueFactory(new PropertyValueFactory<>("categoria"));
@@ -195,52 +218,60 @@ public class PurchaseViewController {
     }
 
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
-    
     /**
      * Actualiza los textos de la interfaz en función del idioma.
      */
     private void updateTexts() {
-        
+
         // Acceder al Singleton del LanguageManager
         LanguageManager languageManager = LanguageManager.getInstance();
 
         if (languageManager == null) {
-            
+
             System.err.println("Error: LanguageManager no está disponible.");
             return;
         }
 
         // Traducción de los textos de los botones
-        btnOpenAddNewProduct.setText(languageManager.getTranslation("addNewProduct")); 
-        btnCompletePurchase.setText(languageManager.getTranslation("completePurchase")); 
+        btnOpenAddNewProduct.setText(languageManager.getTranslation("addNewProduct"));
+        btnCompletePurchase.setText(languageManager.getTranslation("completePurchase"));
+        btnSendPurchase.setText(languageManager.getTranslation("sendPurchase"));
+
+        purchasesTitle.setText(languageManager.getTranslation("purchasesTitle"));
 
         // Traducción de encabezados de las columnas en la tabla de inventario
-        colProductName.setText(languageManager.getTranslation("productName")); 
-        colQuantity.setText(languageManager.getTranslation("quantity")); 
-        colMinQuantity.setText(languageManager.getTranslation("minQuantity")); 
-        colCategory.setText(languageManager.getTranslation("category")); 
-        colType.setText(languageManager.getTranslation("type")); 
+        colProductName.setText(languageManager.getTranslation("productName"));
+        colQuantity.setText(languageManager.getTranslation("quantity"));
+        colMinQuantity.setText(languageManager.getTranslation("minQuantity"));
+        colCategory.setText(languageManager.getTranslation("category"));
+        colType.setText(languageManager.getTranslation("type"));
 
         // Traducción de encabezados de las columnas en la tabla de la lista de compras
-        colShoppingProduct.setText(languageManager.getTranslation("shoppingProduct")); 
-        colShoppingQuantity.setText(languageManager.getTranslation("shoppingQuantity")); 
-        colShoppingType.setText(languageManager.getTranslation("shoppingType")); 
+        colShoppingProduct.setText(languageManager.getTranslation("shoppingProduct"));
+        colShoppingQuantity.setText(languageManager.getTranslation("shoppingQuantity"));
+        colShoppingType.setText(languageManager.getTranslation("shoppingType"));
 
         // Depuración: Confirmar idioma actual
         System.out.println("Traducciones aplicadas exitosamente en idioma: " + languageManager.getTranslation("currentLanguage"));
     }
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////     
-    
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////    
     /**
      * Abre la vista para actualizar o eliminar un producto seleccionado.
      *
      * @param product El producto seleccionado en la tabla.
      */
     private void openUpdateProductView(Product product) {
-        
+
+        //No permite el doble click para acceder a update si consultor
+        if (role == 2) {
+
+            //System.out.println("Acceso denegado: los usuarios con rol 2 no pueden actualizar productos.");
+            return; // Sale del método sin abrir la vista
+        }
+
         try {
-            
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/purchase/UpdateProductView.fxml"));
             Parent root = loader.load();
 
@@ -252,17 +283,17 @@ public class PurchaseViewController {
             // Crea la escena y muestra
             Stage stage = new Stage();
             stage.setTitle("Actualizar Producto");
+            stage.setResizable(false);
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL); // Ventana modal
             stage.showAndWait(); // Espera hasta que se cierre la ventana
-            
+
         } catch (IOException e) {
-            
+
             e.printStackTrace();
             System.err.println("Error al abrir la vista UpdateProductView.");
         }
     }
-
 
     /**
      * Configura una columna para que incluya controles (+/-) y permita al
@@ -273,104 +304,113 @@ public class PurchaseViewController {
      * (por ejemplo, "cantidad" o "cantidadMinima").
      */
     private void configureColumnWithControls(TableColumn<Product, Void> column, String propertyName) {
-        
+
         Callback<TableColumn<Product, Void>, TableCell<Product, Void>> cellFactory = new Callback<>() {
-            
+
             @Override
             public TableCell<Product, Void> call(final TableColumn<Product, Void> param) {
-                
+
                 return new TableCell<>() {
-                    
+
                     private final Button btnIncrease = new Button("+");
                     private final Button btnDecrease = new Button("-");
                     private final Label lblValue = new Label(); // Muestra el valor actual
 
                     {
+
+                        //Si el usuario tiene rol consultor, desactivamos botones
+                        if (role == 2) {
+
+                            btnIncrease.setDisable(true);
+                            btnDecrease.setDisable(true);
+
+                        }
+
                         // Configura el estilo visual de los botones
                         btnIncrease.getStyleClass().add("btn-increase");
                         btnDecrease.getStyleClass().add("btn-decrease");
 
                         // Acción para aumentar la cantidad
                         btnIncrease.setOnAction(event -> {
-                            
+
                             Product product = getTableView().getItems().get(getIndex());
                             if ("cantidad".equals(propertyName)) {
-                                
+
                                 product.setCantidad(product.getCantidad() + getIncrement(product.getTipo()));
                                 lblValue.setText(formatValue(product.getCantidad())); // Actualiza la vista
-                                
+
                             } else if ("cantidadMinima".equals(propertyName)) {
-                                
+
                                 product.setCantidadMinima(product.getCantidadMinima() + getIncrement(product.getTipo()));
                                 lblValue.setText(formatValue(product.getCantidadMinima())); // Actualiza la vista
                             }
-                            
+
                             updateInventoryProduct(product); // Actualiza la base de datos
                             updateShoppingList(product); // Sincroniza con la lista de compras
                             tableViewInventory.refresh(); // Refresca la tabla
                             tableViewShoppingList.refresh(); // Refresca la lista de compras
-                            
+
                         });
 
                         // Acción para disminuir la cantidad
                         btnDecrease.setOnAction(event -> {
-                            
+
                             Product product = getTableView().getItems().get(getIndex());
-                            
+
                             if ("cantidad".equals(propertyName)) {
-                                
+
                                 product.setCantidad(Math.max(0, product.getCantidad() - getIncrement(product.getTipo())));
                                 lblValue.setText(formatValue(product.getCantidad())); // Actualiza la vista
                             } else if ("cantidadMinima".equals(propertyName)) {
-                                
+
                                 product.setCantidadMinima(Math.max(0, product.getCantidadMinima() - getIncrement(product.getTipo())));
                                 lblValue.setText(formatValue(product.getCantidadMinima())); // Actualiza la vista
                             }
-                            
+
                             updateInventoryProduct(product); // Actualiza la base de datos
                             updateShoppingList(product); // Sincroniza con la lista de compras
                             tableViewInventory.refresh(); // Refresca la tabla
                             tableViewShoppingList.refresh(); // Refresca la lista de compras
-                            
+
                         });
                     }
 
                     @Override
                     protected void updateItem(Void item, boolean empty) {
-                        
                         super.updateItem(item, empty);
-                        
+
                         if (empty) {
-                            
                             setGraphic(null);
-                            
                         } else {
-                            
                             Product product = getTableView().getItems().get(getIndex());
-                            
+
                             if ("cantidad".equals(propertyName)) {
-                                
                                 lblValue.setText(formatValue(product.getCantidad()));
-                                
                             } else if ("cantidadMinima".equals(propertyName)) {
-                                
                                 lblValue.setText(formatValue(product.getCantidadMinima()));
                             }
-                            
-                            HBox buttonsBox = new HBox(5, lblValue, btnIncrease, btnDecrease);
-                            setGraphic(buttonsBox);
+
+                            lblValue.setPrefWidth(50); // Define un ancho fijo para evitar que se mueva
+
+                            HBox buttonsBox = new HBox(5, btnDecrease, btnIncrease);
+                            buttonsBox.setAlignment(Pos.CENTER_RIGHT);
+
+                            HBox container = new HBox(15, lblValue, buttonsBox);
+                            container.setAlignment(Pos.CENTER); // Asegura mejor distribución
+
+                            setGraphic(container);
                         }
                     }
 
                     // Método auxiliar para calcular el incremento basado en el tipo
                     private int getIncrement(String tipo) {
-                        
+
                         return "Gramos".equals(tipo) ? 50 : 1; // Incremento de 50 para "Gramos", 1 para "Cantidad".
                     }
 
                     // Método auxiliar para formatear valores sin ningún sufijo
                     private String formatValue(int cantidad) {
-                        
+
                         return String.valueOf(cantidad); // Devuelve el número como texto sin formato adicional.
                     }
                 };
@@ -397,17 +437,17 @@ public class PurchaseViewController {
      * @param product El objeto del producto a actualizar.
      */
     public void updateInventoryProduct(Product product) {
-        
+
         InventoryDAO inventoryDAO = new InventoryDAO();
         boolean updated = inventoryDAO.updateInventoryProduct(product);
-        
+
         if (!updated) {
-            
+
             System.err.println("Error al actualizar el producto en la base de datos. Producto: "
                     + product.getNombreProducto() + ", Tipo: " + product.getTipo());
-            
+
         } else {
-            
+
             System.out.println("Producto actualizado correctamente: "
                     + product.getNombreProducto() + ", Tipo: " + product.getTipo());
         }
@@ -420,18 +460,18 @@ public class PurchaseViewController {
      * @param product El objeto del inventario que se evaluará.
      */
     public void updateShoppingList(Product product) {
-        
+
         // Verifica si la cantidad actual es menor que la cantidad mínima
         if (product.getCantidad() < product.getCantidadMinima()) {
-            
+
             // Calcula la cantidad necesaria para alcanzar la cantidad mínima
             int cantidadNecesaria = product.getCantidadMinima() - product.getCantidad();
 
             // Comprueba si el producto ya existe en la lista de compras
             boolean exists = shoppingList.stream().anyMatch(p -> p.getId() == product.getId());
-            
+
             if (!exists) {
-                
+
                 // Si no existe, crea un nuevo producto para la lista de compras
                 Product shoppingProduct = new Product(
                         product.getId(), // Usa el ID del producto existente
@@ -444,13 +484,13 @@ public class PurchaseViewController {
                         product.getIdGrupo(),
                         LocalDate.now().toString() // Fecha actual
                 );
-                
+
                 shoppingList.add(shoppingProduct);
                 System.out.println("Producto añadido a la lista de compras: " + shoppingProduct.getNombreProducto()
                         + ", cantidad necesaria: " + cantidadNecesaria + ", tipo: " + shoppingProduct.getTipo());
-                
+
             } else {
-                
+
                 // Si ya existe, actualiza la cantidad necesaria
                 shoppingList.stream()
                         .filter(p -> p.getId() == product.getId())
@@ -461,14 +501,14 @@ public class PurchaseViewController {
                                     + ", cantidad necesaria: " + cantidadNecesaria + ", tipo: " + p.getTipo());
                         });
             }
-            
+
         } else {
-            
+
             // Si la cantidad actual es mayor o igual que la mínima, elimina el producto de la lista de compras
             boolean removed = shoppingList.removeIf(p -> p.getId() == product.getId());
-            
+
             if (removed) {
-                
+
                 System.out.println("Producto eliminado de la lista de compras: " + product.getNombreProducto());
             }
         }
@@ -486,7 +526,7 @@ public class PurchaseViewController {
     private void openAddNewProduct(ActionEvent event) {
 
         try {
-            
+
             // Carga la vista CreateEventView desde el archivo FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/purchase/CreateProductView.fxml"));
             Parent root = loader.load();
@@ -500,13 +540,14 @@ public class PurchaseViewController {
             // Configura una nueva ventana para la vista de creación
             Stage stage = new Stage();
             stage.setTitle("Añadir Nuevo Producto"); // Título de la ventana
+            stage.setResizable(false);
             stage.setScene(new Scene(root)); // Configura la escena
             stage.initModality(Modality.WINDOW_MODAL); // Establece la ventana como modal
             stage.initOwner(btnOpenAddNewProduct.getScene().getWindow()); // Asocia la ventana actual como propietaria
             stage.showAndWait(); // Muestra la ventana y espera a que se cierre
-            
+
         } catch (IOException e) {
-            
+
             // Registra un error en caso de problemas al cargar la vista
             System.err.println("Error al cargar la vista CreateProductView: " + e.getMessage());
         }
@@ -520,9 +561,9 @@ public class PurchaseViewController {
      * @param groupId El ID del grupo cuyos productos se cargarán.
      */
     public void loadShoppingList(int groupId) {
-        
+
         try {
-            
+
             PurchaseDAO purchaseDAO = new PurchaseDAO();
 
             // Recupera los datos actualizados desde el DAO
@@ -530,20 +571,20 @@ public class PurchaseViewController {
 
             // Mantiene los productos existentes y añade solo los nuevos
             for (Product updatedProduct : updatedProducts) {
-                
+
                 // Verifica si el producto ya existe en la lista observable
                 boolean exists = shoppingList.stream()
                         .anyMatch(product -> product.getId() == updatedProduct.getId());
 
                 if (!exists) {
-                    
+
                     shoppingList.add(updatedProduct);
                 }
             }
 
             // Verifica que los datos se hayan cargado correctamente
             for (Product product : shoppingList) {
-                
+
                 System.out.println("Lista actualizada: " + product.getNombreProducto()
                         + ", cantidad necesaria: " + product.getCantidad()
                         + ", tipo: " + product.getTipo());
@@ -553,7 +594,7 @@ public class PurchaseViewController {
             tableViewShoppingList.refresh();
 
         } catch (Exception e) {
-            
+
             e.printStackTrace();
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error",
                     "Hubo un problema al cargar la lista de compras.");
@@ -569,66 +610,161 @@ public class PurchaseViewController {
      */
     @FXML
     private void completePurchase(ActionEvent event) {
-        
+
+        System.out.println("Inicio de completePurchase");
+
+        // Obtiene el idioma actual
+        String idiomaActivo = LanguageManager.getInstance().getLanguageCode();
+
+        // Declaración de variables antes del `try`
+        String tituloModificacion, mensajeModificacion;
+        String tituloProductosFuera, mensajeProductosFuera;
+        String tituloGasto, mensajeGasto;
+        String tituloExito, headerExito, contenidoExito;
+        String tituloCancelado, mensajeCancelado;
+        String tituloError = "Error";
+        String mensajeError;
+
+        boolean compraCompletada = false; // Nueva variable para controlar si la compra fue realmente completada 
+
+        if (idiomaActivo.equals("en")) {
+
+            tituloModificacion = "Modify Quantities";
+            mensajeModificacion = "Have you modified the quantities of the products in the list?";
+
+            tituloProductosFuera = "Products Outside the List";
+            mensajeProductosFuera = "Did you buy products that were not on the list?";
+
+            tituloGasto = "Register Expense";
+            mensajeGasto = "Do you want to continue with expense registration?";
+
+            tituloExito = "Purchase Processed";
+            headerExito = "Purchase completed successfully!";
+            contenidoExito = "The products have been processed correctly, and the expense has been successfully registered in the system.";
+
+            tituloCancelado = "Operation Cancelled";
+            mensajeCancelado = "The purchase process was cancelled by the user. No changes have been made.";
+
+            mensajeError = "There was a problem processing the purchase.";
+
+        } else {
+
+            tituloModificacion = "Modificar Cantidades";
+            mensajeModificacion = "¿Has modificado las cantidades de los productos en la lista?";
+
+            tituloProductosFuera = "Productos Fuera de la Lista";
+            mensajeProductosFuera = "¿Has comprado productos que no estaban en la lista?";
+
+            tituloGasto = "Registrar Gasto";
+            mensajeGasto = "¿Desea continuar con el registro del gasto?";
+
+            tituloExito = "Compra Procesada";
+            headerExito = "¡Compra completada con éxito!";
+            contenidoExito = "Los productos han sido procesados correctamente y el gasto ha sido registrado con éxito en el sistema.";
+
+            tituloCancelado = "Operación Cancelada";
+            mensajeCancelado = "El proceso de compra fue cancelado por el usuario. No se han realizado cambios.";
+
+            mensajeError = "Hubo un problema al procesar la compra.";
+        }
+
         try {
-            
-            System.out.println("Inicio de completePurchase");
 
             // Valida modificación de cantidades
-            if (!validateModifiedQuantities()) {
-                
+            Optional<ButtonType> resultCantidad = showConfirmationAlert(tituloModificacion, mensajeModificacion);
+
+            if (resultCantidad.isPresent() && resultCantidad.get() == ButtonType.CANCEL) {
+
                 System.out.println("El usuario canceló la compra en la etapa de modificación de cantidades.");
-                return; // Detener el flujo si se decide cancelar
+                AlertUtils.showAlert(Alert.AlertType.INFORMATION, tituloCancelado, mensajeCancelado);
+                return; //  Sale completamente sin hacer cambios 
             }
 
-            // Confirma si desea continuar con la actualización del inventario
-            if (!confirmAction("Actualizar Inventario", "¿Desea continuar con la actualización del inventario?")) {
-                
-                System.out.println("El usuario canceló la compra en la etapa de actualización del inventario.");
-                return; // Detener el flujo si se decide cancelar
+            if (resultCantidad.isPresent() && resultCantidad.get() == ButtonType.OK) {
+
+                System.out.println("El usuario indicó que ha modificado las cantidades. Salimos del proceso.");
+                return; //  Sale del proceso y no sigue 
             }
 
-            // Actualiza productos directamente en el inventario
-            InventoryDAO inventoryDAO = new InventoryDAO();
-            updateInventoryQuantities(inventoryDAO);
+            // Manejo de productos fuera de la lista
+            boolean productosFuera = true;
+            while (productosFuera) {
+                Optional<ButtonType> resultProductos = showConfirmationAlert(tituloProductosFuera, mensajeProductosFuera);
 
-            // Confirma si desea continuar con el manejo de productos fuera de la lista
-            if (!confirmAction("Productos Fuera de la Lista", "¿Desea continuar con el manejo de productos fuera de la lista?")) {
-                
-                System.out.println("El usuario canceló la compra en la etapa de manejo de productos fuera de la lista.");
-                return; // Detener el flujo si se decide cancelar
-            }
+                if (resultProductos.isPresent() && resultProductos.get() == ButtonType.CANCEL) {
 
-            // Maneja productos fuera de la lista
-            manageProductsOutsideList(inventoryDAO);
+                    System.out.println("El usuario canceló la compra en la etapa de productos fuera de la lista.");
+                    AlertUtils.showAlert(Alert.AlertType.INFORMATION, tituloCancelado, mensajeCancelado);
+                    return; //  Salie sin hacer cambios 
+                }
 
-            // Confirma si desea continuar con el registro del gasto
-            if (!confirmAction("Registrar Gasto", "¿Desea continuar con el registro del gasto?")) {
-                
-                System.out.println("El usuario canceló la compra en la etapa de registro del gasto.");
-                return; // Detener el flujo si se decide cancelar
+                if (resultProductos.isPresent() && resultProductos.get() == ButtonType.OK) {
+
+                    System.out.println("El usuario indicó que compró productos fuera de la lista.");
+                    InventoryDAO inventoryDAO = new InventoryDAO();
+                    manageProductsOutsideList(inventoryDAO);
+
+                } else {
+
+                    productosFuera = false; // ? Si el usuario dice que no, pasa a la siguiente 
+                }
             }
 
             // Registra el gasto
-            registerExpense();
+            Optional<ButtonType> resultGasto = showConfirmationAlert(tituloGasto, mensajeGasto);
 
-            // Vacia la lista de compras
+            if (resultGasto.isPresent() && resultGasto.get() == ButtonType.CANCEL) {
+
+                System.out.println("El usuario canceló la compra en la etapa de registro del gasto.");
+                AlertUtils.showAlert(Alert.AlertType.INFORMATION, tituloCancelado, mensajeCancelado);
+                return; //  Sale sin hacer cambios 
+            }
+
+            //  Si el usuario cancela el diálogo de importe, detenemos el flujo
+            boolean gastoRegistrado = registerExpense();
+
+            if (!gastoRegistrado) {
+
+                System.out.println("El usuario canceló la introducción del importe.");
+                AlertUtils.showAlert(Alert.AlertType.INFORMATION, tituloCancelado, mensajeCancelado);
+                return; // sale sin hacer cambios 
+            }
+
+            compraCompletada = true; //  Marcamos que la compra se completó correctamente 
+
+            // Vacía la lista de compras solo si la compra se completó
             clearShoppingList();
 
-            // Muestra mensaje final de éxito
-            Alert alertSuccess = new Alert(Alert.AlertType.INFORMATION);
-            alertSuccess.setTitle("Compra Procesada");
-            alertSuccess.setHeaderText("¡Compra completada con éxito!");
-            alertSuccess.setContentText("Los productos han sido procesados correctamente y el gasto ha sido registrado con éxito en el sistema.");
-            alertSuccess.showAndWait();
+            // Muestra mensaje final solo si la compra fue exitosa
+            if (compraCompletada) {
 
-            System.out.println("Proceso completo: Compra procesada y gasto registrado correctamente.");
-            
+                Alert alertSuccess = new Alert(Alert.AlertType.INFORMATION);
+                alertSuccess.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
+                alertSuccess.setTitle(tituloExito);
+                alertSuccess.setHeaderText(headerExito);
+                alertSuccess.setContentText(contenidoExito);
+                alertSuccess.showAndWait();
+                System.out.println("Proceso completo: Compra procesada y gasto registrado correctamente.");
+            }
+
         } catch (Exception e) {
-            
+
             e.printStackTrace();
-            AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "Hubo un problema al procesar la compra.");
+            AlertUtils.showAlert(Alert.AlertType.ERROR, tituloError, mensajeError);
         }
+    }
+
+    /**
+     * Muestra una alerta de confirmación genérica.
+     */
+    private Optional<ButtonType> showConfirmationAlert(String titulo, String mensaje) {
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
+        alert.setTitle(titulo);
+        alert.setHeaderText(mensaje);
+        alert.getButtonTypes().setAll(ButtonType.OK, ButtonType.NO, ButtonType.CANCEL);
+        return alert.showAndWait();
     }
 
     /**
@@ -640,8 +776,9 @@ public class PurchaseViewController {
      * @return True si el usuario desea continuar, False si decide cancelar.
      */
     private boolean confirmAction(String title, String message) {
-        
+
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
         alert.setTitle(title);
         alert.setHeaderText(message);
 
@@ -662,27 +799,60 @@ public class PurchaseViewController {
      * ser modificadas.
      */
     private boolean validateModifiedQuantities() {
-        
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Completar Compra");
-        alert.setHeaderText("¿Has modificado las cantidades de los productos en la lista?");
-        alert.setContentText("Si no has modificado las cantidades, se sumarán las necesarias directamente al inventario.");
 
-        ButtonType yesButton = new ButtonType("Sí");
-        ButtonType noButton = new ButtonType("No");
+        // Obtener el idioma actual
+        String idiomaActivo = LanguageManager.getInstance().getLanguageCode();
+
+        String tituloAlerta;
+        String encabezadoAlerta;
+        String contenidoAlerta;
+        String textoSi;
+        String textoNo;
+        String tituloModificar;
+        String mensajeModificar;
+
+        // Definelos textos según el idioma seleccionado
+        if (idiomaActivo.equals("en")) {
+
+            tituloAlerta = "Complete Purchase";
+            encabezadoAlerta = "Have you modified the product quantities in the list?";
+            contenidoAlerta = "If not, the necessary amounts will be added automatically to the inventory.";
+            textoSi = "Yes";
+            textoNo = "No";
+            tituloModificar = "Modify Quantities";
+            mensajeModificar = "Please modify the quantities directly in the table, then press 'Complete Purchase' again.";
+
+        } else {
+
+            tituloAlerta = "Completar Compra";
+            encabezadoAlerta = "¿Has modificado las cantidades de los productos en la lista?";
+            contenidoAlerta = "Si no has modificado las cantidades, se sumarán las necesarias directamente al inventario.";
+            textoSi = "Sí";
+            textoNo = "No";
+            tituloModificar = "Modificar Cantidades";
+            mensajeModificar = "Por favor, modifica las cantidades directamente en la tabla y luego pulsa nuevamente 'Completar Compra'.";
+        }
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
+        alert.setTitle(tituloAlerta);
+        alert.setHeaderText(encabezadoAlerta);
+        alert.setContentText(contenidoAlerta);
+
+        ButtonType yesButton = new ButtonType(textoSi);
+        ButtonType noButton = new ButtonType(textoNo);
         alert.getButtonTypes().setAll(yesButton, noButton);
 
         Optional<ButtonType> result = alert.showAndWait();
         System.out.println("Resultado de la alerta (modificar cantidades): " + result);
 
         if (result.isPresent() && result.get() == yesButton) {
-            
-            AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Modificar Cantidades",
-                    "Por favor, modifica las cantidades directamente en la tabla y luego pulsa nuevamente 'Completar Compra'.");
-            return false; // Indicar que el flujo debe detenerse
-            
+
+            AlertUtils.showAlert(Alert.AlertType.INFORMATION, tituloModificar, mensajeModificar);
+            return false; // Indica que el flujo debe detenerse
+
         } else if (!result.isPresent()) {
-            
+
             System.err.println("No se seleccionó ninguna opción en la alerta de modificación de cantidades.");
             return false;
         }
@@ -701,15 +871,15 @@ public class PurchaseViewController {
      * del inventario.
      */
     private void updateInventoryQuantities(InventoryDAO inventoryDAO) throws SQLException {
-        
+
         for (Product product : shoppingList) {
-            
+
             System.out.println("Procesando producto: " + product.getNombreProducto() + " (ID: " + product.getId() + ")");
 
             int currentQuantity = inventoryDAO.getCurrentQuantityById(product.getId());
-            
+
             if (currentQuantity == -1) {
-                
+
                 throw new SQLException("No se pudo obtener la cantidad actual del producto: " + product.getNombreProducto());
             }
 
@@ -718,7 +888,7 @@ public class PurchaseViewController {
             System.out.println("Nueva cantidad calculada: " + newQuantity);
 
             if (!updated) {
-                
+
                 AlertUtils.showAlert(Alert.AlertType.ERROR, "Error",
                         "No se pudo actualizar la cantidad del producto: " + product.getNombreProducto());
                 return;
@@ -737,8 +907,9 @@ public class PurchaseViewController {
      * del inventario.
      */
     private void manageProductsOutsideList(InventoryDAO inventoryDAO) throws IOException, SQLException {
-        
+
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
         alert.setTitle("Productos Fuera de la Lista");
         alert.setHeaderText("¿Has comprado productos que no estaban en la lista?");
         alert.setContentText("Si es así, podrás añadirlos directamente al inventario y a la lista de compras.");
@@ -751,7 +922,7 @@ public class PurchaseViewController {
         System.out.println("Resultado de la alerta (productos fuera de la lista): " + result);
 
         if (result.isPresent() && result.get() == yesButton) {
-            
+
             System.out.println("El usuario indicó que compró productos fuera de la lista.");
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/purchase/CreateProductInShoppingListView.fxml"));
@@ -762,26 +933,27 @@ public class PurchaseViewController {
 
             Stage stage = new Stage();
             stage.setTitle("Añadir Producto al Inventario");
+            stage.setResizable(false);
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
 
             Product newProduct = createController.getCreatedProduct();
-            
+
             if (newProduct != null) {
-                
+
                 boolean productExistsInInventory = inventoryDAO.isProductInInventory(newProduct.getNombreProducto(), newProduct.getIdGrupo());
 
                 if (productExistsInInventory) {
-                    
+
                     int idInventario = inventoryDAO.getInventoryProductIdByName(newProduct.getNombreProducto(), newProduct.getIdGrupo());
                     int currentQuantity = inventoryDAO.getCurrentQuantityById(idInventario);
 
                     int updatedQuantity = currentQuantity + newProduct.getCantidad();
                     inventoryDAO.updateInventoryQuantity(idInventario, updatedQuantity);
-                    
+
                 } else {
-                    
+
                     inventoryDAO.addInventoryProduct(newProduct);
                 }
 
@@ -797,18 +969,18 @@ public class PurchaseViewController {
      * @throws SQLException Si ocurre un error al registrar el gasto en la base
      * de datos.
      */
-    private void registerExpense() throws SQLException {
-        
+    private boolean registerExpense() throws SQLException {
+
         TextInputDialog inputDialog = new TextInputDialog();
         inputDialog.setTitle("Registrar Coste");
         inputDialog.setHeaderText("Introduce el importe de la compra:");
         inputDialog.setContentText("Importe:");
+
         Optional<String> inputResult = inputDialog.showAndWait();
 
         if (!inputResult.isPresent()) {
-            
-            System.err.println("El usuario canceló la introducción del coste.");
-            return;
+
+            return false; //  Si el usuario cancela, devolvemos `false` 
         }
 
         double importe = Double.parseDouble(inputResult.get());
@@ -818,15 +990,20 @@ public class PurchaseViewController {
         paymentDialog.setTitle("Registrar Método de Pago");
         paymentDialog.setHeaderText("Selecciona el método de pago:");
         paymentDialog.setContentText("Método de pago:");
+
         Optional<String> paymentResult = paymentDialog.showAndWait();
 
-        String metodoPago = paymentResult.get();
+        if (!paymentResult.isPresent()) {
 
+            return false; //  Si el usuario cancela, devolvemos `false` 
+        }
+
+        String metodoPago = paymentResult.get();
         BudgetDAO budgetDAO = new BudgetDAO();
         Budget newBudget = new Budget(0, "Compra", "Alimentación", importe, metodoPago, LocalDate.now(), "", CurrentSession.getInstance().getUserGroupId());
         budgetDAO.addBudget(newBudget);
 
-        System.out.println("Registro de gasto añadido correctamente: Importe = " + importe + ", Método de Pago = " + metodoPago);
+        return true; //  Gasto registrado correctamente 
     }
 
     /**
@@ -836,7 +1013,7 @@ public class PurchaseViewController {
      * la base de datos.
      */
     private void clearShoppingList() throws SQLException {
-        
+
         shoppingList.clear();
         tableViewShoppingList.refresh();
         System.out.println("Lista de compras vaciada correctamente en la interfaz.");
@@ -856,13 +1033,164 @@ public class PurchaseViewController {
     }
 
     public ObservableList<Product> getShoppingList() {
-        
+
         return shoppingList; // Devuelve la lista observable directamente
     }
 
     public ObservableList<Product> getInventoryList() {
-        
+
         return FXCollections.unmodifiableObservableList(inventoryList); // Proporciona acceso seguro a la lista
+    }
+
+//    /**
+//     * Metodo que envia por mail la lista de la compra
+//     *
+//     * @param event
+//     */
+//    @FXML
+//    private void sendPurchase(ActionEvent event) {
+//        
+//        String filePath = saveShoppingListToFile(); //  Guarda la lista y obtiene la ruta
+//        System.out.println("Ruta del archivo: " + filePath); //  Verifica ruta correcta
+//
+//        String recipientEmail = "algamento2@gmail.com";
+//        sendEmailWithShoppingList(recipientEmail, filePath); //  Envía la ruta, NO el contenido
+//    }
+    
+     /**
+     * Metodo que envia por mail la lista de la compra
+     *
+     * @param event
+     */
+    @FXML
+    private void sendPurchase(ActionEvent event) {
+        
+        String filePath = saveShoppingListToFile(); // Guarda la lista y obtiene la ruta
+        System.out.println("Ruta del archivo: " + filePath); // Verifica ruta correcta
+
+        // Obtiene el correo electrónico del usuario actual
+        int userId = CurrentSession.getInstance().getUserId();
+        UserDAO userDAO = new UserDAO();
+        String recipientEmail = userDAO.getUserEmailById(userId);
+
+        if (recipientEmail != null && !recipientEmail.isEmpty()) {
+            
+            sendEmailWithShoppingList(recipientEmail, filePath); // Envía la lista
+            System.out.println("Email enviado a: " + recipientEmail);
+            
+        } else {
+            
+            System.err.println("No se pudo obtener el correo electrónico del usuario.");
+        }
+    }
+
+    /**
+     * Guarda la lista de la compra en un txt
+     *
+     * @return
+     */
+    private String saveShoppingListToFile() {
+        String filePath = "src/shoppingLists/shopping_list.txt"; //  Ruta 
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+
+            for (Product product : shoppingList) {
+
+                writer.write(product.getNombreProducto() + "," + product.getCantidad() + "," + product.getTipo());
+                writer.newLine();
+            }
+
+            System.out.println("Lista guardada en: " + filePath);
+            return filePath; //  Devuelve solo la ruta
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+            return ""; //  En caso de error, devuelve una cadena vacía
+        }
+    }
+
+    /**
+     * Configura el envio del mail
+     *
+     * @param recipientEmail
+     * @param filePath
+     */
+    private void sendEmailWithShoppingList(String recipientEmail, String filePath) {
+
+        final String senderEmail = "apphomesweethome@gmail.com"; // correo de la app -> en esta caso un gmail con autenticación y contraseña de aplicación
+        final String senderPassword = "mskh lydf tzib vguo"; // Usa autenticación segura ->contraseña app terceros de google
+
+        // Lee el contenido del archivo correctamente
+        String fileContent = "";
+
+        try {
+
+            System.out.println("Ruta del archivo recibida: '" + filePath + "'");
+
+            Path path = Paths.get(filePath); //  Usa la ruta sin modificar
+            fileContent = Files.readString(path); //  Usa `Files.readString()` en lugar de `readAllBytes()`
+
+            System.out.println("Contenido del archivo:\n" + fileContent); //  Verifica contenido 
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+        // Configuración del servidor SMTP
+        Properties properties = new Properties();
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+        properties.put("mail.smtp.host", "smtp.gmail.com");
+        properties.put("mail.smtp.port", "587");
+
+        // Sesión con autenticación segura
+        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(senderEmail, senderPassword);
+            }
+        });
+
+        try {
+
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(senderEmail));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
+            message.setSubject("Lista de Compras");
+
+            // Cuerpo del correo con el contenido del archivo
+            message.setText("Aquí está tu lista de compras:\n\n" + fileContent);
+
+            Transport.send(message);
+            
+            if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                     AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Éxito", "Correo enviado correctamente.");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                     AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Success", "Email sent successfully.");
+                }
+            
+            System.out.println("Correo enviado correctamente a: " + recipientEmail);
+            
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            
+            if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se pudo enviar el correo. Formato inválido");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "The email could not be sent. Invalid format.");
+                }
+            
+        }
     }
 
 }

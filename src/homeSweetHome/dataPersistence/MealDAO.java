@@ -18,6 +18,7 @@ public class MealDAO {
      * @return True si la operación fue exitosa, False en caso contrario.
      */
     public boolean addMeal(Meal meal) {
+        
         String query = "INSERT INTO Comidas (dia_semana, id_receta, id_grupo) VALUES (?, ?, ?)";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -27,26 +28,38 @@ public class MealDAO {
             stmt.setInt(3, meal.getGroupId());
 
             return stmt.executeUpdate() > 0;
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al insertar la comida.");
         }
+        
         return false;
     }
 
+
     /**
-     * Recupera todas las comidas semanales desde la vista
+     * Recupera todas las comidas semanales del grupo del usuario desde la vista
      * Vista_Comidas_Semanales.
      *
-     * @return Lista de objetos Meal que representan las comidas semanales.
+     * @param groupId ID del grupo al que pertenecen las comidas.
+     * @return Lista de objetos Meal que representan las comidas semanales del
+     * grupo.
      */
-    public List<Meal> getAllMeals() {
-        String query = "SELECT * FROM Vista_Comidas_Semanales";
+    public List<Meal> getAllMeals(int groupId) {
+        
+        String query = "SELECT * FROM Vista_Comidas_Semanales WHERE id_grupo = ?";
+        
         List<Meal> meals = new ArrayList<>();
 
-        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, groupId);
+            ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+                
                 Meal meal = new Meal(
                         rs.getInt("id"),
                         rs.getString("dia_semana"),
@@ -56,12 +69,16 @@ public class MealDAO {
                         rs.getBytes("foto"),
                         rs.getInt("id_grupo")
                 );
+                
                 meals.add(meal);
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al recuperar las comidas.");
         }
+
         return meals;
     }
 
@@ -72,6 +89,7 @@ public class MealDAO {
      * @return True si la operación fue exitosa, False en caso contrario.
      */
     public boolean updateMeal(Meal meal) {
+        
         String query = "UPDATE Comidas SET dia_semana = ?, id_receta = ?, id_grupo = ? WHERE id = ?";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -82,10 +100,13 @@ public class MealDAO {
             stmt.setInt(4, meal.getId());
 
             return stmt.executeUpdate() > 0;
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al actualizar la comida.");
         }
+        
         return false;
     }
 
@@ -96,16 +117,20 @@ public class MealDAO {
      * @return True si la operación fue exitosa, False en caso contrario.
      */
     public boolean deleteMeal(int mealId) {
+        
         String query = "DELETE FROM Comidas WHERE id = ?";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, mealId);
             return stmt.executeUpdate() > 0;
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al eliminar la comida.");
         }
+        
         return false;
     }
 
@@ -116,14 +141,18 @@ public class MealDAO {
      * @return Lista de objetos Meal para ese día.
      */
     public List<Meal> getMealsByDay(String dayOfWeek) {
+        
         String query = "SELECT * FROM Vista_Comidas_Semanales WHERE dia_semana = ?";
         List<Meal> meals = new ArrayList<>();
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, dayOfWeek);
+            
             try (ResultSet rs = stmt.executeQuery()) {
+                
                 while (rs.next()) {
+                    
                     Meal meal = new Meal(
                             rs.getInt("id"),
                             rs.getString("dia_semana"),
@@ -133,13 +162,17 @@ public class MealDAO {
                             rs.getBytes("foto"),
                             rs.getInt("id_grupo")
                     );
+                    
                     meals.add(meal);
                 }
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al recuperar comidas por día.");
         }
+        
         return meals;
     }
 
@@ -153,11 +186,16 @@ public class MealDAO {
      * @return true si la operación fue exitosa, false si ocurrió algún error.
      */
     public boolean deleteAllMeals() {
+        
         String query = "DELETE FROM Comidas";
+        
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             stmt.executeUpdate();
             return true; // Operación exitosa
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al eliminar todas las comidas.");
             return false; // Operación fallida
@@ -175,11 +213,16 @@ public class MealDAO {
      * contrario o si ocurre un error
      */
     public boolean deleteMealsByRecipeId(int recipeId) {
+        
         String query = "DELETE FROM Comidas WHERE id_receta = ?";
+        
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             stmt.setInt(1, recipeId);
             return stmt.executeUpdate() > 0;
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             return false;
         }
@@ -195,6 +238,7 @@ public class MealDAO {
      * @return una lista de objetos {@code Meal} asociados con la receta
      */
     public List<Meal> getMealsByRecipeId(int recipeId) {
+        
         List<Meal> meals = new ArrayList<>();
         String query = "SELECT * FROM Comidas WHERE id_receta = ?";
 
@@ -202,7 +246,9 @@ public class MealDAO {
             stmt.setInt(1, recipeId);
 
             try (ResultSet rs = stmt.executeQuery()) {
+                
                 while (rs.next()) {
+                    
                     Meal meal = new Meal();
                     meal.setId(rs.getInt("id"));
                     meal.setRecipeId(rs.getInt("id_receta"));
@@ -210,7 +256,9 @@ public class MealDAO {
                     meals.add(meal);
                 }
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al recuperar las comidas relacionadas con la receta ID: " + recipeId);
         }

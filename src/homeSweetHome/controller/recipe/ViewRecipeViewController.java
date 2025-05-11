@@ -15,6 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
+import javafx.scene.control.TextArea;
 
 public class ViewRecipeViewController {
 
@@ -25,7 +26,7 @@ public class ViewRecipeViewController {
     @FXML
     private Label labelIngredients;
     @FXML
-    private Label labelInstructions;
+    private TextArea labelInstructions;
     @FXML
     private ImageView imgRecipe;
     @FXML
@@ -49,13 +50,15 @@ public class ViewRecipeViewController {
         LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
         updateTexts(); // Actualiza los textos inicialmente
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////         
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
+
         System.out.println("Inicializando vista de Ver Receta...");
     }
+    
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
 
     /**
-     *
+     * TRaduccion textos
      */
     private void updateTexts() {
 
@@ -92,7 +95,7 @@ public class ViewRecipeViewController {
         Platform.runLater(() -> labelRecipeName.getScene().getWindow().sizeToScene());
     }
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////      
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
     
     /**
      * Asigna una receta y carga sus detalles en la vista.
@@ -100,7 +103,7 @@ public class ViewRecipeViewController {
      * @param recipe la receta a establecer
      */
     public void setRecipe(Recipe recipe) {
-        
+
         this.recipe = recipe;
         loadRecipeDetails();
     }
@@ -114,7 +117,7 @@ public class ViewRecipeViewController {
     private void loadRecipeDetails() {
 
         if (recipe != null) {
-            
+
             // Muestra el nombre de la receta
             System.out.println("Cargando detalles para la receta: " + recipe.getNombre());
             labelRecipeName.setText(recipe.getNombre());
@@ -127,53 +130,53 @@ public class ViewRecipeViewController {
 
             // Carga los ingredientes desde el DAO
             List<Product> ingredientes = recipeDAO.getProductsByRecipeId(recipe.getId());
-            
+
             if (ingredientes == null || ingredientes.isEmpty()) {
-                
+
                 System.out.println("No hay ingredientes disponibles para esta receta.");
                 labelIngredients.setText("No hay ingredientes.");
-                
+
             } else {
-                
+
                 // Muestra nombre y cantidad de cada ingrediente
                 StringBuilder ingredientesBuilder = new StringBuilder();
-                
+
                 for (Product ingrediente : ingredientes) {
-                    
+
                     ingredientesBuilder.append(ingrediente.getNombreProducto())
                             .append(" - Cantidad: ")
                             .append(ingrediente.getCantidad())
                             .append("\n");
                 }
-                
+
                 labelIngredients.setText(ingredientesBuilder.toString());
                 System.out.println("Ingredientes cargados: " + ingredientes);
             }
 
             // Carga imagen si existe
             if (recipe.getFoto() != null) {
-                
+
                 try {
-                    
+
                     Image image = new Image(new ByteArrayInputStream(recipe.getFoto()));
                     imgRecipe.setImage(image);
                     imgRecipe.setFitHeight(150);
                     imgRecipe.setFitWidth(150);
                     imgRecipe.setPreserveRatio(true);
-                    
+
                 } catch (Exception e) {
-                    
+
                     System.out.println("Error al cargar la imagen de la receta.");
                     e.printStackTrace();
                 }
-                
+
             } else {
-                
+
                 System.out.println("No hay imagen asociada a esta receta.");
             }
-            
+
         } else {
-            
+
             System.out.println("La receta es nula, no se pueden cargar detalles.");
         }
     }
@@ -186,15 +189,15 @@ public class ViewRecipeViewController {
      * consola.
      */
     private void adjustImage() {
-        
+
         if (recipe.getFoto() != null) {
             imgRecipe.setImage(new Image(new ByteArrayInputStream(recipe.getFoto())));
             imgRecipe.setFitHeight(150);
             imgRecipe.setFitWidth(150);
             imgRecipe.setPreserveRatio(true);
-            
+
         } else {
-            
+
             System.out.println("No hay imagen asociada a esta receta.");
         }
     }
@@ -203,7 +206,7 @@ public class ViewRecipeViewController {
      * Metodo para debugear con trazas
      */
     private void debugRecipeDetails() {
-        
+
         System.out.println("Detalles de la receta:");
         System.out.println("Nombre: " + recipe.getNombre());
         System.out.println("Categoría: " + recipe.getTipo());
@@ -218,7 +221,7 @@ public class ViewRecipeViewController {
      */
     @FXML
     private void closeView(ActionEvent event) {
-        
+
         ((Stage) btnClose.getScene().getWindow()).close();
         System.out.println("Vista de Ver Receta cerrada.");
     }

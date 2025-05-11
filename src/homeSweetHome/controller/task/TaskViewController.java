@@ -1,5 +1,6 @@
 package homeSweetHome.controller.task;
 
+import homeSweetHome.dataPersistence.CurrentSession;
 import homeSweetHome.dataPersistence.TaskDAO;
 import homeSweetHome.model.Task;
 import homeSweetHome.utils.LanguageManager;
@@ -12,6 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -19,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -34,7 +37,10 @@ public class TaskViewController implements Initializable {
     private VBox taskContainer; // Contenedor de las tareas dinámicas
     @FXML
     private Button btnOpenCreateNewTask;
+    @FXML
+    private Label tasksTitle;
 
+    int role = CurrentSession.getInstance().getUserRole(); // Tomamos rol para control de permisos
 
     /**
      * Inicializa la vista de tareas y configura los elementos necesarios.
@@ -49,6 +55,13 @@ public class TaskViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+        //Si el usuario tiene rol consultor, desactivamos botones
+        if (role == 2) {
+
+            btnOpenCreateNewTask.setDisable(true);
+
+        }
+
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
 
         // Registra este controlador como listener del LanguageManager
@@ -58,14 +71,16 @@ public class TaskViewController implements Initializable {
 /////////////////////////////////FIN IDIOMAS///////////////////////////////////////////// 
 
         // Ajusta el ScrollPane para que el VBox se ajuste al ancho del ScrollPane
-        scrollPane.setFitToWidth(true);
-
-        if (taskContainer == null) {
-            System.err.println("Error: taskContainer no está inicializado. Verifica el archivo TaskView.fxml.");
-            return;
-        }
-
+        //scrollPane.setFitToWidth(true);
+//        if (taskContainer == null) {
+//            System.err.println("Error: taskContainer no está inicializado. Verifica el archivo TaskView.fxml.");
+//            return;
+//        }
         loadTasks(); // Carga las tareas al inicializar la vista
+        taskContainer.translateXProperty().bind(
+                scrollPane.widthProperty().subtract(taskContainer.widthProperty()).divide(2)
+        );
+
     }
 
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
@@ -83,7 +98,9 @@ public class TaskViewController implements Initializable {
         }
 
         // Actualización del texto del botón
-        btnOpenCreateNewTask.setText(languageManager.getTranslation("createTask")); 
+        btnOpenCreateNewTask.setText(languageManager.getTranslation("createTask"));
+
+        tasksTitle.setText(languageManager.getTranslation("tasksTitle"));
 
         // Actualización dinámica del contenido del ScrollPane si aplica
         scrollPane.setContent(taskContainer); // Manteniene el contenedor dinámico
@@ -92,8 +109,8 @@ public class TaskViewController implements Initializable {
         System.out.println("Traducciones aplicadas correctamente en EventViewController.");
     }
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////  
     
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////  
     /**
      * Abre la ventana para crear una nueva tarea.
      *
@@ -117,13 +134,14 @@ public class TaskViewController implements Initializable {
             // Crea una nueva ventana para la vista de creación
             Stage stage = new Stage();
             stage.setTitle("Crear Nueva Tarea");
+            stage.setResizable(false);
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL); // Establece la ventana como modal
             stage.initOwner(btnOpenCreateNewTask.getScene().getWindow()); // Asocia la ventana actual como propietaria
             stage.showAndWait(); // Muestra la ventana y espera a que se cierre
-            
+
         } catch (IOException e) {
-            
+
             // Muestra un error si ocurre un problema al cargar la vista
             System.err.println("Error al cargar la vista CreateTaskView: " + e.getMessage());
         }
@@ -133,12 +151,12 @@ public class TaskViewController implements Initializable {
      * Carga y muestra todas las tareas del grupo actual en la vista.
      */
     public void loadTasks() {
-        
+
         TaskDAO taskDAO = new TaskDAO();
 
         // Obtiene el ID del grupo del usuario actual desde la sesión
         int userGroupId = homeSweetHome.dataPersistence.CurrentSession.getInstance().getUserGroupId();
-        
+
         // Obtiene la lista de tareas asociadas al grupo
         List<Task> tasks = taskDAO.getTasksByGroup(userGroupId);
 
@@ -147,9 +165,9 @@ public class TaskViewController implements Initializable {
 
         // Itera sobre las tareas para cargarlas en la vista
         for (Task task : tasks) {
-            
+
             try {
-                
+
                 // Carga la vista del ítem de tarea desde el archivo FXML
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/task/TaskItemView.fxml"));
                 Node taskItemNode = loader.load();
@@ -171,7 +189,7 @@ public class TaskViewController implements Initializable {
                 taskContainer.getChildren().add(taskItemNode);
 
             } catch (IOException e) {
-                
+
                 // Muestra un error si no se puede cargar la vista del ítem de tarea
                 System.err.println("No se pudo cargar la vista TaskItemView para la tarea: " + task.getNombreTarea());
                 e.printStackTrace();
@@ -180,7 +198,7 @@ public class TaskViewController implements Initializable {
     }
 
     public VBox getTaskContainer() {
-        
+
         return taskContainer;
     }
 }

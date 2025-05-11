@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -54,16 +52,11 @@
    </children>
 </AnchorPane> -->
 
-<AnchorPane id="AnchorPane" prefHeight="746.0" prefWidth="911.0" stylesheets="@viewRecipe.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.recipe.ViewRecipeViewController">
+<AnchorPane id="AnchorPane" prefHeight="831.0" prefWidth="911.0" stylesheets="@viewRecipe.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.recipe.ViewRecipeViewController">
     <children>
         <VBox alignment="CENTER" layoutX="0.0" layoutY="0.0" prefHeight="746.0" prefWidth="911.0" spacing="30" styleClass="main-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <!-- Título -->
-                <HBox alignment="CENTER" prefHeight="72.0" prefWidth="911.0">
-                    <children>
-                        <Label text="Ver Receta" styleClass="title-label" />
-                    </children>
-                </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0" />
 
                 <!-- Nombre y Categoría -->
                 <HBox alignment="CENTER" spacing="80.0">
@@ -74,28 +67,30 @@
                 </HBox>
 
                 <!-- Ingredientes e Instrucciones -->
-                <HBox alignment="CENTER" spacing="20.0">
+                <HBox alignment="CENTER" spacing="250.0">
                     <children>
-                        <VBox prefHeight="349.0" prefWidth="216.0">
+                        <VBox id="ingredients" prefHeight="300.0" prefWidth="267.0">
                             <children>
-                                <Label text="Ingredientes:" styleClass="section-title" />
-                                <Label fx:id="labelIngredients" prefHeight="300.0" prefWidth="216.0" styleClass="text-area-label" text="Aquí van los ingredientes" />
+                                <Label styleClass="section-title" text="Ingredientes:" />
+                                <Label fx:id="labelIngredients" alignment="TOP_LEFT" prefHeight="258.0" prefWidth="256.0" styleClass="ingredients" text="Aquí van los ingredientes" />
                             </children>
                         </VBox>
-                        <VBox prefHeight="349.0" prefWidth="648.0">
-                            <children>
-                                <Label text="Instrucciones:" styleClass="section-title" />
-                                <Label fx:id="labelInstructions" prefHeight="300.0" prefWidth="648.0" styleClass="text-area-label" text="Aquí van las instrucciones" />
-                            </children>
-                        </VBox>
+                        <ImageView fx:id="imgRecipe" fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" />
                     </children>
                 </HBox>
 
                 <!-- Imagen -->
-                <HBox alignment="CENTER" spacing="30.0">
-                    <children>
-                        <ImageView fx:id="imgRecipe" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
-                    </children>
+                <HBox alignment="CENTER" spacing="30.0" />
+                <!-- Título -->
+                <HBox alignment="CENTER" prefHeight="359.0" prefWidth="911.0">
+               <children>
+                        <VBox prefHeight="246.0" prefWidth="574.0">
+                            <children>
+                                <Label styleClass="section-title" text="Instrucciones:" />
+                        <TextArea fx:id="labelInstructions" prefHeight="200.0" prefWidth="200.0" wrapText="true" />
+                            </children>
+                        </VBox>
+               </children>
                 </HBox>
 
                 <!-- Botón Cerrar -->
@@ -103,9 +98,11 @@
                     <children>
                         <Button fx:id="btnClose" mnemonicParsing="false" onAction="#closeView" prefHeight="40.0" prefWidth="120.0" styleClass="btn-secondary" text="Cerrar" />
                     </children>
+               <VBox.margin>
+                  <Insets bottom="50.0" />
+               </VBox.margin>
                 </HBox>
             </children>
         </VBox>
     </children>
 </AnchorPane>
-

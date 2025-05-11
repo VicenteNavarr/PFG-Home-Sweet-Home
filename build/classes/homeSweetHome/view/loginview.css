@@ -1,4 +1,4 @@
-.gradient{
+/*.gradient{
     -fx-background-color: linear-gradient(to bottom right, #056d80, #0a8064);
 }
 
@@ -46,5 +46,71 @@
 
 .create-btn:hover{
     -fx-background-color: #ffffff; 
+    -fx-text-fill: #000000;
+}*/
+
+.root {
+    -fx-font-family: 'Poppins';
+    -fx-background-color: #ffffff;
+    -fx-font-size: 14px;
+}
+
+.gradient {
+    -fx-background-color: #2E5077; /* Color sólido en lugar de gradiente */
+}
+
+.white-form {
+    -fx-background-color: #ffffff;
+}
+
+.head-label {
+    -fx-border-color: #4DA1A9;
+    -fx-border-width: 0 0 0 3px;
+    -fx-padding: 0 0 0 5px;
+    -fx-font-size: 16px;
+    /*-fx-font-weight: bold;*/
+    -fx-font-family: 'Poppins';
+}
+
+.login-btn {
+     -fx-background-color: #4DA1A9;
+     -fx-background-radius: 10px;
+     -fx-cursor: hand;
+     -fx-text-fill: #ffffff;
+     -fx-font-size: 16px;
+     /*-fx-font-weight: bold;*/
+     -fx-font-family: 'Poppins';
+}
+
+.login-btn:hover {
+     -fx-background-color: #2E5077;
+}
+
+.textfield {
+    -fx-background-color: transparent;
+    -fx-border-color: #4DA1A9; /* Nuevo color */
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-font-size: 14px;
+}
+
+.textfield:focused {
+    -fx-border-width: 2px;
+}
+
+.create-btn {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-border-color: #ffffff;
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 10px;
+    -fx-border-width: 1px;
+    -fx-font-size: 14px;
+    /*-fx-font-weight: bold;*/
+    -fx-font-family: 'Poppins';
+}
+
+.create-btn:hover {
+    -fx-background-color: #ffffff;
     -fx-text-fill: #000000;
 }

@@ -17,9 +17,9 @@
         <BorderPane style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <!-- Sección superior -->
             <top>
-                <VBox alignment="CENTER" styleClass="header-section" BorderPane.alignment="CENTER">
+                <VBox alignment="CENTER_RIGHT" style="-fx-background-color: #79D7BE;" styleClass="header-section" BorderPane.alignment="CENTER">
                     <children>
-                        <Label styleClass="header-label" text="GASTOS" />
+                        <Label fx:id="budgetTitle" styleClass="header-label" text="GASTOS" />
                     </children>
                 </VBox>
             </top>
@@ -33,11 +33,11 @@
                     <children>
                         <HBox fx:id="HboxFiltros" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                      <children>
-                              <ComboBox fx:id="filterCategory" prefHeight="30.0" prefWidth="186.0" promptText="Categoría" />
+                              <ComboBox fx:id="filterCategory" prefHeight="30.0" prefWidth="210.0" promptText="Categoría" />
                               <DatePicker fx:id="filterStartDate" prefWidth="150" promptText="Inicio" />
                               <DatePicker fx:id="filterEndDate" prefWidth="150" promptText="Fin" />
                               <ComboBox fx:id="filterOrder" prefHeight="30.0" prefWidth="186.0" promptText="Orden por importe" />
-                              <Button fx:id="btnApplyFilters" onAction="#applyFilters" prefHeight="30.0" prefWidth="60.0" text="Filtrar" />
+                              <Button fx:id="btnApplyFilters" onAction="#applyFilters" prefHeight="30.0" prefWidth="100.0" text="Filtrar" />
                               <Button fx:id="btnClearFilters" layoutX="920" layoutY="20" onAction="#clearFilters" prefHeight="30.0" prefWidth="147.0" text="Limpiar filtros" />
                      </children></HBox>
 
@@ -48,12 +48,12 @@
                                     <children>
                                         <TableView fx:id="tableViewSpent" prefHeight="275.0" prefWidth="1005.0">
                                             <columns>
-                                                <TableColumn fx:id="colSpentName" text="Nombre" />
-                                                <TableColumn fx:id="colCategory" text="Categoría" />
-                                                <TableColumn fx:id="colDate" text="Fecha" />
-                                                <TableColumn fx:id="colQuantity" text="Importe" />
-                                                <TableColumn fx:id="colPaymentMethod" prefWidth="129.0" text="Método de Pago" /> <!-- Nueva columna para "Cantidad" o "Gramos" -->
-                                                <TableColumn fx:id="colDescription" prefWidth="250.0" text="Descripción" /> <!-- Nueva columna para botones +/- -->
+                                                <TableColumn fx:id="colSpentName" prefWidth="128.0" text="Nombre" />
+                                                <TableColumn fx:id="colCategory" prefWidth="94.0" text="Categoría" />
+                                                <TableColumn fx:id="colDate" prefWidth="127.0" text="Fecha" />
+                                                <TableColumn fx:id="colQuantity" prefWidth="86.0" text="Importe" />
+                                                <TableColumn fx:id="colPaymentMethod" prefWidth="207.0" text="Método de Pago" /> <!-- Nueva columna para "Cantidad" o "Gramos" -->
+                                                <TableColumn fx:id="colDescription" prefWidth="333.0" text="Descripción" /> <!-- Nueva columna para botones +/- -->
                                             </columns>
                                         </TableView>
                                         
@@ -71,7 +71,4 @@
             </center>
         </BorderPane>
     </children>
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-    </padding>
 </AnchorPane>

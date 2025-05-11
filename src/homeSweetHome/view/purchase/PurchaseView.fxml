@@ -15,9 +15,9 @@
         <BorderPane style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <!-- Sección superior -->
             <top>
-                <VBox alignment="CENTER" styleClass="header-section" BorderPane.alignment="CENTER">
+                <VBox alignment="CENTER_RIGHT" style="-fx-background-color: #79D7BE;" styleClass="header-section" BorderPane.alignment="TOP_RIGHT">
                     <children>
-                        <Label styleClass="header-label" text="COMPRAS" />
+                        <Label fx:id="purchasesTitle" styleClass="header-label" text="COMPRAS" />
                     </children>
                 </VBox>
             </top>
@@ -34,15 +34,19 @@
                                 <!-- Tabla del Inventario -->
                                 <VBox alignment="CENTER" maxWidth="1024.0" spacing="10">
                                     <children>
-                                        <Label styleClass="header-section" text="Inventario" />
-                                        <TableView fx:id="tableViewInventory" prefHeight="300.0" prefWidth="700.0">
+                              <HBox alignment="CENTER_LEFT" prefHeight="46.0" prefWidth="633.0">
+                                 <children>
+                                              <Label contentDisplay="CENTER" stylesheets="@purchaseView.css" text="Inventario" />
+                                 </children>
+                              </HBox>
+                                        <TableView fx:id="tableViewInventory" prefHeight="444.0" prefWidth="633.0">
                                             <columns>
                                                 <TableColumn fx:id="colProductName" text="Producto" />
-                                                <TableColumn fx:id="colQuantity" text="Cantidad Actual" />
-                                                <TableColumn fx:id="colMinQuantity" text="Cantidad Mínima" />
-                                                <TableColumn fx:id="colCategory" text="Categoría" />
-                                                <TableColumn fx:id="colType" text="Tipo" /> <!-- Nueva columna para "Cantidad" o "Gramos" -->
-                                                <TableColumn fx:id="colQuantityControls" prefWidth="150.0" text="Controles" /> <!-- Nueva columna para botones +/- -->
+                                                <TableColumn fx:id="colQuantity" prefWidth="167.0" text="Cantidad Actual" />
+                                                <TableColumn fx:id="colMinQuantity" prefWidth="168.0" text="Cantidad Mínima" />
+                                                <TableColumn fx:id="colCategory" prefWidth="97.0" text="Categoría" />
+                                                <TableColumn fx:id="colType" prefWidth="121.0" text="Tipo" /> <!-- Nueva columna para "Cantidad" o "Gramos" -->
+                                                <TableColumn fx:id="colQuantityControls" minWidth="0.0" prefWidth="0.0" text="Controles" /> <!-- Nueva columna para botones +/- -->
                                             </columns>
                                         </TableView>
                                         
@@ -54,17 +58,26 @@
                                 <!-- Tabla de la Lista de la Compra -->
                                 <VBox alignment="CENTER" maxWidth="1024.0" spacing="10">
                                     <children>
-                                        <Label styleClass="header-section" text="Lista de la Compra" />
-                                        <TableView fx:id="tableViewShoppingList" prefHeight="300.0" prefWidth="300.0">
+                              <HBox alignment="CENTER_LEFT" prefHeight="73.0" prefWidth="303.0">
+                                 <children>
+                                              <Label stylesheets="@purchaseView.css" text="Lista de la Compra" />
+                                 </children>
+                              </HBox>
+                                        <TableView fx:id="tableViewShoppingList" prefHeight="596.0" prefWidth="303.0">
                                             <columns>
-                                                <TableColumn fx:id="colShoppingProduct" text="Producto" />
-                                                <TableColumn fx:id="colShoppingQuantity" text="Cantidad Necesaria" />
-                                                <TableColumn fx:id="colShoppingType" text="Tipo" /> <!-- Nueva columna para "Cantidad" o "Gramos" -->
+                                                <TableColumn fx:id="colShoppingProduct" prefWidth="116.0" text="Producto" />
+                                                <TableColumn fx:id="colShoppingQuantity" minWidth="0.0" prefWidth="102.0" text="Cantidad Necesaria" />
+                                                <TableColumn fx:id="colShoppingType" prefWidth="83.0" text="Tipo" /> <!-- Nueva columna para "Cantidad" o "Gramos" -->
                                             </columns>
                                         </TableView>
-                                        
-                                        <!-- Botón debajo de la tabla de la Lista de la Compra -->
-                                        <Button fx:id="btnCompletePurchase" mnemonicParsing="false" onAction="#completePurchase" styleClass="btn-primary" text="Completar Compra" />
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                 <children>
+                                              
+                                              <!-- Botón debajo de la tabla de la Lista de la Compra -->
+                                              <Button fx:id="btnCompletePurchase" mnemonicParsing="false" onAction="#completePurchase" styleClass="btn-secondary" text="Completar Compra" />
+                                    <Button fx:id="btnSendPurchase" mnemonicParsing="false" onAction="#sendPurchase" prefHeight="36.0" prefWidth="117.0" styleClass="btn-primary" text="Enviar Mail" />
+                                 </children>
+                              </HBox>
                                     </children>
                                 </VBox>
                             </children>
@@ -74,7 +87,4 @@
             </center>
         </BorderPane>
     </children>
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-    </padding>
 </AnchorPane>

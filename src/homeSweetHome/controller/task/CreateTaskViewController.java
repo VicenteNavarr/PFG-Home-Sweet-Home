@@ -20,6 +20,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -40,7 +42,9 @@ public class CreateTaskViewController implements Initializable {
     @FXML
     private DatePicker fieldDateLimit;
     @FXML
-    private TextField fieldTaskDescription;
+    private TextArea fieldTaskDescription;
+    @FXML
+    private Label newTaskTitle;
 
     private TaskViewController taskViewController; // Referencia al controlador principal
 
@@ -58,7 +62,7 @@ public class CreateTaskViewController implements Initializable {
         LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
         updateTexts(); // Actualiza los textos inicialmente
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////  
 
         int groupId = CurrentSession.getInstance().getUserGroupId(); // ID del grupo actual
         UserDAO userDAO = new UserDAO();
@@ -78,12 +82,12 @@ public class CreateTaskViewController implements Initializable {
      * Actualiza los textos de la interfaz en función del idioma.
      */
     private void updateTexts() {
-        
+
         // Obtiene la instancia única del Singleton
         LanguageManager languageManager = LanguageManager.getInstance();
 
         if (languageManager == null) {
-            
+
             System.err.println("Error: LanguageManager es nulo. Traducción no aplicada.");
             return;
         }
@@ -97,6 +101,8 @@ public class CreateTaskViewController implements Initializable {
         fieldTaskDescription.setPromptText(languageManager.getTranslation("promptTaskDescription"));
         btnCreateTask.setText(languageManager.getTranslation("createNewTask"));
         btnCancelTask.setText(languageManager.getTranslation("cancel"));
+
+        newTaskTitle.setText(languageManager.getTranslation("newTaskTitle"));
 
         System.out.println("Etiqueta 'promptTaskName': " + fieldTaskName.getPromptText());
         System.out.println("Etiqueta 'promptTaskDescription': " + fieldTaskDescription.getPromptText());
@@ -119,7 +125,7 @@ public class CreateTaskViewController implements Initializable {
         System.out.println("Traducciones aplicadas correctamente en CreateTaskViewController.");
     }
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////    
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////  
     
     /**
      * Método para establecer la referencia al TaskViewController principal.
@@ -127,7 +133,7 @@ public class CreateTaskViewController implements Initializable {
      * @param taskViewController - Controlador principal
      */
     public void setTaskViewController(TaskViewController taskViewController) {
-        
+
         this.taskViewController = taskViewController;
     }
 
@@ -138,9 +144,9 @@ public class CreateTaskViewController implements Initializable {
      */
     @FXML
     private void createNewTask(ActionEvent event) {
-        
+
         try {
-            
+
             // Recupera los valores de los campos de entrada
             String nombreTarea = fieldTaskName.getText().trim(); // Nombre de la tarea
             String descripcion = fieldTaskDescription.getText().trim(); // Descripción de la tarea
@@ -151,17 +157,35 @@ public class CreateTaskViewController implements Initializable {
 
             // Valida que los campos no estén vacíos
             if (nombreTarea.isEmpty() || descripcion.isEmpty() || usuarioSeleccionado == null || fechaLimite == null) {
-                
-                AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos", "Por favor completa todos los campos, incluida la fecha límite.");
+
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos", "Por favor completa todos los campos, incluida la fecha límite.");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Incomplete Fields", "Please complete all fields, including the deadline.");
+
+                }
+
                 return;
             }
 
             // Valida el usuario seleccionado
             int asignadoAId = userMap.getOrDefault(usuarioSeleccionado, -1);
-            
+
             if (asignadoAId == -1) {
-                
-                AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se encontró el usuario seleccionado.");
+
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se encontró el usuario seleccionado.");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "The selected user was not found.");
+
+                }
+
                 return;
             }
 
@@ -181,26 +205,34 @@ public class CreateTaskViewController implements Initializable {
             boolean success = taskDAO.addTask(nuevaTarea);
 
             if (success) {
-                
-                // Muestra un mensaje de éxito
-                AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Éxito", "La tarea se ha creado correctamente.");
+
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                    // Muestra un mensaje de éxito
+                    AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Éxito", "La tarea se ha creado correctamente.");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                    // Muestra un mensaje de éxito
+                    AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Success", "The task has been created successfully.");
+                }
 
                 // Refresca la lista de tareas en el controlador principal
                 if (taskViewController != null) {
-                    
+
                     taskViewController.loadTasks();
                 }
 
                 // Cierra la ventana actual
                 ((Stage) btnCreateTask.getScene().getWindow()).close();
-                
+
             } else {
-                
+
                 AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "Ocurrió un problema al intentar crear la tarea.");
             }
-            
+
         } catch (Exception e) {
-            
+
             // Maneja cualquier excepción no prevista
             e.printStackTrace();
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "Se produjo un error al procesar la tarea.");
@@ -214,7 +246,7 @@ public class CreateTaskViewController implements Initializable {
      */
     @FXML
     private void cancel(ActionEvent event) {
-        
+
         ((Stage) btnCancelTask.getScene().getWindow()).close();
     }
 

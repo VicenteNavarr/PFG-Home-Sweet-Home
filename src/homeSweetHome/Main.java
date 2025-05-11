@@ -11,7 +11,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 /**
- *
+ * Craga la pantalla de login
  * @author Usuario
  */
 public class Main extends Application {
@@ -23,7 +23,7 @@ public class Main extends Application {
 
         Scene scene = new Scene(root);
 
-        stage.setTitle("Registro de Usuario");
+        stage.setTitle("Registro de Usuario / Register User");
         stage.setMinHeight(400);
         stage.setMinWidth(600);
         stage.setResizable(false);

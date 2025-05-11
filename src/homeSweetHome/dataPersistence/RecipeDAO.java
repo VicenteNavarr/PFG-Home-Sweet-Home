@@ -20,6 +20,7 @@ public class RecipeDAO {
      * @return True si la operación fue exitosa, False en caso contrario.
      */
     public boolean addRecipe(Recipe recipe) {
+        
         String queryRecipe = "INSERT INTO Recetas (nombre, instrucciones, tipo, foto, id_grupo) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmtRecipe = conn.prepareStatement(queryRecipe, Statement.RETURN_GENERATED_KEYS)) {
@@ -31,34 +32,48 @@ public class RecipeDAO {
             stmtRecipe.setInt(5, recipe.getIdGrupo());
 
             int rowsAffected = stmtRecipe.executeUpdate();
+            
             if (rowsAffected > 0) {
+                
                 ResultSet generatedKeys = stmtRecipe.getGeneratedKeys();
+                
                 if (generatedKeys.next()) {
+                    
                     recipe.setId(generatedKeys.getInt(1)); // Asignar el ID generado
                 }
 
-                // Añadir los productos asociados a la receta en Receta_producto
+                // Añade los productos asociados a la receta en Receta_producto
                 return addProductsToRecipe(recipe.getId(), recipe.getIngredientes());
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al insertar la receta.");
         }
+        
         return false;
     }
 
+   
     /**
-     * Recupera todas las recetas de la tabla Recetas.
+     * Recupera todas las recetas del grupo del usuario.
      *
-     * @return Lista de recetas.
+     * @param groupId ID del grupo al que pertenecen las recetas.
+     * @return Lista de recetas del grupo.
      */
-    public List<Recipe> getAllRecipes() {
-        String query = "SELECT * FROM Recetas";
+    public List<Recipe> getRecipesByGroup(int groupId) {
+        
+        String query = "SELECT * FROM Recetas WHERE id_grupo = ?";
         List<Recipe> recipes = new ArrayList<>();
 
-        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, groupId);
+            ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+                
                 Recipe recipe = new Recipe(
                         rs.getInt("id"),
                         rs.getString("nombre"),
@@ -68,12 +83,16 @@ public class RecipeDAO {
                         rs.getInt("id_grupo"),
                         null // Los ingredientes se pueden cargar por separado
                 );
+                
                 recipes.add(recipe);
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al recuperar las recetas.");
         }
+
         return recipes;
     }
 
@@ -84,7 +103,9 @@ public class RecipeDAO {
      * @return La receta correspondiente, o null si no se encuentra.
      */
     public Recipe getRecipeById(int recipeId) {
+        
         String query = "SELECT * FROM Recetas WHERE id = ?";
+        
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, recipeId);
@@ -101,10 +122,13 @@ public class RecipeDAO {
                     );
                 }
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al recuperar la receta por ID.");
         }
+        
         return null;
     }
 
@@ -115,6 +139,7 @@ public class RecipeDAO {
      * @return True si la operación fue exitosa, False en caso contrario.
      */
     public boolean updateRecipe(Recipe recipe) {
+        
         String queryUpdateRecipe = "UPDATE Recetas SET nombre = ?, instrucciones = ?, tipo = ?, foto = ?, id_grupo = ? WHERE id = ?";
         String queryCheckProduct = "SELECT COUNT(*) FROM Receta_producto WHERE id_receta = ? AND nombre_producto = ?";
         String queryUpdateProduct = "UPDATE Receta_producto SET cantidad_necesaria = ?, tipo = ?, categoria = ? WHERE id_receta = ? AND nombre_producto = ?";
@@ -145,6 +170,7 @@ public class RecipeDAO {
 
             // Procesa cada ingrediente
             for (Product product : recipe.getIngredientes()) {
+                
                 // Verifica si el producto ya existe
                 stmtCheck = conn.prepareStatement(queryCheckProduct);
                 stmtCheck.setInt(1, recipe.getId());
@@ -152,11 +178,14 @@ public class RecipeDAO {
                 rsCheck = stmtCheck.executeQuery();
 
                 if (rsCheck.next() && rsCheck.getInt(1) > 0) {
+                    
                     // Asigna valor predeterminado para 'tipo' si está vacío o nulo
                     if (product.getTipo() == null || product.getTipo().trim().isEmpty()) {
+                        
                         product.setTipo("Alimentación");
                         System.out.println("Asignado 'Alimentación' como tipo para el producto actualizado: " + product.getNombreProducto());
                     }
+                    
                     // Actualiza el producto existente
                     stmtUpdateProduct = conn.prepareStatement(queryUpdateProduct);
                     stmtUpdateProduct.setInt(1, product.getCantidad());
@@ -166,12 +195,16 @@ public class RecipeDAO {
                     stmtUpdateProduct.setString(5, product.getNombreProducto());
                     stmtUpdateProduct.executeUpdate();
                     System.out.println("Producto actualizado: " + product.getNombreProducto());
+                    
                 } else {
+                    
                     // Asigna valor predeterminado para 'tipo' si está vacío o nulo
                     if (product.getTipo() == null || product.getTipo().trim().isEmpty()) {
+                        
                         product.setTipo("Alimentación");
                         System.out.println("Asignado 'Alimentación' como tipo para el producto nuevo: " + product.getNombreProducto());
                     }
+                    
                     // Inserta el nuevo producto
                     stmtInsertProduct = conn.prepareStatement(queryInsertProduct);
                     stmtInsertProduct.setInt(1, recipe.getId());
@@ -188,16 +221,25 @@ public class RecipeDAO {
             return true;
 
         } catch (SQLException e) {
+            
             e.printStackTrace();
+            
             if (conn != null) {
+                
                 try {
+                    
                     conn.rollback(); // Revertir!!
+                    
                 } catch (SQLException rollbackEx) {
+                    
                     rollbackEx.printStackTrace();
                 }
             }
+            
             return false;
+            
         } finally {
+            
             try {
                 if (stmtRecipe != null) {
                     stmtRecipe.close();
@@ -235,18 +277,24 @@ public class RecipeDAO {
 
         // Elimina comidas que referencian esta receta
         if (!mealDAO.deleteMealsByRecipeId(recipeId)) {
+            
             System.err.println("Error al eliminar las comidas relacionadas con la receta.");
             return false; // Detienesi no se pudieron borrar las referencias
         }
 
         String query = "DELETE FROM Recetas WHERE id = ?";
+        
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             stmt.setInt(1, recipeId);
             return stmt.executeUpdate() > 0;
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al eliminar la receta.");
         }
+        
         return false;
     }
 
@@ -262,13 +310,17 @@ public class RecipeDAO {
      * en caso de error
      */
     public boolean deleteRecipeCascade(int recipeId) {
+        
         String deleteMealsQuery = "DELETE FROM Comidas WHERE id_receta = ?";
         String deleteRecipeQuery = "DELETE FROM Recetas WHERE id = ?";
+        
         try (Connection conn = MySQLConnection.getConnection()) {
+            
             conn.setAutoCommit(false); // Inicia la transacción
 
             // Elimina comidas relacionadas
             try (PreparedStatement deleteMealsStmt = conn.prepareStatement(deleteMealsQuery)) {
+                
                 deleteMealsStmt.setInt(1, recipeId);
                 int mealsDeleted = deleteMealsStmt.executeUpdate();
                 System.out.println("Comidas eliminadas: " + mealsDeleted);
@@ -276,19 +328,24 @@ public class RecipeDAO {
 
             // Elimina la receta
             try (PreparedStatement deleteRecipeStmt = conn.prepareStatement(deleteRecipeQuery)) {
+                
                 deleteRecipeStmt.setInt(1, recipeId);
                 int recipeDeleted = deleteRecipeStmt.executeUpdate();
                 System.out.println("Receta eliminada: " + recipeDeleted);
 
                 conn.commit(); // Confirma la transacción
                 return recipeDeleted > 0;
+                
             } catch (SQLException e) {
+                
                 conn.rollback(); // Revertir la transacción en caso de error
                 System.err.println("Error al eliminar la receta: " + e.getMessage());
                 e.printStackTrace();
                 return false;
             }
+            
         } catch (SQLException e) {
+            
             System.err.println("Error en la conexión o transacción: " + e.getMessage());
             e.printStackTrace();
             return false;
@@ -302,14 +359,18 @@ public class RecipeDAO {
      * @return Lista de productos necesarios para la receta.
      */
     public List<Product> getProductsByRecipeId(int recipeId) {
+        
         String query = "SELECT rp.nombre_producto, rp.cantidad_necesaria, rp.categoria, rp.tipo "
                 + "FROM Receta_producto rp "
                 + "WHERE rp.id_receta = ?";
         List<Product> products = new ArrayList<>();
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             stmt.setInt(1, recipeId);
+            
             try (ResultSet rs = stmt.executeQuery()) {
+                
                 while (rs.next()) {
                     Product product = new Product(
                             0, // ID no disponible en la tabla Receta_producto
@@ -326,7 +387,9 @@ public class RecipeDAO {
                     System.out.println("Producto cargado: " + product.getNombreProducto() + " (Cantidad: " + product.getCantidad() + ")");
                 }
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al recuperar los productos de la receta.");
         }
@@ -346,16 +409,21 @@ public class RecipeDAO {
      * @return Lista de productos necesarios para la receta.
      */
     public List<Product> getProductsFromRecipe(int recipeId) {
+        
         String query = "SELECT rp.nombre_producto, rp.cantidad_necesaria, rp.tipo, rp.categoria "
                 + "FROM Receta_producto rp "
                 + "WHERE rp.id_receta = ?";
+        
         List<Product> products = new ArrayList<>();
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             stmt.setInt(1, recipeId);
 
             try (ResultSet rs = stmt.executeQuery()) {
+                
                 while (rs.next()) {
+                    
                     Product product = new Product();
                     product.setNombreProducto(rs.getString("nombre_producto")); // Nombre del producto
                     product.setCantidad(rs.getInt("cantidad_necesaria")); // Cantidad necesaria
@@ -365,10 +433,13 @@ public class RecipeDAO {
                     System.out.println("Producto recuperado: Nombre=" + product.getNombreProducto());
                 }
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al recuperar los productos de la receta.");
         }
+        
         return products;
     }
 
@@ -380,16 +451,20 @@ public class RecipeDAO {
      * @return True si la operación fue exitosa, False en caso contrario.
      */
     public boolean deleteProductsFromRecipe(int recipeId) {
+        
         String query = "DELETE FROM Receta_producto WHERE id_receta = ?";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setInt(1, recipeId);
             return stmt.executeUpdate() > 0;
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al eliminar los productos asociados a la receta.");
         }
+        
         return false;
     }
 
@@ -401,11 +476,15 @@ public class RecipeDAO {
      * @return True si la operación fue exitosa, False en caso contrario.
      */
     public boolean addProductsToRecipe(int recipeId, List<Product> productos) {
+        
         String query = "INSERT INTO Receta_producto (id_receta, id_producto, cantidad_necesaria) VALUES (?, ?, ?)";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             for (Product product : productos) {
+                
                 if (product.getId() == 0) { // Verifica que el ID del producto no sea nulo o inválido
+                    
                     System.err.println("Producto inválido: " + product.getNombreProducto());
                     continue; // Salta el producto que no tiene ID válido
                 }
@@ -418,10 +497,13 @@ public class RecipeDAO {
 
             stmt.executeBatch(); // Ejecutar lote
             return true;
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al añadir los ingredientes a la receta.");
         }
+        
         return false;
     }
 
@@ -432,12 +514,13 @@ public class RecipeDAO {
      * `Recetas` y los ingredientes en la tabla `Receta_producto`. Revierte la
      * transacción si ocurre un error.
      *
-     * @param recipe el objeto con la información de la receta y
-     * sus ingredientes
-     * @return  true si la receta y los productos fueron insertados
+     * @param recipe el objeto con la información de la receta y sus
+     * ingredientes
+     * @return true si la receta y los productos fueron insertados
      * correctamente, false si ocurrió algún error
      */
     public boolean addRecipeAndProducts(Recipe recipe) {
+        
         String queryRecipe = "INSERT INTO Recetas (nombre, instrucciones, tipo, foto, id_grupo) VALUES (?, ?, ?, ?, ?)";
         String queryRecipeProduct = "INSERT INTO Receta_producto (id_receta, nombre_producto, cantidad_necesaria, tipo, categoria) VALUES (?, ?, ?, ?, ?)";
         Connection conn = null;
@@ -445,6 +528,7 @@ public class RecipeDAO {
         PreparedStatement stmtProduct = null;
 
         try {
+            
             conn = MySQLConnection.getConnection();
             conn.setAutoCommit(false); // Iniciar transacción
 
@@ -460,14 +544,19 @@ public class RecipeDAO {
             // Obtiene el ID generado para la receta
             ResultSet rs = stmtRecipe.getGeneratedKeys();
             int recipeId = 0;
+            
             if (rs.next()) {
+                
                 recipeId = rs.getInt(1);
             }
+            
             System.out.println("Receta insertada con ID: " + recipeId);
 
             // Inserta los productos en Receta_producto sin el ID del producto
             stmtProduct = conn.prepareStatement(queryRecipeProduct);
+            
             for (Product product : recipe.getIngredientes()) {
+                
                 stmtProduct.setInt(1, recipeId); // ID de la receta
                 stmtProduct.setString(2, product.getNombreProducto()); // Nombre del producto
                 stmtProduct.setInt(3, product.getCantidad()); // Cantidad necesaria
@@ -476,22 +565,34 @@ public class RecipeDAO {
                 stmtProduct.addBatch(); // Añadir al batch
                 System.out.println("Producto preparado para insertar: " + product.getNombreProducto());
             }
+            
             stmtProduct.executeBatch(); // Ejecuta las inserciones
 
             conn.commit(); // Confirma la transacción
             return true;
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
+            
             if (conn != null) {
+                
                 try {
+                    
                     conn.rollback(); // Revertir
+                    
                 } catch (SQLException rollbackEx) {
+                    
                     rollbackEx.printStackTrace();
                 }
             }
+            
             return false;
+            
         } finally {
+            
             try {
+                
                 if (stmtRecipe != null) {
                     stmtRecipe.close();
                 }
@@ -505,6 +606,33 @@ public class RecipeDAO {
                 closeEx.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Comprueba la existencia de receta
+     * @param nombre
+     * @return 
+     */
+    public boolean existsRecipe(String nombre) {
+        
+        String sql = "SELECT COUNT(*) FROM recetas WHERE nombre = ?";
+
+        try (Connection conn = MySQLConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, nombre);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                
+                return true; // La receta ya existe
+            }
+            
+        } catch (SQLException e) {
+            
+            System.err.println("Error al verificar receta duplicada: " + e.getMessage());
+        }
+
+        return false; // La receta no existe
     }
 
 }

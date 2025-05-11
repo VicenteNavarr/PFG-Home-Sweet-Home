@@ -16,6 +16,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -37,8 +38,11 @@ public class CreateSpentViewController implements Initializable {
     private TextField fieldSpentName;
     @FXML
     private Button btnCancelSpent;
-
+    @FXML
+    private Label newSpentTitle;
+    
     private BudgetViewController budgetViewController; // Referencia al controlador principal
+
 
     //private LanguageManager languageManager;
     /**
@@ -67,22 +71,25 @@ public class CreateSpentViewController implements Initializable {
         LanguageManager languageManager = LanguageManager.getInstance();
 
         if (languageManager == null) {
+            
             System.err.println("Error: LanguageManager no está disponible.");
             return;
         }
 
-        // Configurar textos de los botones
+        // Configura textos de los botones
         System.out.println("Configurando textos de botones...");
         btnCreateSpent.setText(languageManager.getTranslation("createSpent"));
         btnCancelSpent.setText(languageManager.getTranslation("cancel"));
+        
+        newSpentTitle.setText(languageManager.getTranslation("newSpentTitle"));
 
-        // Configurar PromptText de los campos de texto
+        // Configura PromptText de los campos de texto
         System.out.println("Configurando PromptText de TextField...");
         fieldSpentName.setPromptText(languageManager.getTranslation("promptSpentName"));
         fieldSpentQuantity.setPromptText(languageManager.getTranslation("promptSpentQuantity"));
         fieldSpentDescription.setPromptText(languageManager.getTranslation("promptSpentDescription"));
 
-        // Configurar ComboBox: Categorías
+        // Configura ComboBox: Categorías
         System.out.println("Configurando ComboBox de categorías...");
         Category.getItems().clear();
         Category.getItems().addAll(
@@ -93,16 +100,19 @@ public class CreateSpentViewController implements Initializable {
                 languageManager.getTranslation("categoryHousing"),
                 languageManager.getTranslation("categoryOthers")
         );
+        
         Category.setPromptText(languageManager.getTranslation("promptCategory"));
 
-        // Configurar ComboBox: Métodos de Pago
+        // Configura ComboBox: Métodos de Pago
         System.out.println("Configurando ComboBox de métodos de pago...");
         PaymentMethod.getItems().clear();
         PaymentMethod.getItems().addAll(
                 languageManager.getTranslation("paymentCash"),
                 languageManager.getTranslation("paymentCard")
         );
+        
         PaymentMethod.setPromptText(languageManager.getTranslation("promptPaymentMethod"));
+        
         // Configuración de DatePicker: Fecha
         Date.setPromptText(languageManager.getTranslation("promptDate")); 
 
@@ -111,12 +121,14 @@ public class CreateSpentViewController implements Initializable {
     }
 
 /////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////    
+    
     /**
      * Método para establecer la referencia al BudgetViewController principal.
      *
      * @param budgetViewController - Controlador principal
      */
     public void setBudgetViewController(BudgetViewController budgetViewController) {
+        
         this.budgetViewController = budgetViewController;
     }
 
@@ -129,7 +141,8 @@ public class CreateSpentViewController implements Initializable {
     private void createNewSpent(ActionEvent event) {
         
         try {
-            // Acceder al Singleton para traducciones
+            
+            // Accede al Singleton para traducciones
             LanguageManager languageManager = LanguageManager.getInstance();
 
             if (languageManager == null) {
@@ -139,7 +152,7 @@ public class CreateSpentViewController implements Initializable {
                 return;
             }
 
-            // Validar el método de pago seleccionado y mapear valores traducidos
+            // Valida el método de pago seleccionado y mapea valores traducidos
             String metodoPagoSeleccionado = PaymentMethod.getSelectionModel().getSelectedItem();
             
             if (metodoPagoSeleccionado == null || metodoPagoSeleccionado.trim().isEmpty()) {
@@ -171,7 +184,7 @@ public class CreateSpentViewController implements Initializable {
                 return;
             }
 
-            // Validar la categoría seleccionada
+            // Valida la categoría seleccionada
             String categoriaSeleccionada = Category.getSelectionModel().getSelectedItem();
             
             if (categoriaSeleccionada == null || categoriaSeleccionada.trim().isEmpty()) {
@@ -185,7 +198,7 @@ public class CreateSpentViewController implements Initializable {
                 return;
             }
 
-            // Validar el nombre del gasto
+            // Valida el nombre del gasto
             String nombreGasto = fieldSpentName.getText().trim();
             
             if (nombreGasto.isEmpty()) {
@@ -199,7 +212,7 @@ public class CreateSpentViewController implements Initializable {
                 return;
             }
 
-            // Validar y parsear la cantidad
+            // Valida y parsea la cantidad
             String cantidadGasto = fieldSpentQuantity.getText().trim();
             double montoGasto;
             
@@ -221,7 +234,7 @@ public class CreateSpentViewController implements Initializable {
                 return;
             }
 
-            // Crear un nuevo gasto con los datos validados
+            // Crea un nuevo gasto con los datos validados
             Budget nuevoGasto = new Budget(
                     0, // ID inicial, suponiendo que la base de datos lo genera automáticamente
                     nombreGasto,
@@ -233,11 +246,11 @@ public class CreateSpentViewController implements Initializable {
                     CurrentSession.getInstance().getUserGroupId()
             );
 
-            // Agregar el gasto a la base de datos
+            // Agrega el gasto a la base de datos
             BudgetDAO budgetDAO = new BudgetDAO();
             boolean success = budgetDAO.addBudget(nuevoGasto);
 
-            // Mostrar alerta según el resultado de la operación
+            // Muestra alerta según el resultado de la operación
             if (success) {
                 
                 AlertUtils.showAlert(
@@ -248,10 +261,10 @@ public class CreateSpentViewController implements Initializable {
                 
                 if (budgetViewController != null) {
                     
-                    budgetViewController.loadSpents(); // Refrescar la tabla en el controlador principal
+                    budgetViewController.loadSpents(); // Refresca la tabla en el controlador principal
                 }
                 
-                ((Stage) btnCreateSpent.getScene().getWindow()).close(); // Cerrar la ventana actual
+                ((Stage) btnCreateSpent.getScene().getWindow()).close(); // Cierra la ventana actual
                 
             } else {
                 
@@ -265,7 +278,7 @@ public class CreateSpentViewController implements Initializable {
         } catch (Exception e) {
             
             e.printStackTrace();
-            LanguageManager languageManager = LanguageManager.getInstance(); // Reforzar acceso al Singleton
+            LanguageManager languageManager = LanguageManager.getInstance(); // acceso al Singleton
             
             AlertUtils.showAlert(
                     Alert.AlertType.ERROR,

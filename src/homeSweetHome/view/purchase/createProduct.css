@@ -1,30 +1,30 @@
 /* Estilo Global */
-@font-face {
+/*@font-face {
     font-family: 'Poppins';
-    src: url('../../../fonts/Poppins-Regular.ttf'); /* Ruta relativa desde el archivo CSS */
+    src: url('../../../fonts/Poppins-Regular.ttf');  Ruta relativa desde el archivo CSS 
 }
 
 .root {
-    -fx-font-family: 'Poppins'; /* Fuente global aplicada a toda la interfaz */
-    -fx-background-color: #f4f4f4; /* Fondo global suave */
-    -fx-font-size: 14px; /* Tamaño de fuente base */
+    -fx-font-family: 'Poppins';  Fuente global aplicada a toda la interfaz 
+    -fx-background-color: #f4f4f4;  Fondo global suave 
+    -fx-font-size: 14px;  Tamaño de fuente base 
 }
 
-/* TextFields con solo una línea debajo */
+ TextFields con solo una línea debajo 
 .text-field {
     -fx-background-color: transparent;
     -fx-border-color: transparent transparent #BF9A77 transparent;
     -fx-border-width: 0 0 2 0;
-    -fx-prompt-text-fill: #B0B0B0; /* Color del placeholder */
-    -fx-text-fill: #333333; /* Color del texto */
+    -fx-prompt-text-fill: #B0B0B0;  Color del placeholder 
+    -fx-text-fill: #333333;  Color del texto 
     -fx-padding: 5 10 5 10;
 }
 
 .text-field:focused {
-    -fx-border-color: transparent transparent #D35C37 transparent; /* Línea más destacada al enfocar */
+    -fx-border-color: transparent transparent #D35C37 transparent;  Línea más destacada al enfocar 
 }
 
-/* ComboBox estilos */
+ ComboBox estilos 
 .combo-box {
     -fx-background-color: #FFFFFF;
     -fx-border-color: #BF9A77;
@@ -33,7 +33,7 @@
     -fx-padding: 5;
 }
 
-/* Botones primarios */
+ Botones primarios 
 .btn-primary {
     -fx-background-color: #D35C37;
     -fx-text-fill: #FFFFFF;
@@ -44,14 +44,14 @@
 }
 
 .btn-primary:hover {
-    -fx-background-color: #BF9A77; /* Color más suave al pasar el ratón */
+    -fx-background-color: #BF9A77;  Color más suave al pasar el ratón 
 }
 
 .btn-primary:pressed {
-    -fx-background-color: #A24E2E; /* Color más oscuro al hacer clic */
+    -fx-background-color: #A24E2E;  Color más oscuro al hacer clic 
 }
 
-/* Botones secundarios */
+ Botones secundarios 
 .btn-secondary {
     -fx-background-color: #97B8C2;
     -fx-text-fill: #FFFFFF;
@@ -62,10 +62,123 @@
 }
 
 .btn-secondary:hover {
-    -fx-background-color: #7A9EA9; /* Color más oscuro al pasar el ratón */
+    -fx-background-color: #7A9EA9;  Color más oscuro al pasar el ratón 
 }
 
 .btn-secondary:pressed {
-    -fx-background-color: #688893; /* Color más oscuro al hacer clic */
+    -fx-background-color: #688893;  Color más oscuro al hacer clic 
+}
+*/
+@font-face {
+    font-family: 'Poppins';
+    src: url('../../../fonts/Poppins-Regular.ttf');
 }
 
+.root {
+    -fx-background-color: #F6F4F0;
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 14px;
+}
+
+/* Contenedor principal SIN bordes */
+.main-container {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 20px;
+}
+
+/* Título */
+.label {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2E5077;
+}
+
+/* Campos de texto con solo una línea debajo */
+.text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #2E5077 transparent;
+    -fx-border-width: 0 0 2px 0;
+    -fx-prompt-text-fill: #B0B0B0;
+    -fx-text-fill: #333333;
+    -fx-padding: 5px 10px;
+}
+
+.text-field:focused {
+    -fx-border-color: transparent transparent #79D7BE transparent;
+}
+
+/* ComboBox */
+.combo-box {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #2E5077;
+    -fx-border-radius: 5px;
+    -fx-padding: 8px;
+}
+
+/* Botón primario */
+.btn-primary {
+    -fx-background-color: #E58E00;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 15px;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #F6A600;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #2E5077;
+}
+
+.btn-secondary {
+    -fx-background-color: #AA1803;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 15px;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #C32C19;
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: #8B1300;
+}
+
+.btn-success {
+    -fx-background-color: #778D45;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 15px;
+    -fx-cursor: hand;
+}
+
+.btn-success:hover {
+    -fx-background-color: #93A664;
+}
+
+.btn-success:pressed {
+    -fx-background-color: #778D45;
+}
+
+/* Botones principales */
+.btn-primary2 {
+    -fx-background-color: #4DA1A9;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 15px;
+    -fx-cursor: hand;
+}
+
+.btn-primary2:hover {
+    -fx-background-color: #79D7BE;
+}
+
+.btn-primary2:pressed {
+    -fx-background-color: #2E5077;
+}

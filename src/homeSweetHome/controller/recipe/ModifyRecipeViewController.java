@@ -65,6 +65,8 @@ public class ModifyRecipeViewController implements Initializable {
     private TableColumn<Product, String> colIngredientUnit;
     @FXML
     private TableColumn<Product, Void> deleteColumn;
+    @FXML
+    private Label modifyRecipeTitle;
 
     private RecipeViewController recipeViewController;
 
@@ -84,21 +86,20 @@ public class ModifyRecipeViewController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
 
         // Registra este controlador como listener del LanguageManager
         LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
         updateTexts(); // Actualiza los textos inicialmente
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////            
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////  
 
         colIngredientName.setCellValueFactory(new PropertyValueFactory<>("nombreProducto"));
         colIngredientQuantity.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         colIngredientUnit.setCellValueFactory(new PropertyValueFactory<>("tipo"));
 
         //cmbRecipeCategory.getItems().addAll("Carnes", "Pescados", "Verduras", "Legumbres", "Postres", "Otros");
-
         deleteColumn.setCellFactory(param -> new TableCell<>() {
             private final Button btnDelete = new Button("Eliminar");
 
@@ -124,15 +125,16 @@ public class ModifyRecipeViewController implements Initializable {
         });
 
     }
-    
-/////////////////////////////////IDIOMAS/////////////////////////////////////////////
 
+/////////////////////////////////IDIOMAS/////////////////////////////////////////////
+    
     private void updateTexts() {
+        
         // Accede al Singleton del LanguageManager
         LanguageManager languageManager = LanguageManager.getInstance();
 
         if (languageManager == null) {
-            
+
             System.err.println("Error: LanguageManager no está disponible.");
             return;
         }
@@ -140,45 +142,47 @@ public class ModifyRecipeViewController implements Initializable {
         System.out.println("Actualizando textos de la interfaz...");
 
         // Traducción de los textos de los botones
-        btnAddIngredient.setText(languageManager.getTranslation("addIngredient")); 
-        btnLoadImage.setText(languageManager.getTranslation("loadImage")); 
-        btnModifyRecipe.setText(languageManager.getTranslation("modifyRecipe")); 
-        btnCancel.setText(languageManager.getTranslation("cancel")); 
+        btnAddIngredient.setText(languageManager.getTranslation("addIngredient"));
+        btnLoadImage.setText(languageManager.getTranslation("loadImage"));
+        btnModifyRecipe.setText(languageManager.getTranslation("modifyRecipe"));
+        btnCancel.setText(languageManager.getTranslation("cancel"));
+
+        modifyRecipeTitle.setText(languageManager.getTranslation("modifyRecipeTitle"));
 
         // Traducción de los campos de texto
-        fieldRecipeName.setPromptText(languageManager.getTranslation("recipeNamePrompt")); 
-        txtAreaInstructions.setPromptText(languageManager.getTranslation("instructionsPrompt")); 
+        fieldRecipeName.setPromptText(languageManager.getTranslation("recipeNamePrompt"));
+        txtAreaInstructions.setPromptText(languageManager.getTranslation("instructionsPrompt"));
 
         // Traducción de encabezados de las columnas en la tabla de ingredientes
-        colIngredientName.setText(languageManager.getTranslation("ingredientName")); 
-        colIngredientQuantity.setText(languageManager.getTranslation("ingredientQuantity")); 
-        colIngredientUnit.setText(languageManager.getTranslation("ingredientUnit")); 
-        deleteColumn.setText(languageManager.getTranslation("delete")); 
+        colIngredientName.setText(languageManager.getTranslation("ingredientName"));
+        colIngredientQuantity.setText(languageManager.getTranslation("ingredientQuantity"));
+        colIngredientUnit.setText(languageManager.getTranslation("ingredientUnit"));
+        deleteColumn.setText(languageManager.getTranslation("delete"));
 
         // Traducción del ComboBox de categorías de recetas
-        cmbRecipeCategory.setPromptText(languageManager.getTranslation("recipeCategoryPrompt")); 
+        cmbRecipeCategory.setPromptText(languageManager.getTranslation("recipeCategoryPrompt"));
         cmbRecipeCategory.getItems().clear();
         cmbRecipeCategory.getItems().addAll(
-                languageManager.getTranslation("recipeCategoryMeat"), 
-                languageManager.getTranslation("recipeCategoryFish"), 
-                languageManager.getTranslation("recipeCategoryVegetables"), 
-                languageManager.getTranslation("recipeCategoryLegumes"), 
-                languageManager.getTranslation("recipeCategoryDesserts"), 
-                languageManager.getTranslation("recipeCategoryOthers") 
+                languageManager.getTranslation("recipeCategoryMeat"),
+                languageManager.getTranslation("recipeCategoryFish"),
+                languageManager.getTranslation("recipeCategoryVegetables"),
+                languageManager.getTranslation("recipeCategoryLegumes"),
+                languageManager.getTranslation("recipeCategoryDesserts"),
+                languageManager.getTranslation("recipeCategoryOthers")
         );
 
         System.out.println("Traducciones aplicadas correctamente en idioma: " + languageManager.getTranslation("currentLanguage"));
     }
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////         
-
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////  
+    
     /**
      * Asigna el controlador de la vista de recetas.
      *
      * @param recipeViewController controlador de la vista de recetas
      */
     public void setRecipeViewController(RecipeViewController recipeViewController) {
-        
+
         this.recipeViewController = recipeViewController;
     }
 
@@ -188,10 +192,12 @@ public class ModifyRecipeViewController implements Initializable {
      * @param recipe la receta a establecer
      */
     public void setRecipe(Recipe recipe) {
-        
+
         this.recipe = recipe;
         loadRecipeDetails();
     }
+
+    
 
     /**
      * Carga y muestra los detalles de la receta actual.
@@ -200,7 +206,7 @@ public class ModifyRecipeViewController implements Initializable {
      * y la imagen de la receta en la interfaz, utilizando los datos asociados.
      */
     private void loadRecipeDetails() {
-
+        
         if (recipe != null) {
             
             System.out.println("Cargando detalles para la receta: " + recipe.getNombre());
@@ -210,7 +216,7 @@ public class ModifyRecipeViewController implements Initializable {
 
             // Carga ingredientes desde el DAO
             List<Product> ingredientes = recipeDAO.getProductsByRecipeId(recipe.getId());
-            
+
             if (ingredientes == null || ingredientes.isEmpty()) {
                 
                 System.out.println("No hay ingredientes disponibles para esta receta.");
@@ -219,8 +225,26 @@ public class ModifyRecipeViewController implements Initializable {
             } else {
                 
                 tableIngredients.getItems().clear();
+
+                //  Depuración  para verificar los datos antes de insertarlos en la tabla
+                for (Product ingrediente : ingredientes) {
+                    
+                    if (ingrediente.getTipo() == null || ingrediente.getTipo().isEmpty()) {
+                        
+                        ingrediente.setTipo("Cantidad"); // Asigna un valor por defecto si está vacío
+                    }
+                    
+                    System.out.println("Ingrediente cargado: " + ingrediente.getNombreProducto()
+                            + " - Cantidad: " + ingrediente.getCantidad()
+                            + " - Unidad (Tipo): " + ingrediente.getTipo());
+                }
+
+                // Agrega ingredientes a la tabla
                 tableIngredients.getItems().addAll(ingredientes);
-                System.out.println("Ingredientes cargados: " + ingredientes);
+                System.out.println("Total ingredientes cargados en la tabla: " + tableIngredients.getItems().size());
+
+                // actualización visual de la tabla
+                tableIngredients.refresh();
             }
 
             // Carga imagen si existe
@@ -247,7 +271,7 @@ public class ModifyRecipeViewController implements Initializable {
      */
     @FXML
     private void cancel(ActionEvent event) {
-        
+
         ((Stage) btnCancel.getScene().getWindow()).close();
     }
 
@@ -258,9 +282,9 @@ public class ModifyRecipeViewController implements Initializable {
      */
     @FXML
     private void addIngredient(ActionEvent event) {
-        
+
         try {
-            
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/recipe/AddIngredientView.fxml"));
             Parent root = loader.load();
 
@@ -269,13 +293,14 @@ public class ModifyRecipeViewController implements Initializable {
 
             Stage stage = new Stage();
             stage.setTitle("Añadir Ingrediente");
+            stage.setResizable(false);
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnAddIngredient.getScene().getWindow());
             stage.showAndWait();
-            
+
         } catch (Exception e) {
-            
+
             System.err.println("Error al cargar la vista de añadir ingrediente: " + e.getMessage());
         }
     }
@@ -286,9 +311,9 @@ public class ModifyRecipeViewController implements Initializable {
      * @param ingredient el ingrediente a añadir
      */
     public void addIngredientToTable(Product ingredient) {
-        
+
         if (ingredient != null) {
-            
+
             tableIngredients.getItems().add(ingredient);
             System.out.println("Ingrediente añadido: " + ingredient.getNombreProducto());
         }
@@ -302,23 +327,23 @@ public class ModifyRecipeViewController implements Initializable {
      */
     @FXML
     private void loadImage(ActionEvent event) {
-        
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Seleccionar Imagen");
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos de Imagen", "*.png", "*.jpg", "*.jpeg"));
 
         selectedImageFile = fileChooser.showOpenDialog(btnLoadImage.getScene().getWindow());
-        
+
         if (selectedImageFile != null) {
-            
+
             try {
-                
+
                 Image image = new Image(selectedImageFile.toURI().toString());
                 imgRecipe.setImage(image);
                 ImageUtils.setClipToCircle(imgRecipe);
-                
+
             } catch (Exception e) {
-                
+
                 System.err.println("Error al cargar la imagen: " + e.getMessage());
             }
         }
@@ -335,23 +360,23 @@ public class ModifyRecipeViewController implements Initializable {
      */
     @FXML
     private void modifyRecipe(ActionEvent event) {
-        
+
         try {
-            
+
             // Valida los campos principales
             String recipeName = fieldRecipeName.getText().trim();
             String recipeCategory = cmbRecipeCategory.getValue();
             String recipeInstructions = txtAreaInstructions.getText().trim();
 
             if (recipeName.isEmpty() || recipeCategory == null || recipeInstructions.isEmpty()) {
-                
+
                 AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos Vacíos", "Por favor, completa todos los campos.");
                 return;
             }
 
             // Verifica que haya al menos un ingrediente
             if (tableIngredients.getItems().isEmpty()) {
-                
+
                 AlertUtils.showAlert(Alert.AlertType.WARNING, "Sin Ingredientes", "Por favor, añade al menos un ingrediente.");
                 return;
             }
@@ -364,14 +389,23 @@ public class ModifyRecipeViewController implements Initializable {
 
             // Maneja la imagen (convertir `Image` a `byte[]`)
             if (imgRecipe.getImage() != null) {
-                
+
                 try {
-                    
+
                     recipe.setFoto(ImageUtils.convertImageToBlob(imgRecipe.getImage()).getBytes(1, (int) ImageUtils.convertImageToBlob(imgRecipe.getImage()).length()));
                 } catch (Exception e) {
-                    
+
                     e.printStackTrace();
-                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Error con la Imagen", "No se pudo procesar la imagen seleccionada.");
+
+                    if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                        AlertUtils.showAlert(Alert.AlertType.ERROR, "Error con la Imagen", "No se pudo procesar la imagen seleccionada.");
+
+                    } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                        AlertUtils.showAlert(Alert.AlertType.ERROR, "Image Error", "The selected image could not be processed.");
+                    }
+
                     return;
                 }
             }
@@ -381,17 +415,33 @@ public class ModifyRecipeViewController implements Initializable {
             boolean success = recipeDAO.updateRecipe(recipe);
 
             if (success) {
-                
-                AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Receta Modificada", "La receta se modificó exitosamente.");
+
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Receta Modificada", "La receta se modificó exitosamente.");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Recipe Modified", "The recipe was successfully modified.");
+                }
+
                 ((Stage) btnModifyRecipe.getScene().getWindow()).close(); // Cierra la ventana actual
-                
+
             } else {
-                
-                AlertUtils.showAlert(Alert.AlertType.ERROR, "Error al Modificar", "No se pudo modificar la receta. Por favor, inténtalo de nuevo.");
+
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Error al Modificar", "No se pudo modificar la receta. Por favor, inténtalo de nuevo.");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Modification Error", "The recipe could not be modified. Please try again.");
+                }
+
             }
-            
+
         } catch (Exception e) {
-            
+
             e.printStackTrace();
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error Inesperado", "Ocurrió un error inesperado.");
         }
@@ -407,9 +457,9 @@ public class ModifyRecipeViewController implements Initializable {
      * @param product el producto a eliminar
      */
     private void deleteProductFromTable(Product product) {
-        
+
         if (product == null) {
-            
+
             System.out.println("No se seleccionó ningún producto para eliminar.");
             return;
         }
@@ -423,7 +473,7 @@ public class ModifyRecipeViewController implements Initializable {
         PreparedStatement stmtDelete = null;
 
         try {
-            
+
             conn = MySQLConnection.getConnection();
 
             // Elimina el producto sólo de esta receta
@@ -433,38 +483,38 @@ public class ModifyRecipeViewController implements Initializable {
             int rowsAffected = stmtDelete.executeUpdate();
 
             if (rowsAffected > 0) {
-                
+
                 System.out.println("Producto eliminado de la receta actual: " + product.getNombreProducto());
-                
+
             } else {
-                
+
                 System.out.println("El producto no estaba asociado con esta receta: " + product.getNombreProducto());
             }
 
             // Elimina el producto de la tabla visual
             tableIngredients.getItems().remove(product);
             System.out.println("Producto eliminado de la tabla visual: " + product.getNombreProducto());
-            
+
         } catch (SQLException e) {
-            
+
             e.printStackTrace();
-            
+
         } finally {
-            
+
             try {
-                
+
                 if (stmtDelete != null) {
-                    
+
                     stmtDelete.close();
                 }
-                
+
                 if (conn != null) {
-                    
+
                     conn.close();
                 }
-                
+
             } catch (SQLException closeEx) {
-                
+
                 closeEx.printStackTrace();
             }
         }

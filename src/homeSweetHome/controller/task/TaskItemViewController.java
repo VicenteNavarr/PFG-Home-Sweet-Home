@@ -15,11 +15,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -55,6 +57,8 @@ public class TaskItemViewController implements Initializable {
 
     private TaskViewController taskViewController;
 
+    int role = CurrentSession.getInstance().getUserRole(); // Tomamos rol para control de permisos
+
     /**
      * Inizializador controlador
      *
@@ -64,14 +68,23 @@ public class TaskItemViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+        //Si el usuario tiene rol consultor, desactivamos botones
+        if (role == 2) {
+
+            btnDelete.setDisable(true);
+            btnComplete.setDisable(true);
+            btnOpenUpdateTask.setDisable(true);
+
+        }
+
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
 
         // Registra este controlador como listener del LanguageManager
         LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
         updateTexts(); // Actualiza los textos inicialmente
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////        
-        
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
+
     }
 
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
@@ -80,12 +93,12 @@ public class TaskItemViewController implements Initializable {
      * Actualiza los textos de la interfaz en función del idioma.
      */
     private void updateTexts() {
-        
+
         // Obtiene la instancia única del Singleton
         LanguageManager languageManager = LanguageManager.getInstance();
 
         if (languageManager == null) {
-            
+
             System.err.println("Error: LanguageManager es nulo. Traducción no aplicada.");
             return;
         }
@@ -118,7 +131,12 @@ public class TaskItemViewController implements Initializable {
         System.out.println("Descripción 'promptTaskDescription': " + txtDescription.getPromptText());
 
         // Refrescar UI para aplicar los cambios visualmente
-        Platform.runLater(() -> lbNombreTarea.getScene().getWindow().sizeToScene());
+        //Platform.runLater(() -> lbNombreTarea.getScene().getWindow().sizeToScene());
+        Platform.runLater(() -> {
+            if (lbNombreTarea.getScene() != null && lbNombreTarea.getScene().getWindow() != null) {
+                lbNombreTarea.getScene().getWindow().sizeToScene();
+            }
+        });
 
         System.out.println("Traducciones aplicadas correctamente en TaskItemViewController.");
     }
@@ -160,15 +178,15 @@ public class TaskItemViewController implements Initializable {
      */
     @FXML
     private void openUpdateTask(ActionEvent event) {
-        
+
         try {
-            
+
             TaskDAO taskDAO = new TaskDAO();
             // Recupera los datos completos de la tarea por su ID.
             Task updatedTask = taskDAO.getTaskById(taskId);
 
             if (updatedTask == null) {
-                
+
                 AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "La tarea no se pudo cargar.");
                 return;
             }
@@ -184,22 +202,23 @@ public class TaskItemViewController implements Initializable {
 
             // Enlaza el controlador principal y los datos de la tarea.
             if (taskViewController != null) {
-                
+
                 updateTaskController.setTaskViewController(taskViewController);
             }
-            
+
             updateTaskController.setTaskData(updatedTask);
 
             // Crea y configura una nueva ventana para la vista de actualización.
             Stage stage = new Stage();
             stage.setTitle("Actualizar Tarea");
+            stage.setResizable(false);
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnOpenUpdateTask.getScene().getWindow());
             stage.showAndWait(); // Muestra la ventana y espera a que se cierre.
-            
+
         } catch (IOException e) {
-            
+
             System.err.println("Error al cargar la vista UpdateTaskView: " + e.getMessage());
         }
     }
@@ -212,24 +231,73 @@ public class TaskItemViewController implements Initializable {
     @FXML
     private void deleteTask(ActionEvent event) {
         
-        // Instancia del DAO para gestionar la eliminación en la base de datos.
-        TaskDAO taskDAO = new TaskDAO();
+        // Crea la alerta de confirmación sin mensaje inicial
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "");
 
-        // Intenta eliminar la tarea usando su ID.
-        boolean success = taskDAO.deleteTask(taskId);
+        // Aplica la hoja de estilos
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
 
-        if (success) {
+        // Define mensaje según idioma
+        String message = LanguageManager.getInstance().getLanguageCode().equals("es")
+                ? "¿Seguro que desea eliminar esta tarea?"
+                : "Are you sure you want to delete this task?";
+
+        String title = LanguageManager.getInstance().getLanguageCode().equals("es")
+                ? "Confirmación"
+                : "Confirmation";
+
+        String header = LanguageManager.getInstance().getLanguageCode().equals("es")
+                ? "Eliminar tarea"
+                : "Delete Task";
+
+        alert.setContentText(message);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+
+        // Captura la respuesta del usuario
+        Optional<ButtonType> result = alert.showAndWait();
+        
+        if (result.isPresent() && result.get() == ButtonType.OK) {
             
-            // Elimina visualmente la tarea del contenedor.
-            taskViewController.getTaskContainer().getChildren().remove(borderPaneContainer);
+            // Instancia del DAO para gestionar la eliminación en la base de datos
+            TaskDAO taskDAO = new TaskDAO();
 
-            // Muestra un mensaje de éxito.
-            AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Tarea Eliminada", "La tarea se eliminó correctamente.");
+            // Intenta eliminar la tarea usando su ID
+            boolean success = taskDAO.deleteTask(taskId);
+
+            if (success) {
+                
+                // Elimina visualmente la tarea del contenedor
+                taskViewController.getTaskContainer().getChildren().remove(borderPaneContainer);
+
+                String deleteSuccessTitle = LanguageManager.getInstance().getLanguageCode().equals("es")
+                        ? "Tarea Eliminada"
+                        : "Task Deleted";
+
+                String deleteSuccessMessage = LanguageManager.getInstance().getLanguageCode().equals("es")
+                        ? "La tarea se eliminó correctamente."
+                        : "The task was successfully deleted.";
+
+                AlertUtils.showAlert(Alert.AlertType.INFORMATION, deleteSuccessTitle, deleteSuccessMessage);
+                
+            } else {
+                
+                String errorTitle = LanguageManager.getInstance().getLanguageCode().equals("es")
+                        ? "Error"
+                        : "Error";
+
+                String errorMessage = LanguageManager.getInstance().getLanguageCode().equals("es")
+                        ? "No se pudo eliminar la tarea."
+                        : "The task could not be deleted.";
+
+                AlertUtils.showAlert(Alert.AlertType.ERROR, errorTitle, errorMessage);
+            }
             
         } else {
             
-            // Muestra un mensaje de error si algo falla.
-            AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se pudo eliminar la tarea.");
+            System.out.println(LanguageManager.getInstance().getLanguageCode().equals("es")
+                    ? "Eliminación cancelada por el usuario."
+                    : "Deletion canceled by user.");
         }
     }
 
@@ -242,22 +310,30 @@ public class TaskItemViewController implements Initializable {
      */
     @FXML
     private void completeTask(ActionEvent event) {
-        
+
         TaskDAO taskDAO = new TaskDAO();
         int groupId = CurrentSession.getInstance().getUserGroupId();
 
         boolean success = taskDAO.moveTaskToHistory(taskId, groupId);
 
         if (success) {
-            
+
             // Elimina visualmente la tarea completada de la vista actual
             taskViewController.getTaskContainer().getChildren().remove(borderPaneContainer);
+            if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
 
-            // Muestra un mensaje de éxito
-            AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Tarea Completada", "La tarea ha sido movida al historial.");
-            
+                // Muestra un mensaje de éxito
+                AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Tarea Completada", "La tarea ha sido movida al historial.");
+
+            } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                // Muestra un mensaje de éxito
+                AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Task Completed", "The task has been moved to the history.");
+
+            }
+
         } else {
-            
+
             // Muestra un mensaje de error si algo falla
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se pudo completar la tarea. Puede que no pertenezca a tu grupo.");
         }

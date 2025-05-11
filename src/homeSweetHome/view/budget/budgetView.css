@@ -1,33 +1,33 @@
 /* Fondo global */
-.root {
+/*.root {
     -fx-background-color: #FFFFFF;
-    -fx-font-family: 'Poppins'; /* Fuente global */
+    -fx-font-family: 'Poppins';  Fuente global 
     -fx-font-size: 14px;
 }
 
-/* Estilo de la sección del encabezado */
+ Estilo de la sección del encabezado 
 .header-section {
-    -fx-background-color: #D35C37; /* Fondo rojo intenso */
+    -fx-background-color: #D35C37;  Fondo rojo intenso 
     -fx-padding: 20;
 }
 
 .header-label {
-    -fx-text-fill: #FFFFFF; /* Texto blanco */
+    -fx-text-fill: #FFFFFF;  Texto blanco 
     -fx-font-size: 24px;
     -fx-font-weight: bold;
     -fx-text-alignment: center;
 }
 
-/* Contenedor de usuarios (lado derecho) */
+ Contenedor de usuarios (lado derecho) 
 .user-container {
-    -fx-background-color: #FFFFFF; /* Fondo blanco para contraste */
+    -fx-background-color: #FFFFFF;  Fondo blanco para contraste 
     -fx-padding: 10;
     -fx-border-color: #D3D3D3;
     -fx-border-width: 1;
     -fx-border-radius: 5;
 }
 
-/* Botones principales */
+ Botones principales 
 .btn-primary {
     -fx-background-color: #D35C37;
     -fx-text-fill: #FFFFFF;
@@ -38,58 +38,58 @@
 }
 
 .btn-primary:hover {
-    -fx-background-color: #BF9A77; /* Color más suave al pasar el ratón */
+    -fx-background-color: #BF9A77;  Color más suave al pasar el ratón 
 }
 
 .btn-primary:pressed {
-    -fx-background-color: #A24E2E; /* Color más oscuro al hacer clic */
+    -fx-background-color: #A24E2E;  Color más oscuro al hacer clic 
 }
 
-/* Sección central (acciones principales) */
+ Sección central (acciones principales) 
 .main-actions {
-    -fx-background-color: #FFFFFF; /* Fondo claro */
+    -fx-background-color: #FFFFFF;  Fondo claro 
     -fx-border-color: #D3D3D3;
-    -fx-border-width: 1 0 0 0; /* Línea superior */
+    -fx-border-width: 1 0 0 0;  Línea superior 
     -fx-padding: 20;
 }
 
-/* ScrollPane */
+ ScrollPane 
 .scroll-pane {
-    -fx-background: transparent; /* Fondo transparente */
-    -fx-border-color: transparent; /* Sin bordes */
-    -fx-background-insets: 0; /* Quita el fondo interno */
-    -fx-padding: 0; /* Asegura que no haya relleno extra */
+    -fx-background: transparent;  Fondo transparente 
+    -fx-border-color: transparent;  Sin bordes 
+    -fx-background-insets: 0;  Quita el fondo interno 
+    -fx-padding: 0;  Asegura que no haya relleno extra 
 }
 
-/* Personalizar la barra de desplazamiento horizontal y vertical */
+ Personalizar la barra de desplazamiento horizontal y vertical 
 .custom-scroll-pane .scroll-bar {
-    -fx-background-color: transparent; /* Fondo transparente */
+    -fx-background-color: transparent;  Fondo transparente 
 }
 
-/* Estilo del track (fondo de la barra) */
+ Estilo del track (fondo de la barra) 
 .custom-scroll-pane .scroll-bar:vertical .track,
 .custom-scroll-pane .scroll-bar:horizontal .track {
-    -fx-background-color: #EFEFEF; /* Color claro para integrarse con el diseño */
-    -fx-background-radius: 10; /* Bordes redondeados */
+    -fx-background-color: #EFEFEF;  Color claro para integrarse con el diseño 
+    -fx-background-radius: 10;  Bordes redondeados 
 }
 
-/* Estilo del thumb (la parte que puedes mover) */
+ Estilo del thumb (la parte que puedes mover) 
 .custom-scroll-pane .scroll-bar:vertical .thumb,
 .custom-scroll-pane .scroll-bar:horizontal .thumb {
-    -fx-background-color: #D35C37; /* Rojo intenso */
-    -fx-background-radius: 10; /* Bordes redondeados */
+    -fx-background-color: #D35C37;  Rojo intenso 
+    -fx-background-radius: 10;  Bordes redondeados 
 }
 
-/* Cambiar el color al pasar el mouse por encima */
+ Cambiar el color al pasar el mouse por encima 
 .custom-scroll-pane .scroll-bar:vertical .thumb:hover,
 .custom-scroll-pane .scroll-bar:horizontal .thumb:hover {
-    -fx-background-color: #BF9A77; /* Color más suave al pasar el mouse */
+    -fx-background-color: #BF9A77;  Color más suave al pasar el mouse 
 }
 
-/* Opcional: Estilo de las flechas */
+ Opcional: Estilo de las flechas 
 .custom-scroll-pane .increment-button,
 .custom-scroll-pane .decrement-button {
-    -fx-background-color: transparent; /* Flechas transparentes */
+    -fx-background-color: transparent;  Flechas transparentes 
 }
 
 
@@ -99,5 +99,131 @@
 }
 .btn-decrease {
     -fx-background-color: #f44336;
+    -fx-text-fill: white;
+}*/
+/* Fondo global */
+.root {
+    -fx-background-color: #F6F4F0;
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 14px;
+}
+
+/* Encabezado con altura reducida */
+.header-section {
+    -fx-background-color: #2E5077;
+    -fx-padding: 10px 20px;
+}
+
+/* Texto del encabezado alineado a la derecha */
+.header-label {
+    -fx-text-fill: #2E5077;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER-RIGHT;
+}
+
+.table-view .column-header {
+    -fx-background-color: #4DA1A9; /* Cambia el color de fondo de la cabecera */
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white; /* Cambia el color del texto */
+    -fx-font-size: 14px; /* Ajusta el tamaño del texto */
+    -fx-font-weight: bold; /* Hace el texto más visible */
+}
+
+
+
+/* Contenedor de presupuesto */
+.budget-container {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 10px;
+    -fx-border-color: #2E5077;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 3);
+}
+
+/* Botones principales */
+.btn-primary {
+    -fx-background-color: #4DA1A9;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 16px;
+    -fx-background-radius: 5px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #79D7BE;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #2E5077;
+}
+
+/* Sección de acciones */
+.main-actions {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #2E5077;
+    -fx-border-width: 1px 0 0 0;
+    -fx-padding: 20px;
+}
+
+/* ScrollPane */
+.scroll-pane {
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0px;
+}
+
+/* Barra de desplazamiento */
+.custom-scroll-pane .scroll-bar {
+    -fx-background-color: transparent;
+}
+
+.table-view .scroll-bar:horizontal {
+    -fx-opacity: 0; /* Hace que el scroll horizontal sea invisible */
+    -fx-max-height: 0; /* Oculta completamente la barra horizontal */
+    -fx-pref-height: 0;
+}
+
+
+/* Track */
+.table-view .scroll-bar:vertical .track,
+.table-view .scroll-bar:horizontal .track {
+    -fx-background-color: #EFEFEF;
+    -fx-background-radius: 10px;
+}
+
+/* Thumb */
+.table-view .scroll-bar:vertical .thumb,
+.table-view .scroll-bar:horizontal .thumb {
+    -fx-background-color: #2E5077;
+    -fx-background-radius: 10px;
+}
+
+/* Hover sobre el thumb */
+.table-view .scroll-bar:vertical .thumb:hover,
+.table-view .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #79D7BE;
+}
+
+/* Flechas */
+.table-view .increment-button,
+.table-view .decrement-button {
+    -fx-background-color: transparent;
+}
+
+
+
+/* Botones de incremento y decremento */
+.btn-increase {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+}
+
+.btn-decrease {
+    -fx-background-color: #F44336;
     -fx-text-fill: white;
 }

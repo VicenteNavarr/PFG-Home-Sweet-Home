@@ -1,14 +1,14 @@
 
 /* Estilo Global */
-@font-face {
+/*@font-face {
     font-family: 'Poppins';
-    src: url('../../../fonts/Poppins-Regular.ttf'); /* Ruta relativa desde el archivo CSS */
+    src: url('../../../fonts/Poppins-Regular.ttf');  Ruta relativa desde el archivo CSS 
 }
 
 
-/* Fondo principal */
+ Fondo principal 
 .root {
-    -fx-background-color: #EFEFEF; /* Fondo suave */
+    -fx-background-color: #EFEFEF;  Fondo suave 
     -fx-padding: 10;
     -fx-font-family: 'Poppins';
 }
@@ -19,20 +19,20 @@
 
 }
 
-/* Imagen del usuario */
+ Imagen del usuario 
 .user-image {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.5, 0, 1); /* Sombra suave */
-    -fx-border-radius: 10; /* Bordes redondeados */
-    -fx-fit-width: 80px; /* Tamaño fijo: ancho */
-    -fx-fit-height: 80px; /* Tamaño fijo: alto */
-    -fx-background-radius: 40px; /* Radio para hacerla redonda */
-    -fx-border-radius: 40px; /* Borde redondeado */
-    -fx-border-color: #cccccc; /* Borde opcional */
-    -fx-border-width: 2px; /* Espesor del borde */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.5, 0, 1);  Sombra suave 
+    -fx-border-radius: 10;  Bordes redondeados 
+    -fx-fit-width: 80px;  Tamaño fijo: ancho 
+    -fx-fit-height: 80px;  Tamaño fijo: alto 
+    -fx-background-radius: 40px;  Radio para hacerla redonda 
+    -fx-border-radius: 40px;  Borde redondeado 
+    -fx-border-color: #cccccc;  Borde opcional 
+    -fx-border-width: 2px;  Espesor del borde 
     
 }
 
-/* Información del usuario */
+ Información del usuario 
 .item-info {
     -fx-padding: 10;
     -fx-spacing: 10;
@@ -41,17 +41,17 @@
 .item-title {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-text-fill: #333333; /* Texto oscuro */
+    -fx-text-fill: #333333;  Texto oscuro 
 }
 
 .item-date {
     -fx-font-size: 12px;
-    -fx-text-fill: #666666; /* Texto más claro */
+    -fx-text-fill: #666666;  Texto más claro 
 }
 
-/* Botones de acción */
+ Botones de acción 
 .action-buttons {
-    -fx-spacing: 20; /* Separación entre botones */
+    -fx-spacing: 20;  Separación entre botones 
 }
 
 .btn-primary {
@@ -64,11 +64,11 @@
 }
 
 .btn-primary:hover {
-    -fx-background-color: #BF9A77; /* Fondo más claro al pasar */
+    -fx-background-color: #BF9A77;  Fondo más claro al pasar 
 }
 
 .btn-primary:pressed {
-    -fx-background-color: #A24E2E; /* Fondo más oscuro al hacer clic */
+    -fx-background-color: #A24E2E;  Fondo más oscuro al hacer clic 
 }
 
 .btn-secondary {
@@ -81,17 +81,139 @@
 }
 
 .btn-secondary:hover {
-    -fx-background-color: #7A9EA9; /* Fondo más claro al pasar */
+    -fx-background-color: #7A9EA9;  Fondo más claro al pasar 
 }
 
 .btn-secondary:pressed {
-    -fx-background-color: #688893; /* Fondo más oscuro al hacer clic */
+    -fx-background-color: #688893;  Fondo más oscuro al hacer clic 
 }
 
 
 
 .rounded-border-pane {
-    -fx-background-color: #688893; /* O el color que desees */
-    -fx-background-radius: 15; /* Bordes redondeados */
-    -fx-padding: 10; /* Espaciado interior opcional */
+    -fx-background-color: #688893;  O el color que desees 
+    -fx-background-radius: 15;  Bordes redondeados 
+    -fx-padding: 10;  Espaciado interior opcional 
+}*/
+
+
+
+
+/* Fondo principal */
+.root {
+    -fx-background-color: #F6F4F0;
+    -fx-padding: 10;
+    -fx-font-family: 'Poppins';
+}
+
+/* Fuente */
+.font {
+    -fx-font-family: 'Poppins';
+    -fx-text-fill: #2E5077;
+}
+
+.text-area {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #4DA1A9 transparent;
+    -fx-border-width: 0 0 2px 0;
+    -fx-prompt-text-fill: #B0B0B0;
+    -fx-text-fill: #333333;
+    -fx-padding: 5px 10px;
+}
+
+.text-area:focused {
+    -fx-border-color: transparent transparent #79D7BE transparent;
+}
+
+/* Imagen del usuario */
+.user-image {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 4, 0, 0, 2);
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    -fx-border-color: #2E5077;
+    -fx-border-width: 2px;
+    -fx-fit-width: 80px;
+    -fx-fit-height: 80px;
+}
+
+/* Información de la tarea */
+.item-info {
+    -fx-padding: 10px;
+    -fx-spacing: 10px;
+}
+
+/* Texto de la tarea */
+.item-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2E5077;
+}
+
+.item-date {
+    -fx-font-size: 12px;
+    -fx-text-fill: #555555;
+}
+
+/* Botones de acción */
+.action-buttons {
+    -fx-spacing: 10px;
+}
+
+.btn-primary {
+    -fx-background-color: #E58E00;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 15px;
+}
+
+.btn-primary:hover {
+    -fx-background-color: #F6A600;
+}
+
+.btn-primary:pressed {
+    -fx-background-color: #2E5077;
+}
+
+.btn-secondary {
+    -fx-background-color: #AA1803;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 15px;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #C32C19;
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: #8B1300;
+}
+
+.btn-success {
+    -fx-background-color: #778D45; /* Verde éxito */
+    -fx-text-fill: #FFFFFF; /* Texto blanco */
+    -fx-font-size: 14px;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 15px;
+    -fx-cursor: hand;
+}
+
+.btn-success:hover {
+    -fx-background-color: #93A664; /* Verde más oscuro al pasar */
+}
+
+.btn-success:pressed {
+    -fx-background-color: #93A664; /* Verde más oscuro al pasar */
+}
+
+/* Panel con bordes redondeados */
+.rounded-border-pane {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #2E5077;
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+    -fx-padding: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 5, 0, 0, 3);
 }

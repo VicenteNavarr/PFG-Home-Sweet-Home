@@ -1,7 +1,6 @@
 package homeSweetHome.dataPersistence;
 
 import homeSweetHome.model.Event;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +11,13 @@ public class EventDAO {
 
     // Constructor para inicializar la conexión
     public EventDAO() {
+        
         try {
+            
             this.connection = MySQLConnection.getConnection(); // Usar tu clase de conexión
+            
         } catch (SQLException e) {
+            
             System.err.println("Error al conectar a la base de datos: " + e.getMessage());
         }
     }
@@ -26,8 +29,11 @@ public class EventDAO {
      * @return boolean - Indica si la operación fue exitosa.
      */
     public boolean addEvent(Event event) {
+        
         String query = "INSERT INTO Eventos (nombre_evento, descripcion, fecha_evento, hora_evento, recordatorio_enviado, id_grupo) VALUES (?, ?, ?, ?, ?, ?)";
+        
         try (PreparedStatement statement = connection.prepareStatement(query)) {
+            
             statement.setString(1, event.getNombreEvento());
             statement.setString(2, event.getDescripcion());
             statement.setDate(3, event.getFechaEvento());
@@ -36,7 +42,9 @@ public class EventDAO {
             statement.setInt(6, event.getIdGrupo());
 
             return statement.executeUpdate() > 0;
+            
         } catch (SQLException e) {
+            
             System.err.println("Error al agregar el evento: " + e.getMessage());
             return false;
         }
@@ -49,12 +57,17 @@ public class EventDAO {
      * @return List<Event> - Lista de eventos del grupo.
      */
     public List<Event> getEventsByGroup(int idGrupo) {
+        
         List<Event> events = new ArrayList<>();
         String query = "SELECT * FROM Eventos WHERE id_grupo = ?";
+        
         try (PreparedStatement statement = connection.prepareStatement(query)) {
+            
             statement.setInt(1, idGrupo);
             ResultSet resultSet = statement.executeQuery();
+            
             while (resultSet.next()) {
+                
                 Event event = new Event(
                         resultSet.getInt("id"),
                         resultSet.getString("nombre_evento"),
@@ -64,11 +77,15 @@ public class EventDAO {
                         resultSet.getBoolean("recordatorio_enviado"),
                         resultSet.getInt("id_grupo")
                 );
+                
                 events.add(event);
             }
+            
         } catch (SQLException e) {
+            
             System.err.println("Error al obtener los eventos: " + e.getMessage());
         }
+        
         return events;
     }
 
@@ -79,8 +96,11 @@ public class EventDAO {
      * @return boolean - Indica si la operación fue exitosa.
      */
     public boolean updateEvent(Event event) {
+        
         String query = "UPDATE Eventos SET nombre_evento = ?, descripcion = ?, fecha_evento = ?, hora_evento = ?, recordatorio_enviado = ? WHERE id = ?";
+        
         try (PreparedStatement statement = connection.prepareStatement(query)) {
+            
             statement.setString(1, event.getNombreEvento());
             statement.setString(2, event.getDescripcion());
             statement.setDate(3, event.getFechaEvento());
@@ -89,7 +109,9 @@ public class EventDAO {
             statement.setInt(6, event.getId());
 
             return statement.executeUpdate() > 0;
+            
         } catch (SQLException e) {
+            
             System.err.println("Error al actualizar el evento: " + e.getMessage());
             return false;
         }
@@ -102,11 +124,16 @@ public class EventDAO {
      * @return boolean - Indica si la operación fue exitosa.
      */
     public boolean deleteEvent(int eventId) {
+        
         String query = "DELETE FROM Eventos WHERE id = ?";
+        
         try (PreparedStatement statement = connection.prepareStatement(query)) {
+            
             statement.setInt(1, eventId);
             return statement.executeUpdate() > 0;
+            
         } catch (SQLException e) {
+            
             System.err.println("Error al eliminar el evento: " + e.getMessage());
             return false;
         }
@@ -123,7 +150,9 @@ public class EventDAO {
      * válidos.
      */
     public boolean markEventAsCompleted(int eventId, int groupId) {
+        
         if (eventId <= 0 || groupId <= 0) {
+            
             throw new IllegalArgumentException("El ID del evento o del grupo no son válidos.");
         }
 
@@ -139,6 +168,7 @@ public class EventDAO {
             return rowsUpdated > 0; // Retorna true si se actualizó al menos una fila
 
         } catch (SQLException e) {
+            
             e.printStackTrace();
             return false; // Retorna false en caso de error
         }
@@ -157,6 +187,7 @@ public class EventDAO {
      * ocurrió algún error.
      */
     public boolean moveEventToHistory(int eventId, int groupId) {
+        
         String insertQuery = "INSERT INTO EventosHistorico (id, nombre_evento, descripcion, fecha_evento, hora_evento, recordatorio_enviado, id_grupo, fecha_completado) "
                 + "SELECT id, nombre_evento, descripcion, fecha_evento, hora_evento, recordatorio_enviado, id_grupo, NOW() "
                 + "FROM Eventos WHERE id = ? AND id_grupo = ?";
@@ -170,6 +201,7 @@ public class EventDAO {
             int rowsInserted = insertStmt.executeUpdate();
 
             if (rowsInserted > 0) {
+                
                 // Elimina el evento de la tabla original
                 deleteStmt.setInt(1, eventId);
                 deleteStmt.setInt(2, groupId);
@@ -178,9 +210,11 @@ public class EventDAO {
             }
 
         } catch (SQLException e) {
+            
             System.err.println("Error al mover el evento al historial: " + e.getMessage());
             e.printStackTrace();
         }
+        
         return false;
     }
 
@@ -193,9 +227,11 @@ public class EventDAO {
      * válido.
      */
     public List<Event> getHistoricalEvents() {
+        
         int groupId = CurrentSession.getInstance().getUserGroupId();
 
         if (groupId <= 0) {
+            
             throw new IllegalStateException("El ID del grupo actual en la sesión no es válido: " + groupId);
         }
 
@@ -208,6 +244,7 @@ public class EventDAO {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
+                
                 Event event = new Event(
                         rs.getInt("id"),
                         rs.getString("nombre_evento"),
@@ -217,10 +254,12 @@ public class EventDAO {
                         rs.getBoolean("recordatorio_enviado"),
                         rs.getInt("id_grupo")
                 );
+                
                 historicalEvents.add(event);
             }
 
         } catch (SQLException e) {
+            
             System.err.println("Error al obtener eventos históricos: " + e.getMessage());
             e.printStackTrace(); // Ayuda a depurar si ocurre un error
         }

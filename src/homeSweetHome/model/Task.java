@@ -43,6 +43,16 @@ public class Task {
         this.idGrupo = idGrupo;
     }
 
+    // Nuevo constructor para `getHistoricalTasks()`
+    public Task(int id, String nombreTarea, String descripcion, Date fechaLimite, int asignadoAId, int idGrupo) {
+        this.id = id;
+        this.nombreTarea = nombreTarea;
+        this.descripcion = descripcion;
+        this.fechaLimite = fechaLimite;
+        this.asignadoAId = asignadoAId;
+        this.idGrupo = idGrupo;
+    }
+
     // Getters y setters
     public int getId() {
         return id;
@@ -110,15 +120,15 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "id=" + id +
-                ", nombreTarea='" + nombreTarea + '\'' +
-                ", descripcion='" + descripcion + '\'' +
-                ", fechaLimite=" + fechaLimite +
-                ", asignadoAId=" + asignadoAId +
-                ", asignadoANombre='" + asignadoANombre + '\'' +
-                ", estado='" + estado + '\'' +
-                ", idGrupo=" + idGrupo +
-                '}';
+        return "Task{"
+                + "id=" + id
+                + ", nombreTarea='" + nombreTarea + '\''
+                + ", descripcion='" + descripcion + '\''
+                + ", fechaLimite=" + fechaLimite
+                + ", asignadoAId=" + asignadoAId
+                + ", asignadoANombre='" + asignadoANombre + '\''
+                + ", estado='" + estado + '\''
+                + ", idGrupo=" + idGrupo
+                + '}';
     }
 }

@@ -16,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -36,6 +37,10 @@ public class CreateProductInShoppingListViewController implements Initializable 
     private Button btnCreateProduct; // Botón para crear el producto
     @FXML
     private Button btnCancelProduct; // Botón para cancelar la creación del producto
+    @FXML
+    private Label newProductTitle;
+    @FXML
+    private TextField fieldProductMinQuantity;
 
     private PurchaseViewController purchaseViewController; // Referencia al controlador principal
 
@@ -44,66 +49,67 @@ public class CreateProductInShoppingListViewController implements Initializable 
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-      
+
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
+
         // Registra este controlador como listener del LanguageManager
         LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
         updateTexts(); // Actualiza los textos inicialmente
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////                 
-        
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
 
     }
-    
+
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
     
     /**
      * Actualiza los textos de la interfaz en función del idioma.
      */
     private void updateTexts() {
-        
+
         // Accede directamente al Singleton del LanguageManager
         LanguageManager languageManager = LanguageManager.getInstance();
 
         if (languageManager == null) {
-            
+
             System.err.println("Error: LanguageManager no está disponible.");
             return;
         }
 
-        // Traducir los textos de los botones
-        btnCreateProduct.setText(languageManager.getTranslation("createProduct")); 
-        btnCancelProduct.setText(languageManager.getTranslation("cancelProduct")); 
+        // Traduce los textos de los botones
+        btnCreateProduct.setText(languageManager.getTranslation("createProduct"));
+        btnCancelProduct.setText(languageManager.getTranslation("cancelProduct"));
 
-        // Traducir los PromptText de los campos de texto
-        fieldProductName.setPromptText(languageManager.getTranslation("productNamePrompt")); 
-        fieldProductCurrentQuantity.setPromptText(languageManager.getTranslation("currentQuantityPrompt")); 
+        newProductTitle.setText(languageManager.getTranslation("newProductTitle"));
 
+        // Traduce los PromptText de los campos de texto
+        fieldProductName.setPromptText(languageManager.getTranslation("productNamePrompt"));
+        fieldProductCurrentQuantity.setPromptText(languageManager.getTranslation("currentQuantityPrompt"));
 
-        // Establecer PromptText en los ComboBox y traducir opciones dinámicamente
-        Measure.setPromptText(languageManager.getTranslation("measurePrompt")); 
+        // Establece PromptText en los ComboBox y traduce opciones dinámicamente
+        Measure.setPromptText(languageManager.getTranslation("measurePrompt"));
         Measure.getItems().clear();
         Measure.getItems().addAll(
-                languageManager.getTranslation("measureQuantity"), 
-                languageManager.getTranslation("measureGrams") 
+                languageManager.getTranslation("measureQuantity"),
+                languageManager.getTranslation("measureGrams")
         );
 
-        category.setPromptText(languageManager.getTranslation("categoryPrompt")); 
+        category.setPromptText(languageManager.getTranslation("categoryPrompt"));
         category.getItems().clear();
         category.getItems().addAll(
-                languageManager.getTranslation("categoryFood"), 
-                languageManager.getTranslation("categoryDrinks"), 
-                languageManager.getTranslation("categoryCleaning"), 
-                languageManager.getTranslation("categoryHygiene"), 
-                languageManager.getTranslation("categoryOthers") 
+                languageManager.getTranslation("categoryFood"),
+                languageManager.getTranslation("categoryDrinks"),
+                languageManager.getTranslation("categoryCleaning"),
+                languageManager.getTranslation("categoryHygiene"),
+                languageManager.getTranslation("categoryOthers")
         );
 
         // Depuración
         System.out.println("Traducciones y PromptText aplicados correctamente en CreateProductViewController.");
     }
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////            
-
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////  
+    
     /**
      * Método para establecer la referencia al controlador principal.
      *
@@ -134,23 +140,42 @@ public class CreateProductInShoppingListViewController implements Initializable 
 
             // Valida que los campos no estén vacíos
             if (nombreProducto.isEmpty() || medida == null || categoriaSeleccionada == null || cantidadActualTexto.isEmpty()) {
-                
-                AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos",
-                        "Por favor completa todos los campos antes de continuar.");
+
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos",
+                            "Por favor completa todos los campos antes de continuar.");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Incomplete Fields",
+                            "Please complete all fields before proceeding.");
+
+                }
+
                 return;
             }
 
             // Valida que la cantidad sea un número válido
             int cantidadNecesaria;
-            
+
             try {
-                
+
                 cantidadNecesaria = Integer.parseInt(cantidadActualTexto);
-                
+
             } catch (NumberFormatException e) {
-                
-                AlertUtils.showAlert(Alert.AlertType.WARNING, "Cantidad inválida",
-                        "La cantidad debe ser un número válido.");
+
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Cantidad inválida",
+                            "La cantidad debe ser un número válido.");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Invalid Quantity",
+                            "The quantity must be a valid number.");
+                }
+
                 return;
             }
 
@@ -164,7 +189,7 @@ public class CreateProductInShoppingListViewController implements Initializable 
             int idInventario;
 
             if (productExists) {
-                
+
                 // Si el producto existe, toma su ID directamente
                 idInventario = inventoryDAO.getInventoryProductIdByName(nombreProducto, userGroupId);
                 System.out.println("Producto encontrado en el inventario: ID " + idInventario);
@@ -175,16 +200,16 @@ public class CreateProductInShoppingListViewController implements Initializable 
                 boolean updated = inventoryDAO.updateInventoryQuantity(idInventario, updatedQuantity);
 
                 if (!updated) {
-                    
+
                     AlertUtils.showAlert(Alert.AlertType.ERROR, "Error",
                             "No se pudo actualizar la cantidad del producto en el inventario.");
                     return;
                 }
-                
+
                 System.out.println("Cantidad actualizada para el producto: " + updatedQuantity);
-                
+
             } else {
-                
+
                 // Si no existe, generar un nuevo ID único y añadirlo al inventario
                 idInventario = inventoryDAO.generateNewInventoryId();
                 Product nuevoProductoInventario = new Product(
@@ -200,31 +225,40 @@ public class CreateProductInShoppingListViewController implements Initializable 
                 );
 
                 boolean addedToInventory = inventoryDAO.addInventoryProduct(nuevoProductoInventario);
-                
+
                 if (!addedToInventory) {
-                    
+
                     AlertUtils.showAlert(Alert.AlertType.ERROR, "Error",
                             "No se pudo añadir el producto al inventario.");
                     return;
                 }
-                
+
                 System.out.println("Producto añadido al inventario: ID " + idInventario);
             }
 
-            AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Éxito",
-                    "El producto se ha añadido correctamente al inventario.");
+            if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Éxito",
+                        "El producto se ha añadido correctamente al inventario.");
+
+            } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Success",
+                        "The product has been added to the inventory successfully.");
+
+            }
 
             // Refresca el inventario en el controlador principal
             if (purchaseViewController != null) {
-                
+
                 purchaseViewController.loadInventory(userGroupId);
             }
 
             // Cierra la ventana actual
             ((Stage) btnCreateProduct.getScene().getWindow()).close();
-            
+
         } catch (Exception e) {
-            
+
             e.printStackTrace();
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error",
                     "Se produjo un error al intentar añadir el producto.");
@@ -237,27 +271,38 @@ public class CreateProductInShoppingListViewController implements Initializable 
      * @return El objeto Product creado, o null si los campos no son válidos.
      */
     public Product getCreatedProduct() {
+        
         try {
+            
             String nombreProducto = fieldProductName.getText().trim();
             String medida = Measure.getSelectionModel().getSelectedItem();
             String categoriaSeleccionada = category.getSelectionModel().getSelectedItem();
             String cantidadActualTexto = fieldProductCurrentQuantity.getText().trim();
 
             if (nombreProducto.isEmpty() || medida == null || categoriaSeleccionada == null || cantidadActualTexto.isEmpty()) {
-                
-                AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos",
-                        "Por favor completa todos los campos antes de continuar.");
+
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos",
+                            "Por favor completa todos los campos antes de continuar.");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Incomplete Fields",
+                            "Please complete all fields before proceeding.");
+
+                }
                 return null;
             }
 
             int cantidadNecesaria;
-            
+
             try {
-                
+
                 cantidadNecesaria = Integer.parseInt(cantidadActualTexto);
-                
+
             } catch (NumberFormatException e) {
-                
+
                 AlertUtils.showAlert(Alert.AlertType.WARNING, "Cantidad inválida",
                         "La cantidad debe ser un número válido.");
                 return null;
@@ -274,9 +319,9 @@ public class CreateProductInShoppingListViewController implements Initializable 
                     CurrentSession.getInstance().getUserGroupId(),
                     LocalDate.now().toString()
             );
-            
+
         } catch (Exception e) {
-            
+
             e.printStackTrace();
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error",
                     "Se produjo un error al intentar crear el producto.");
@@ -291,7 +336,7 @@ public class CreateProductInShoppingListViewController implements Initializable 
      */
     @FXML
     private void cancel(ActionEvent event) {
-        
+
         ((Stage) btnCancelProduct.getScene().getWindow()).close(); // Cierra la ventana actual
     }
 }

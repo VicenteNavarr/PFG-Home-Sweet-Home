@@ -24,6 +24,7 @@ import java.sql.Blob;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 /**
@@ -51,6 +52,8 @@ public class CreateUserViewController implements Initializable {
     private Button btnLoadImage;
     @FXML
     private TextField fieldPassword;
+    @FXML
+    private Label newUserTitle;
 
     private UserViewController userViewController;
 
@@ -70,14 +73,15 @@ public class CreateUserViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+        
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
 
         // Registra este controlador como listener del LanguageManager
         LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
         updateTexts(); // Actualiza los textos inicialmente
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////                  
-       
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
+
     }
 
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
@@ -86,12 +90,12 @@ public class CreateUserViewController implements Initializable {
      * Actualiza los textos de la interfaz en función del idioma.
      */
     private void updateTexts() {
-        
+
         // Obtiene la instancia única del Singleton
         LanguageManager languageManager = LanguageManager.getInstance();
 
         if (languageManager == null) {
-            
+
             System.err.println("Error: LanguageManager es nulo. Traducción no aplicada.");
             return;
         }
@@ -104,6 +108,8 @@ public class CreateUserViewController implements Initializable {
         btnCreate.setText(languageManager.getTranslation("createUser"));
         btnCancel.setText(languageManager.getTranslation("cancel"));
         btnLoadImage.setText(languageManager.getTranslation("loadImage"));
+
+        newUserTitle.setText(languageManager.getTranslation("newUserTitle"));
 
         System.out.println("Botón 'createUser': " + btnCreate.getText());
         System.out.println("Botón 'cancel': " + btnCancel.getText());
@@ -144,7 +150,7 @@ public class CreateUserViewController implements Initializable {
      */
     @FXML
     private void createNewUser(ActionEvent event) {
-        
+
         // Obtienelos datos de los campos de texto
         String nombre = fieldName.getText();
         String apellidos = fieldSurname.getText();
@@ -154,22 +160,45 @@ public class CreateUserViewController implements Initializable {
 
         // Valida campos obligatorios
         if (nombre.isEmpty() || apellidos.isEmpty() || correoElectronico.isEmpty() || contrasenia.isEmpty() || imgUser.getImage() == null) {
-            
-            AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos", "Por favor, completa todos los campos e incluye una imagen.");
+
+            if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos", "Por favor, completa todos los campos e incluye una imagen.");
+
+            } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                AlertUtils.showAlert(Alert.AlertType.WARNING, "Incomplete fields", "Please complete all fields and include an image.");
+
+            }
             return;
         }
 
         // Validaa el formato del correo electrónico utilizando ValidationUtils
         if (!ValidationUtils.isValidEmail(fieldMail.getText())) {
-            
-            showAlert(Alert.AlertType.ERROR, "Error de Registro", "El correo electrónico no tiene un formato válido.");
+
+            if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                showAlert(Alert.AlertType.ERROR, "Error de Registro", "El correo electrónico no tiene un formato válido.");
+
+            } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                showAlert(Alert.AlertType.ERROR, "Register Error", "Mail invalid format.");
+            }
             return;
         }
 
         // Comprueba si el usuario ya existe utilizando el correo electrónico
         if (UserDAO.userExists(correoElectronico)) {
-            
-            AlertUtils.showAlert(Alert.AlertType.ERROR, "Error de Registro", "El usuario ya existe.");
+
+            if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                AlertUtils.showAlert(Alert.AlertType.ERROR, "Error de Registro", "El usuario ya existe.");
+
+            } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                AlertUtils.showAlert(Alert.AlertType.ERROR, "Registration Error", "The user already exists.");
+            }
+
             System.out.println("Error: Usuario con el correo ya registrado: " + correoElectronico);
 
             // Limpia los campos si el usuario ya existe
@@ -182,13 +211,13 @@ public class CreateUserViewController implements Initializable {
 
         // Convierte la imagen a formato Blob
         Blob fotoPerfil;
-        
+
         try {
-            
+
             fotoPerfil = new javax.sql.rowset.serial.SerialBlob(ImageUtils.convertImageToBlob(imgUser.getImage()));
-            
+
         } catch (Exception e) {
-            
+
             System.err.println("Error al convertir la imagen: " + e.getMessage());
             return;
         }
@@ -204,9 +233,17 @@ public class CreateUserViewController implements Initializable {
         boolean success = userDAO.addUser(newUser);
 
         if (success) {
-            
+
             // Usuario creado exitosamente
             System.out.println("Usuario creado exitosamente.");
+            if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Éxito", "Usuario creado exitosamente.");
+
+            } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Sucess", "User successfully created.");
+            }
 
             // Limpia los campos del formulario
             fieldName.clear();
@@ -216,15 +253,15 @@ public class CreateUserViewController implements Initializable {
 
             // Refresca la vista de usuarios si el controlador está disponible
             if (userViewController != null) {
-                
+
                 userViewController.loadUsers();
             }
 
             // Cierra la ventana actual
             ((Stage) ((Node) event.getSource()).getScene().getWindow()).close();
-            
+
         } else {
-            
+
             // Maneja error en la creación del usuario
             System.out.println("Hubo un error al crear el usuario.");
         }
@@ -237,7 +274,7 @@ public class CreateUserViewController implements Initializable {
      */
     @FXML
     private void cancel(ActionEvent event) {
-        
+
         // Cierra la ventana actual
         ((Button) event.getSource()).getScene().getWindow().hide();
         System.out.println("Ventana cerrada.");
@@ -250,7 +287,7 @@ public class CreateUserViewController implements Initializable {
      */
     @FXML
     private void loadImage(ActionEvent event) {
-        
+
         // Abre un cuadro de diálogo para seleccionar un archivo de imagen
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Seleccionar Imagen");
@@ -260,14 +297,14 @@ public class CreateUserViewController implements Initializable {
         File file = fileChooser.showOpenDialog(btnLoadImage.getScene().getWindow());
 
         if (file != null) {
-            
+
             // Carga y muestra la imagen seleccionada
             Image image = new Image(file.toURI().toString());
             imgUser.setImage(image);
             System.out.println("Imagen cargada correctamente: " + file.getName());
-            
+
         } else {
-            
+
             // Maneja el caso en que no se seleccionó un archivo
             System.out.println("No se seleccionó ningún archivo.");
         }

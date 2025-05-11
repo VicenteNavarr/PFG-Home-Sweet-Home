@@ -23,6 +23,7 @@ public class BudgetDAO {
         String query = "INSERT INTO Gastos (nombre, categoria, monto, metodo_pago, fecha, descripcion, id_grupo) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             stmt.setString(1, budget.getNombre());
             stmt.setString(2, budget.getCategoria());
             stmt.setDouble(3, budget.getMonto());
@@ -32,10 +33,13 @@ public class BudgetDAO {
             stmt.setInt(7, budget.getIdGrupo());
 
             return stmt.executeUpdate() > 0;
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al agregar el gasto.");
         }
+        
         return false;
     }
 
@@ -47,10 +51,12 @@ public class BudgetDAO {
      * @return Una lista de objetos Budget representando los gastos.
      */
     public List<Budget> getBudgetsByGroup(int groupId) {
+        
         String query = "SELECT * FROM Gastos WHERE id_grupo = ?";
         List<Budget> budgets = new ArrayList<>();
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             stmt.setInt(1, groupId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -64,10 +70,13 @@ public class BudgetDAO {
                             rs.getString("descripcion"),
                             rs.getInt("id_grupo")
                     );
+                    
                     budgets.add(budget);
                 }
             }
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al recuperar los gastos.");
         }
@@ -82,9 +91,11 @@ public class BudgetDAO {
      * contrario.
      */
     public boolean updateBudget(Budget budget) {
+        
         String query = "UPDATE Gastos SET nombre = ?, categoria = ?, monto = ?, metodo_pago = ?, fecha = ?, descripcion = ? WHERE id = ?";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             stmt.setString(1, budget.getNombre());
             stmt.setString(2, budget.getCategoria());
             stmt.setDouble(3, budget.getMonto());
@@ -94,10 +105,13 @@ public class BudgetDAO {
             stmt.setInt(7, budget.getId());
 
             return stmt.executeUpdate() > 0;
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al actualizar el gasto.");
         }
+        
         return false;
     }
 
@@ -109,15 +123,20 @@ public class BudgetDAO {
      * contrario.
      */
     public boolean deleteBudget(int budgetId) {
+        
         String query = "DELETE FROM Gastos WHERE id = ?";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(query)) {
+            
             stmt.setInt(1, budgetId);
             return stmt.executeUpdate() > 0;
+            
         } catch (SQLException e) {
+            
             e.printStackTrace();
             System.err.println("Error al eliminar el gasto.");
         }
+        
         return false;
     }
 }

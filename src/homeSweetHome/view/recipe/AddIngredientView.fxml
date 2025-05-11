@@ -15,7 +15,7 @@
                 <HBox prefHeight="12.0" prefWidth="600.0" />
                 <HBox alignment="CENTER" prefHeight="72.0" prefWidth="600.0">
                     <children>
-                        <Label text="Añadir Ingrediente" />
+                        <Label fx:id="addIngredientTitle" text="Añadir Ingrediente" />
                     </children>
                 </HBox>
             <HBox alignment="CENTER" spacing="20">
@@ -36,14 +36,14 @@
                 </HBox>
             <HBox alignment="CENTER" spacing="20">
                <children>
-                  <ComboBox fx:id="category" prefHeight="42.0" prefWidth="209.0" promptText="Categoría" />
+                  <ComboBox fx:id="category" prefHeight="42.0" prefWidth="209.0" promptText="Categoría" visible="false" />
                </children>
             </HBox>
 
                 <HBox alignment="CENTER" spacing="20" />
                 <HBox alignment="CENTER" prefHeight="171.0" prefWidth="600.0" spacing="25">
                     <children>
-                        <Button fx:id="btnAddIngredient" mnemonicParsing="false" onAction="#createAddIngredient" prefHeight="40.0" prefWidth="120.0" styleClass="btn-primary" text="Crear" />
+                        <Button fx:id="btnAddIngredient" mnemonicParsing="false" onAction="#createAddIngredient" prefHeight="40.0" prefWidth="168.0" styleClass="btn-primary" text="Crear" />
                         <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#cancel" prefHeight="40.0" prefWidth="120.0" styleClass="btn-secondary" text="Cancelar" />
                     </children>
                 </HBox>

@@ -138,15 +138,33 @@
             <top>
                 <AnchorPane prefHeight="96.0" prefWidth="1280.0" styleClass="background2" stylesheets="@main.css" BorderPane.alignment="CENTER">
                     <children>
-                        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="1280.0" spacing="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <HBox alignment="CENTER_LEFT" prefHeight="96.0" prefWidth="531.0">
+                     <children>
+                        <ImageView fitHeight="94.0" fitWidth="104.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/SweetHomeLogo.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets left="40.0" />
+                           </HBox.margin>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                        <HBox alignment="CENTER_RIGHT" layoutX="386.0" prefHeight="96.0" prefWidth="894.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="386.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
-                        <ComboBox fx:id="languageSelector" prefWidth="150.0" promptText="Idioma" />
-                                <ImageView fx:id="userImage" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+                        <HBox prefHeight="100.0" prefWidth="200.0" />
+                        <ImageView fitHeight="56.0" fitWidth="73.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/languageIcon.png" />
+                           </image>
+                        </ImageView>
+                        <ComboBox fx:id="languageSelector" prefHeight="42.0" prefWidth="191.0" promptText="Idioma" />
+                                <ImageView fx:id="userImage" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true" styleClass="user-image">
                                     <image>
                                         <Image url="@../../images/add-image.png" />
                                     </image>
                                 </ImageView>
-                                <Label fx:id="lblHola" prefHeight="30.0" prefWidth="134.0" styleClass="font" stylesheets="@main.css" textFill="WHITE">
+                                <Label fx:id="lblHola" prefHeight="30.0" prefWidth="247.0" styleClass="font" stylesheets="@main.css" textFill="WHITE">
                                     <font>
                                         <Font size="20.0" />
                                     </font>
@@ -186,7 +204,7 @@
             <center>
                 <BorderPane fx:id="rootPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <center>
-                        <AnchorPane fx:id="viewContainer" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                        <AnchorPane fx:id="viewContainer" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" BorderPane.alignment="CENTER" />
                     </center>
                 </BorderPane>
             </center>

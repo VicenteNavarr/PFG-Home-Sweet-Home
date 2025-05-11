@@ -1,0 +1,47 @@
+.dialog-pane {
+    -fx-background-color: #FFFFFF;  
+    -fx-font-family: 'Poppins';   
+    -fx-font-size: 14px;  
+}
+
+.dialog-pane .label {
+    -fx-text-fill: #2E5077;  
+    
+}
+
+
+.dialog-pane .button {
+    -fx-background-radius: 5px;
+    -fx-font-size: 14px;
+    -fx-padding: 8px 15px;
+    -fx-cursor: hand;
+}
+
+
+.dialog-pane .button:default {
+    -fx-background-color: #4DA1A9;
+    -fx-text-fill: #FFFFFF;
+}
+
+.dialog-pane .button:default:hover {
+    -fx-background-color: #79D7BE;
+}
+
+.dialog-pane .button:default:pressed {
+    -fx-background-color: #2E5077;
+}
+
+
+.dialog-pane .button:cancel {
+    -fx-background-color: #AA1803;
+    -fx-text-fill: #FFFFFF;
+}
+
+.dialog-pane .button:cancel:hover {
+    -fx-background-color: #C32C19;
+}
+
+.dialog-pane .button:cancel:pressed {
+    -fx-background-color: #8B1300;
+}
+

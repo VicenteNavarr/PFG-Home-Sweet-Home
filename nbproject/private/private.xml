@@ -3,10 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="PFG">
-            <file>file:/C:/Users/Usuario/Documents/NetBeansProjects/PFG/homeSweetHome/src/homeSweetHome/controller/user/UpdateUserViewController.java</file>
-            <file>file:/C:/Users/Usuario/Documents/NetBeansProjects/PFG/homeSweetHome/src/homeSweetHome/utils/messages_en.properties</file>
-            <file>file:/C:/Users/Usuario/Documents/NetBeansProjects/PFG/homeSweetHome/src/homeSweetHome/utils/messages_es.properties</file>
-            <file>file:/C:/Users/Usuario/Documents/NetBeansProjects/PFG/homeSweetHome/src/homeSweetHome/controller/user/CurrentUserSettingsViewController.java</file>
+            <file>file:/C:/Users/Usuario/Documents/NetBeansProjects/PFG/homeSweetHome/src/homeSweetHome/controller/MainViewController.java</file>
+            <file>file:/C:/Users/Usuario/Documents/NetBeansProjects/PFG/homeSweetHome/src/homeSweetHome/controller/recipe/ViewRecipeViewController.java</file>
         </group>
     </open-files>
 </project-private>

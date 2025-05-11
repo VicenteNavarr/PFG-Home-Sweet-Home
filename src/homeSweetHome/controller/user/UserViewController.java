@@ -4,6 +4,7 @@
  */
 package homeSweetHome.controller.user;
 
+import homeSweetHome.dataPersistence.CurrentSession;
 import homeSweetHome.dataPersistence.UserDAO;
 import homeSweetHome.model.User;
 import homeSweetHome.utils.LanguageManager;
@@ -39,12 +40,25 @@ public class UserViewController implements Initializable {
     private Button btnOpenCreateUser;
     @FXML
     private ScrollPane scrollPane; // ScrollPane que envuelve el contenedor
+    @FXML
+    private Label usersTitle;
 
+    int role = CurrentSession.getInstance().getUserRole(); // Tomamos rol para control de permisos
+
+    //String userRol = homeSweetHome.dataPersistence.CurrentSession.getInstance().
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        //Si el usuario tiene rol consultor, desactivamos botones
+        if (role == 2) {
+
+            //btnOpenCreateUser.setVisible(false);
+            btnOpenCreateUser.setDisable(true);
+
+        }
 
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
 
@@ -52,7 +66,8 @@ public class UserViewController implements Initializable {
         LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
         updateTexts(); // Actualiza los textos inicialmente
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////             
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////  
+
         loadUsers();//Carga el metodo de listar usuarios y mostrar en el scrollpane
     }
 
@@ -62,12 +77,12 @@ public class UserViewController implements Initializable {
      * Actualiza los textos de la interfaz en función del idioma.
      */
     private void updateTexts() {
-        
+
         // Obtiene la instancia única del Singleton
         LanguageManager languageManager = LanguageManager.getInstance();
 
         if (languageManager == null) {
-            
+
             System.err.println("Error: LanguageManager es nulo. Traducción no aplicada.");
             return;
         }
@@ -79,15 +94,16 @@ public class UserViewController implements Initializable {
         // Traducción del botón de creación de usuario
         btnOpenCreateUser.setText(languageManager.getTranslation("createUser"));
 
+        usersTitle.setText(languageManager.getTranslation("usersTitle"));
+
         System.out.println("Botón 'createUser': " + btnOpenCreateUser.getText());
 
         // Refrescar UI para aplicar los cambios visualmente
-        Platform.runLater(() -> btnOpenCreateUser.getScene().getWindow().sizeToScene());
-
+        //Platform.runLater(() -> btnOpenCreateUser.getScene().getWindow().sizeToScene());
         System.out.println("Traducciones aplicadas correctamente en UserViewController.");
     }
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////     
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
     
     /**
      * Metodo para crear un nuevo usuario - abre el pop up CreateUserView
@@ -113,6 +129,7 @@ public class UserViewController implements Initializable {
             // Crea un nuevo Stage (ventana)
             Stage stage = new Stage();
             stage.setTitle("Crear Usuario");
+            stage.setResizable(false);
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL); // Ventana modal
             stage.initOwner(btnOpenCreateUser.getScene().getWindow()); // Establece el dueño de la ventana

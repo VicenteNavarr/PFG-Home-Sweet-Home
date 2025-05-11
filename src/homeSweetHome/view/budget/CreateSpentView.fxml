@@ -16,34 +16,34 @@
                 <HBox prefHeight="12.0" prefWidth="600.0" />
                 <HBox alignment="CENTER" prefHeight="72.0" prefWidth="600.0">
                     <children>
-                        <Label text="Nuevo Gasto" />
+                        <Label fx:id="newSpentTitle" text="Nuevo Gasto" />
                     </children>
                 </HBox>
             <HBox alignment="CENTER" spacing="20">
                <children>
-                  <TextField fx:id="fieldSpentName" prefWidth="200" promptText="Nombre del Gasto" styleClass="text-field" />
+                  <TextField fx:id="fieldSpentName" prefHeight="32.0" prefWidth="309.0" promptText="Nombre del Gasto" styleClass="text-field" />
                </children>
             </HBox>
                 <HBox alignment="CENTER" spacing="20">
                <children>
-                  <ComboBox fx:id="Category" prefHeight="42.0" prefWidth="209.0" promptText="Categoría" />
+                  <ComboBox fx:id="Category" prefHeight="48.0" prefWidth="308.0" promptText="Categoría" />
                </children>
                 </HBox>
                 <!-- Campo para fecha -->
                 <HBox alignment="CENTER" spacing="20">
                <children>
-                  <TextField fx:id="fieldSpentQuantity" prefWidth="200" promptText="Importe" styleClass="text-field" />
+                  <TextField fx:id="fieldSpentQuantity" prefHeight="32.0" prefWidth="306.0" promptText="Importe" styleClass="text-field" />
                </children>
                 </HBox>
             <HBox alignment="CENTER" spacing="20">
                <children>
-                  <ComboBox fx:id="PaymentMethod" prefHeight="42.0" prefWidth="209.0" promptText="Método de Pago" />
+                  <ComboBox fx:id="PaymentMethod" prefHeight="48.0" prefWidth="304.0" promptText="Método de Pago" />
                </children>
             </HBox>
                 <!-- Campo para hora -->
                 <HBox alignment="CENTER" spacing="10">
                <children>
-                  <DatePicker fx:id="Date" promptText="Fecha" />
+                  <DatePicker fx:id="Date" prefHeight="32.0" prefWidth="306.0" promptText="Fecha" />
                </children>
                 </HBox>
             <HBox alignment="CENTER" spacing="20">
@@ -55,8 +55,8 @@
                 <HBox alignment="CENTER" spacing="20" />
                 <HBox alignment="CENTER" prefHeight="171.0" prefWidth="600.0" spacing="25">
                     <children>
-                        <Button fx:id="btnCreateSpent" mnemonicParsing="false" onAction="#createNewSpent" prefHeight="40.0" prefWidth="120.0" styleClass="btn-primary" text="Crear" />
-                        <Button fx:id="btnCancelSpent" mnemonicParsing="false" onAction="#cancel" prefHeight="40.0" prefWidth="120.0" styleClass="btn-secondary" text="Cancelar" />
+                        <Button fx:id="btnCreateSpent" mnemonicParsing="false" onAction="#createNewSpent" prefHeight="40.0" prefWidth="140.0" styleClass="btn-success" text="Crear" />
+                        <Button fx:id="btnCancelSpent" mnemonicParsing="false" onAction="#cancel" prefHeight="40.0" prefWidth="140.0" styleClass="btn-primary2" text="Cancelar" />
                     </children>
                 </HBox>
             </children>

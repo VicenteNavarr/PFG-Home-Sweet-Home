@@ -15,7 +15,7 @@
                 <HBox prefHeight="12.0" prefWidth="600.0" />
                 <HBox alignment="CENTER" prefHeight="72.0" prefWidth="600.0">
                     <children>
-                        <Label text="Modificar o Eliminar Producto" />
+                        <Label fx:id="modifyProductTitle" text="Modificar o Eliminar Producto" />
                     </children>
                 </HBox>
             <HBox alignment="CENTER" spacing="20">
@@ -49,9 +49,9 @@
                 <HBox alignment="CENTER" spacing="20" />
                 <HBox alignment="CENTER" prefHeight="171.0" prefWidth="600.0" spacing="25">
                     <children>
-                        <Button fx:id="btnUpdateProduct" mnemonicParsing="false" onAction="#updateProduct" prefHeight="40.0" prefWidth="120.0" styleClass="btn-primary" text="Modificar" />
+                        <Button fx:id="btnUpdateProduct" mnemonicParsing="false" onAction="#updateProduct" prefHeight="40.0" prefWidth="180.0" styleClass="btn-primary" text="Modificar" />
                         <Button fx:id="btnDeleteProduct" mnemonicParsing="false" onAction="#deleteProduct" prefHeight="40.0" prefWidth="120.0" styleClass="btn-secondary" text="Eliminar" />
-                  <Button fx:id="btnCancelProduct" mnemonicParsing="false" onAction="#cancel" prefHeight="40.0" prefWidth="120.0" styleClass="btn-secondary" text="Cancelar" />
+                  <Button fx:id="btnCancelProduct" mnemonicParsing="false" onAction="#cancel" prefHeight="40.0" prefWidth="120.0" styleClass="btn-primary2" text="Cancelar" />
                     </children>
                 </HBox>
             </children>

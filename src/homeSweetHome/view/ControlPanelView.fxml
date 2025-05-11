@@ -1,21 +1,122 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.VBox?>
+
+<!--
+
+<AnchorPane id="AnchorPane" prefHeight="624.0" prefWidth="1036.0" style="-fx-background-color: white;" stylesheets="@controlPanelView.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.ControlPanelViewController">
+    <children>
+        <BorderPane style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+             Sección superior 
+            <top>
+                <VBox alignment="CENTER_RIGHT" style="-fx-background-color: #79D7BE;" styleClass="header-section" BorderPane.alignment="CENTER">
+                    <children>
+                        <Label fx:id="controlPanelTitle" styleClass="header-label" text="PANEL DE CONTROL" />
+                    </children>
+                </VBox>
+            </top>
+
+             Sección central 
+            <center>
+                <VBox alignment="CENTER" spacing="20" style="-fx-padding: 30px;" BorderPane.alignment="CENTER">
+                    <children>
+                        <TableView fx:id="usersTable" prefWidth="600" prefHeight="200">
+                            <columns>
+                                <TableColumn fx:id="colUserId" text="ID" />
+                                <TableColumn fx:id="colUserName" text="Nombre" />
+                                <TableColumn fx:id="colUserApellidos" text="Apellidos" />
+                                <TableColumn fx:id="colUserEmail" text="Correo Electrónico" />
+                                <TableColumn fx:id="colUserRol" text="Rol" />
+                                <TableColumn fx:id="colUserFoto" text="Foto" />
+                            </columns>
+                        </TableView>
+
+                        <Label text="Histórico de Eventos" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                        <TableView fx:id="eventHistoryTable" prefWidth="600" prefHeight="180">
+                            <columns>
+                                <TableColumn fx:id="colEventName" text="Evento" />
+                                <TableColumn fx:id="colEventDescription" text="Descripción" />
+                                <TableColumn fx:id="colEventDate" text="Fecha" />
+                                <TableColumn fx:id="colEventTime" text="Hora" />
+                            </columns>
+                        </TableView>
 
 
-<AnchorPane id="AnchorPane" prefHeight="624.0" prefWidth="1036.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.ControlPanelViewController">
-   <children>
-      <BorderPane prefHeight="624.0" prefWidth="1036.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <center>
-            <Label text="PANEL DE CONTROL" textFill="WHITE" BorderPane.alignment="CENTER">
-               <font>
-                  <Font size="85.0" />
-               </font>
-            </Label>
-         </center>
-      </BorderPane>
-   </children>
+
+                        <Label text="Histórico de Tareas" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                        <TableView fx:id="taskHistoryTable" prefWidth="600" prefHeight="180">
+                            <columns>
+                                <TableColumn fx:id="colTaskName" text="Tarea" />
+                                <TableColumn fx:id="colTaskDescription" text="Descripción" />
+                                <TableColumn fx:id="colTaskDeadline" text="Fecha Límite" />
+                                <TableColumn fx:id="colTaskAssignedTo" text="Asignado a" />
+                            </columns>
+                        </TableView>
+                    </children>
+                </VBox>
+            </center>
+
+        </BorderPane>
+    </children>
+</AnchorPane>-->
+
+<AnchorPane id="AnchorPane" prefHeight="624.0" prefWidth="1036.0" style="-fx-background-color: white;" stylesheets="@controlPanelView.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.ControlPanelViewController">
+    <children>
+        <BorderPane style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+            <!-- Sección superior -->
+            <top>
+                <VBox alignment="CENTER_RIGHT" style="-fx-background-color: #79D7BE;" styleClass="header-section" BorderPane.alignment="CENTER">
+                    <children>
+                        <Label fx:id="controlPanelTitle" styleClass="header-label" text="PANEL DE CONTROL" />
+                    </children>
+                </VBox>
+            </top>
+
+            <!-- Sección central -->
+            <center>
+                <VBox alignment="TOP_CENTER" spacing="20" style="-fx-padding: 30px;" BorderPane.alignment="CENTER">
+                    <children>
+                        <TableView fx:id="usersTable" maxWidth="900.0" minWidth="900.0" prefHeight="200.0" prefWidth="900.0">
+                            <columns>
+                                <TableColumn fx:id="colUserId" prefWidth="62.0" text="ID" />
+                                <TableColumn fx:id="colUserName" prefWidth="98.0" text="Nombre" />
+                                <TableColumn fx:id="colUserApellidos" prefWidth="152.0" text="Apellidos" />
+                                <TableColumn fx:id="colUserEmail" prefWidth="225.0" text="Correo Electrónico" />
+                                <TableColumn fx:id="colUserRol" prefWidth="158.0" text="Rol" />
+                                <TableColumn fx:id="colUserFoto" prefWidth="202.0" text="Foto" />
+                            </columns>
+                        </TableView>
+
+                        <Label fx:id="lblEventHistory" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Histórico de Eventos" />
+                        <TableView fx:id="eventHistoryTable" maxWidth="900" minWidth="900" prefHeight="180" prefWidth="900">
+                            <columns>
+                                <TableColumn fx:id="colEventName" prefWidth="198.0" text="Evento" />
+                                <TableColumn fx:id="colEventDescription" prefWidth="264.0" text="Descripción" />
+                                <TableColumn fx:id="colEventDate" prefWidth="276.0" text="Fecha" />
+                                <TableColumn fx:id="colEventTime" prefWidth="161.0" text="Hora" />
+                            </columns>
+                        </TableView>
+
+                        <Label fx:id="lblTaskHistory" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Histórico de Tareas" />
+                        <TableView fx:id="taskHistoryTable" maxWidth="900" minWidth="900" prefHeight="180" prefWidth="900">
+                            <columns>
+                                <TableColumn fx:id="colTaskName" text="Tarea" />
+                                <TableColumn fx:id="colTaskDescription" prefWidth="299.0" text="Descripción" />
+                                <TableColumn fx:id="colTaskDeadline" prefWidth="245.0" text="Fecha Límite" />
+                                <TableColumn fx:id="colTaskAssignedTo" prefWidth="275.0" text="Asignado a" />
+                            </columns>
+                        </TableView>
+                    </children>
+                </VBox>
+            </center>
+
+        </BorderPane>
+    </children>
 </AnchorPane>

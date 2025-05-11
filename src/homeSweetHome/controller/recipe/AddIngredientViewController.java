@@ -19,6 +19,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -40,6 +41,8 @@ public class AddIngredientViewController implements Initializable {
     private Button btnAddIngredient;
     @FXML
     private Button btnCancel;
+    @FXML
+    private Label addIngredientTitle;
 
     private CreateRecipeViewController createRecipeController;
 
@@ -60,7 +63,7 @@ public class AddIngredientViewController implements Initializable {
         LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
         updateTexts(); // Actualiza los textos inicialmente
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////                   
+/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////  
 
     }
 
@@ -70,12 +73,12 @@ public class AddIngredientViewController implements Initializable {
      * Actualiza los textos de la interfaz en función del idioma.
      */
     private void updateTexts() {
-        
+
         // Obtiene la instancia única del Singleton
         LanguageManager languageManager = LanguageManager.getInstance();
 
         if (languageManager == null) {
-            
+
             System.err.println("Error: LanguageManager es nulo. Traducción no aplicada.");
             return;
         }
@@ -89,6 +92,8 @@ public class AddIngredientViewController implements Initializable {
         fieldIngredientQuantity.setPromptText(languageManager.getTranslation("ingredientQuantityPrompt"));
         btnAddIngredient.setText(languageManager.getTranslation("addIngredient"));
         btnCancel.setText(languageManager.getTranslation("cancel"));
+
+        addIngredientTitle.setText(languageManager.getTranslation("addIngredientTitle"));
 
         System.out.println("Etiqueta 'ingredientNamePrompt': " + fieldIngredientName.getPromptText());
         System.out.println("Etiqueta 'ingredientQuantityPrompt': " + fieldIngredientQuantity.getPromptText());
@@ -131,7 +136,7 @@ public class AddIngredientViewController implements Initializable {
      * @param modifyRecipeController El controlador de modificación de recetas.
      */
     public void setModifyRecipeController(ModifyRecipeViewController modifyRecipeController) {
-        
+
         this.modifyRecipeController = modifyRecipeController;
     }
 
@@ -142,7 +147,7 @@ public class AddIngredientViewController implements Initializable {
      * vista.
      */
     public void setCreateRecipeController(CreateRecipeViewController controller) {
-        
+
         this.createRecipeController = controller;
     }
 
@@ -153,7 +158,7 @@ public class AddIngredientViewController implements Initializable {
      */
     @FXML
     private void cancel(ActionEvent event) {
-        
+
         ((Stage) btnCancel.getScene().getWindow()).close(); // Cierra la ventana actual
     }
 
@@ -175,26 +180,44 @@ public class AddIngredientViewController implements Initializable {
         String ingredientMeasure = Measure.getValue();
 
         if (ingredientName.isEmpty() || ingredientQuantityStr.isEmpty() || ingredientMeasure == null) {
-            
-            AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos Vacíos", "Por favor, completa todos los campos.");
+
+            if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos Vacíos", "Por favor, completa todos los campos.");
+
+            } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                AlertUtils.showAlert(Alert.AlertType.WARNING, "Empty Fields", "Please complete all fields.");
+
+            }
+
             return;
         }
 
         // Valida la cantidad como número positivo
         int ingredientQuantity;
-        
+
         try {
-            
+
             ingredientQuantity = Integer.parseInt(ingredientQuantityStr);
-            
+
             if (ingredientQuantity <= 0) {
-                
+
                 throw new NumberFormatException();
             }
-            
+
         } catch (NumberFormatException e) {
-            
-            AlertUtils.showAlert(Alert.AlertType.ERROR, "Cantidad Inválida", "La cantidad debe ser un número positivo.");
+
+            if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                AlertUtils.showAlert(Alert.AlertType.ERROR, "Cantidad Inválida", "La cantidad debe ser un número positivo.");
+
+            } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                AlertUtils.showAlert(Alert.AlertType.ERROR, "Invalid Quantity", "The quantity must be a positive number.");
+
+            }
+
             return;
         }
 
@@ -207,43 +230,54 @@ public class AddIngredientViewController implements Initializable {
 
         // Determina el controlador principal (creación o modificación)
         if (createRecipeController != null) {
-            
+
             createRecipeController.addIngredientToTable(ingredient);
-            
+
         } else if (modifyRecipeController != null) {
-            
+
             modifyRecipeController.addIngredientToTable(ingredient);
-            
+
         } else {
-            
+
             System.err.println("No se ha establecido un controlador principal.");
             return;
         }
 
-        // Pregunta si quiere añadir más ingredientes
-        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION, "¿Deseas añadir otro ingrediente?");
-        confirmationAlert.setTitle("Añadir Más Ingredientes");
-        confirmationAlert.setHeaderText(null);
 
-        // Muestra la alerta - respuestas
-        ButtonType buttonYes = new ButtonType("Sí", ButtonBar.ButtonData.YES);
-        ButtonType buttonNo = new ButtonType("No", ButtonBar.ButtonData.NO);
+        // Crea la alerta de confirmación
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION, "");
+
+        // Aplica el estilo CSS
+        confirmationAlert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
+
+        // Define el mensaje según el idioma
+        String message = LanguageManager.getInstance().getLanguageCode().equals("en")
+                ? "Do you want to add another ingredient?"
+                : "¿Deseas añadir otro ingrediente?";
+
+        confirmationAlert.setContentText(message);
+        confirmationAlert.setHeaderText(null); // Elimina el encabezado
+
+        // Define botones personalizados
+        ButtonType buttonYes = LanguageManager.getInstance().getLanguageCode().equals("en")
+                ? new ButtonType("Yes", ButtonBar.ButtonData.YES)
+                : new ButtonType("Sí", ButtonBar.ButtonData.YES);
+
+        ButtonType buttonNo = LanguageManager.getInstance().getLanguageCode().equals("en")
+                ? new ButtonType("No", ButtonBar.ButtonData.NO)
+                : new ButtonType("No", ButtonBar.ButtonData.NO);
+
         confirmationAlert.getButtonTypes().setAll(buttonYes, buttonNo);
 
+        // Captura la respuesta del usuario
         Optional<ButtonType> result = confirmationAlert.showAndWait();
 
         if (result.isPresent() && result.get() == buttonNo) {
-            
-            // Cierra la ventana si el usuario selecciona "No"
-            ((Stage) btnAddIngredient.getScene().getWindow()).close();
-            
+            ((Stage) btnAddIngredient.getScene().getWindow()).close(); // Cierra la ventana si elige "No"
         } else {
-            
-            // Limpia los campos si el usuario selecciona "Sí"
             fieldIngredientName.clear();
             fieldIngredientQuantity.clear();
-            Measure.getSelectionModel().clearSelection();
+            Measure.getSelectionModel().clearSelection(); // Limpia los campos si elige "Sí"
         }
     }
-
 }

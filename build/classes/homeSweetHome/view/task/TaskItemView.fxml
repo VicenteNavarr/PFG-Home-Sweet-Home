@@ -8,8 +8,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="borderPaneContainer" prefHeight="200.0" prefWidth="795.0" styleClass="rounded-border-pane" stylesheets="@taskItem.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.task.TaskItemViewController">
-   <!-- Información de la tarea -->
+<!--<BorderPane fx:id="borderPaneContainer" prefHeight="200.0" prefWidth="795.0" styleClass="rounded-border-pane" stylesheets="@taskItem.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.task.TaskItemViewController">
+    Información de la tarea 
    <center>
       <VBox alignment="CENTER_LEFT" spacing="10.0">
          <children>
@@ -38,7 +38,7 @@
          </padding>
       </VBox>
    </center>
-   <!-- Botones de acción -->
+    Botones de acción 
    <right>
    <VBox alignment="CENTER" spacing="10" styleClass="action-buttons">
       <children>
@@ -52,5 +52,51 @@
 
    <padding>
       <Insets bottom="10.0" left="50.0" right="50.0" top="10.0" />
+   </padding>
+</BorderPane>-->
+
+<BorderPane fx:id="borderPaneContainer" prefHeight="230.0" prefWidth="800.0" styleClass="rounded-border-pane" stylesheets="@taskItem.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.task.TaskItemViewController">
+   <!-- Información de la tarea -->
+   <center>
+      <VBox alignment="CENTER" prefHeight="198.0" prefWidth="579.0" spacing="10.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label fx:id="lbNombreTarea" styleClass="font-label" text="Nombre Tarea:" />
+                  <Label fx:id="lblTaskName" prefHeight="25.0" prefWidth="250.0" styleClass="font" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label fx:id="lblQuien" styleClass="font-label" text="Quién hace la tarea:" />
+                  <Label fx:id="lblAssignedTo" prefHeight="25.0" prefWidth="250.0" styleClass="font" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <Label fx:id="lblFechaLimite" styleClass="font-label" text="Fecha Límite:" />
+                  <Label fx:id="lblDueDate" prefHeight="25.0" prefWidth="250.0" styleClass="font" />
+               </children>
+            </HBox>
+            <TextArea fx:id="txtDescription" prefHeight="80.0" prefWidth="479.0" promptText="Descripción de la tarea..." wrapText="true" />
+         </children>
+         <padding>
+            <Insets left="50.0" right="50.0" />
+         </padding>
+      </VBox>
+   </center>
+   
+   <!-- Botones de acción -->
+   <right>
+      <VBox alignment="CENTER" prefHeight="128.0" prefWidth="194.0" spacing="15" styleClass="action-buttons">
+         <children>
+            <Button fx:id="btnComplete" mnemonicParsing="false" onAction="#completeTask" prefHeight="36.0" prefWidth="160.0" styleClass="btn-success" text="Completar" />
+            <Button fx:id="btnOpenUpdateTask" mnemonicParsing="false" onAction="#openUpdateTask" prefWidth="160.0" styleClass="btn-primary" text="Modificar" />
+            <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#deleteTask" prefWidth="160.0" styleClass="btn-secondary" text="Eliminar" />
+         </children>
+      </VBox>
+   </right>
+   <padding>
+      <Insets left="50.0" right="50.0" />
    </padding>
 </BorderPane>

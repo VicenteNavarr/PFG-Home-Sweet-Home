@@ -21,6 +21,7 @@ public class TaskDAO {
      * @return boolean indicando si la operación fue exitosa
      */
     public boolean addTask(Task task) {
+        
         // Log para depuración
         System.out.println("ID del grupo de la tarea: " + task.getIdGrupo());
 
@@ -28,6 +29,7 @@ public class TaskDAO {
         String sql = "INSERT INTO Tareas (nombre_tarea, descripcion, fecha_limite, asignado_a_id, estado, id_grupo) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
             // Asigna los datos de la tarea a los parámetros de la consulta
             pstmt.setString(1, task.getNombreTarea());
             pstmt.setString(2, task.getDescripcion());
@@ -41,6 +43,7 @@ public class TaskDAO {
             return rowsAffected > 0;
 
         } catch (SQLException e) {
+            
             // Registra cualquier error que ocurra
             System.err.println("Error al registrar tarea: " + e.getMessage());
             return false;
@@ -55,17 +58,22 @@ public class TaskDAO {
      * @return boolean - `true` si la tarea existe, `false` en caso contrario.
      */
     public static boolean taskExists(String nombreTarea) {
+        
         // Consulta SQL para contar tareas con un nombre específico
         String sql = "SELECT COUNT(*) FROM Tareas WHERE nombre_tarea = ?";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
             pstmt.setString(1, nombreTarea); // Establece el nombre como parámetro
             ResultSet rs = pstmt.executeQuery(); // Ejecuta la consulta
 
             if (rs.next()) {
+                
                 return rs.getInt(1) > 0; // Retorna true si el conteo es mayor a 0
             }
+            
         } catch (SQLException e) {
+            
             // Registra el error en caso de fallo
             System.err.println("Error al comprobar si la tarea existe: " + e.getMessage());
         }
@@ -80,6 +88,7 @@ public class TaskDAO {
      * @return List<Task> - Lista de tareas asociadas al grupo.
      */
     public List<Task> getTasksByGroup(int groupId) {
+        
         // Lista para almacenar las tareas recuperadas
         List<Task> tasks = new ArrayList<>();
 
@@ -92,11 +101,13 @@ public class TaskDAO {
     """;
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
             pstmt.setInt(1, groupId); // Establecer el ID del grupo como parámetro
             ResultSet rs = pstmt.executeQuery(); // Ejecutar la consulta
 
             // Itera sobre los resultados y llena la lista de tareas
             while (rs.next()) {
+                
                 Task task = new Task();
                 task.setId(rs.getInt("id"));
                 task.setNombreTarea(rs.getString("nombre_tarea"));
@@ -108,7 +119,9 @@ public class TaskDAO {
 
                 tasks.add(task);
             }
+            
         } catch (SQLException e) {
+            
             // Registra cualquier error durante la consulta
             System.err.println("Error al obtener tareas por grupo: " + e.getMessage());
         }
@@ -125,14 +138,18 @@ public class TaskDAO {
      * caso contrario
      */
     public boolean deleteTask(int taskId) {
+        
         String sql = "DELETE FROM Tareas WHERE id = ?"; // Consulta SQL para eliminar la tarea
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
             pstmt.setInt(1, taskId); // Asigna el ID de la tarea al parámetro de la consulta
 
             int rowsAffected = pstmt.executeUpdate(); // Ejecutar la consulta
             return rowsAffected > 0; // Retorna `true` si se afectó al menos una fila
+            
         } catch (SQLException e) {
+            
             System.err.println("Error al eliminar la tarea con ID " + taskId + ": " + e.getMessage());
             return false; // Retorna `false` en caso de error
         }
@@ -146,9 +163,11 @@ public class TaskDAO {
      * en caso contrario
      */
     public boolean updateTask(Task task) {
+        
         String sqlUpdate = "UPDATE Tareas SET nombre_tarea = ?, descripcion = ?, fecha_limite = ?, asignado_a_id = ?, estado = ? WHERE id = ?";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sqlUpdate)) {
+            
             // Configura los valores de la actualización
             pstmt.setString(1, task.getNombreTarea()); // Nombre de la tarea
             pstmt.setString(2, task.getDescripcion()); // Descripción
@@ -161,7 +180,9 @@ public class TaskDAO {
             int rowsAffected = pstmt.executeUpdate();
             System.out.println("Filas afectadas en la actualización: " + rowsAffected);
             return rowsAffected > 0; // Retornar `true` si se actualizó al menos una fila
+            
         } catch (SQLException e) {
+            
             System.err.println("Error al actualizar la tarea con ID " + task.getId() + ": " + e.getMessage());
             return false; // Retorna `false` en caso de error
         }
@@ -175,13 +196,17 @@ public class TaskDAO {
      * encuentra
      */
     public Task getTaskById(int taskId) {
+        
         String sql = "SELECT id, nombre_tarea, descripcion, fecha_limite, asignado_a_id, estado, id_grupo FROM Tareas WHERE id = ?";
 
         try (Connection conn = MySQLConnection.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
             pstmt.setInt(1, taskId); // Asigna el ID de la tarea al parámetro
 
             ResultSet rs = pstmt.executeQuery();
+            
             if (rs.next()) {
+                
                 // Recupera datos de la tarea desde el ResultSet
                 int id = rs.getInt("id");
                 String nombreTarea = rs.getString("nombre_tarea");
@@ -196,6 +221,7 @@ public class TaskDAO {
             }
 
         } catch (SQLException e) {
+            
             System.err.println("Error al obtener la tarea con ID " + taskId + ": " + e.getMessage());
         }
 
@@ -214,6 +240,7 @@ public class TaskDAO {
      * error.
      */
     public boolean moveTaskToHistory(int tareaId, int groupId) {
+        
         // Consulta para actualizar el estado de la tarea a 'Completada'
         String updateStatusQuery = "UPDATE Tareas SET estado = 'Completada' WHERE id = ? AND id_grupo = ?";
         // Consulta para insertar la tarea en la tabla de histórico
@@ -231,12 +258,14 @@ public class TaskDAO {
             int rowsUpdated = updateStatusStmt.executeUpdate();
 
             if (rowsUpdated > 0) {
+                
                 // Inserta la tarea en la tabla de histórico
                 insertStmt.setInt(1, tareaId);
                 insertStmt.setInt(2, groupId);
                 int rowsInserted = insertStmt.executeUpdate();
 
                 if (rowsInserted > 0) {
+                    
                     // Elimina la tarea de la tabla principal
                     deleteStmt.setInt(1, tareaId);
                     deleteStmt.setInt(2, groupId);
@@ -244,11 +273,55 @@ public class TaskDAO {
                     return rowsDeleted > 0;
                 }
             }
+            
         } catch (SQLException e) {
+            
             System.err.println("Error al mover la tarea al histórico: " + e.getMessage());
             e.printStackTrace();
         }
         return false;
+    }
+
+    public List<Task> getHistoricalTasks() {
+        
+        int groupId = CurrentSession.getInstance().getUserGroupId();
+
+        if (groupId <= 0) {
+            
+            throw new IllegalStateException("El ID del grupo actual en la sesión no es válido: " + groupId);
+        }
+
+        String query = "SELECT id, nombre_tarea, descripcion, fecha_limite, hora_limite, asignado_a_id, id_grupo FROM TareasHistorico WHERE id_grupo = ?";
+        List<Task> historicalTasks = new ArrayList<>();
+
+        try (Connection connection = MySQLConnection.getConnection(); PreparedStatement stmt = connection.prepareStatement(query)) {
+
+            stmt.setInt(1, groupId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                
+                java.util.Date fechaLimite = rs.getDate("fecha_limite");
+
+                Task task = new Task(
+                        rs.getInt("id"),
+                        rs.getString("nombre_tarea"),
+                        rs.getString("descripcion"),
+                        fechaLimite,
+                        rs.getInt("asignado_a_id"),
+                        rs.getInt("id_grupo") // Ya sin `estado`
+                );
+
+                historicalTasks.add(task);
+            }
+
+        } catch (SQLException e) {
+            
+            System.err.println("Error al obtener tareas históricas: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return historicalTasks;
     }
 
 }

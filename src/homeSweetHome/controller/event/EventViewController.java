@@ -4,6 +4,7 @@
  */
 package homeSweetHome.controller.event;
 
+import homeSweetHome.dataPersistence.CurrentSession;
 import homeSweetHome.dataPersistence.EventDAO;
 import homeSweetHome.model.Event;
 import homeSweetHome.utils.LanguageManager;
@@ -20,6 +21,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -38,10 +40,21 @@ public class EventViewController implements Initializable {
     private VBox eventContainer; // Renombrar si es necesario
     @FXML
     private Button btnOpenCreateNewEvent;
+    @FXML
+    private Label eventsTitle;
+
+    int role = CurrentSession.getInstance().getUserRole(); // Tomamos rol para control de permisos
 
     //private LanguageManager languageManager;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        //Si el usuario tiene rol consultor, desactivamos botones
+        if (role == 2) {
+
+            btnOpenCreateNewEvent.setDisable(true);
+
+        }
 
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
 
@@ -54,6 +67,10 @@ public class EventViewController implements Initializable {
         // Inicializa la vista cargando los eventos existentes
         loadEvents();
 
+        eventContainer.translateXProperty().bind(
+                scrollPane.widthProperty().subtract(eventContainer.widthProperty()).divide(2)
+        );
+
     }
 
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////
@@ -62,17 +79,20 @@ public class EventViewController implements Initializable {
      * Actualiza los textos de la interfaz en función del idioma.
      */
     private void updateTexts() {
-        // Acceder al Singleton para traducciones
+        
+        // Accede al Singleton para traducciones
         LanguageManager languageManager = LanguageManager.getInstance();
 
         if (languageManager == null) {
-            
+
             System.err.println("Error: LanguageManager no está disponible.");
             return;
         }
 
         // Actualización del texto del botón
-        btnOpenCreateNewEvent.setText(languageManager.getTranslation("createEvent")); 
+        btnOpenCreateNewEvent.setText(languageManager.getTranslation("createEvent"));
+
+        eventsTitle.setText(languageManager.getTranslation("eventsTitle"));
 
         // Actualización dinámica del contenido del ScrollPane si aplica
         scrollPane.setContent(eventContainer); // Mantener el contenedor dinámico
@@ -81,7 +101,7 @@ public class EventViewController implements Initializable {
         System.out.println("Traducciones aplicadas correctamente en EventViewController.");
     }
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
+/////////////////////////////////FIN IDIOMAS///////////////////////////////////////////// 
     
     /**
      * Abre la ventana para crear un nuevo evento.
@@ -90,9 +110,9 @@ public class EventViewController implements Initializable {
      */
     @FXML
     private void openCreateNewEvent(ActionEvent event) {
-        
+
         try {
-            
+
             // Carga la vista CreateEventView desde el archivo FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/event/CreateEventView.fxml"));
             Parent root = loader.load();
@@ -106,13 +126,14 @@ public class EventViewController implements Initializable {
             // Configura una nueva ventana para la vista de creación
             Stage stage = new Stage();
             stage.setTitle("Crear Nuevo Evento"); // Título de la ventana
+            stage.setResizable(false);
             stage.setScene(new Scene(root)); // Configura la escena
             stage.initModality(Modality.WINDOW_MODAL); // Establece la ventana como modal
             stage.initOwner(btnOpenCreateNewEvent.getScene().getWindow()); // Asocia la ventana actual como propietaria
             stage.showAndWait(); // Muestra la ventana y espera a que se cierre
 
         } catch (IOException e) {
-            
+
             // Registra un error en caso de problemas al cargar la vista
             System.err.println("Error al cargar la vista CreateEventView: " + e.getMessage());
         }
@@ -160,7 +181,7 @@ public class EventViewController implements Initializable {
                 eventContainer.getChildren().add(eventItemNode);
 
             } catch (IOException e) {
-                
+
                 // Muestra un error si no se puede cargar la vista del ítem de evento
                 System.err.println("No se pudo cargar la vista EventItemView para el evento: " + event.getNombreEvento());
                 e.printStackTrace();

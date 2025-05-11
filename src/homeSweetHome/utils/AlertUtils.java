@@ -19,6 +19,13 @@ public class AlertUtils {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+        
+        // Aplicar la hoja de estilos personalizada
+        alert.getDialogPane().getStylesheets().add(AlertUtils.class.getResource("alertsCss.css").toExternalForm());
+        
+        // Aplicar una clase de estilo específica si es necesario
+    alert.getDialogPane().getStyleClass().add("dialog-pane");
+        
         alert.showAndWait();
     }
 }

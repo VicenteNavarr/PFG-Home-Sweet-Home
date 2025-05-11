@@ -1,6 +1,6 @@
-@font-face {
+/*@font-face {
     font-family: 'Poppins';
-    src: url('../../fonts/Poppins-Regular.ttf'); /* Ruta relativa desde el archivo CSS */
+    src: url('../../fonts/Poppins-Regular.ttf');  Ruta relativa desde el archivo CSS 
 }
 
 .font {
@@ -9,30 +9,30 @@
 
 
 
-/*BOTONES MENU PRINCIPAL*/
+BOTONES MENU PRINCIPAL
 
 .button-menu {
-    -fx-background-color: #BF9A77; /* Base cálida */
-    -fx-text-fill: #FFFFFF; /* Texto blanco para un buen contraste */
+    -fx-background-color: #BF9A77;  Base cálida 
+    -fx-text-fill: #FFFFFF;  Texto blanco para un buen contraste 
     -fx-font-size: 14px;
     -fx-padding: 10px 20px;
-    -fx-background-radius: 5px; /* Esquinas redondeadas */
+    -fx-background-radius: 5px;  Esquinas redondeadas 
     -fx-cursor: hand;
 }
 
 .button-menu:hover {
-    -fx-background-color: #D6C6B9; /* Suavidad al pasar el ratón */
-    -fx-text-fill: #FFFFFF; /* Texto blanco para coherencia */
+    -fx-background-color: #D6C6B9;  Suavidad al pasar el ratón 
+    -fx-text-fill: #FFFFFF;  Texto blanco para coherencia 
 }
 
 .button-menu:pressed {
-    -fx-background-color: #97B8C2; /* Fondo fresco al hacer clic */
-    -fx-text-fill: #FFFFFF; /* Texto blanco limpio */
+    -fx-background-color: #97B8C2;  Fondo fresco al hacer clic 
+    -fx-text-fill: #FFFFFF;  Texto blanco limpio 
 }
 
 
 
-/*BACKGROUNDS*/
+BACKGROUNDS
 
 .background1 {
     -fx-background-color: #D35C37;
@@ -54,70 +54,219 @@
     -fx-background-color: #FFFFFF;
 }
 
-/* Estilo del menú principal */
-/* Estilo del menú principal */
+ Estilo del menú principal 
+ Estilo del menú principal 
 .menu-bar {
-    -fx-background-color: transparent; /* Fondo transparente para integrar con el diseño */
-    -fx-font-family: 'Poppins'; /* Fuente consistente */
+    -fx-background-color: transparent;  Fondo transparente para integrar con el diseño 
+    -fx-font-family: 'Poppins';  Fuente consistente 
 }
 
-/* Submenús ("Ajustes", "Cerrar Sesión", "Salir") */
+ Submenús ("Ajustes", "Cerrar Sesión", "Salir") 
 .menu-bar .menu-item {
-    -fx-background-color: #FFFFFF; /* Fondo blanco */
-    -fx-text-fill: #BF9A77; /* Texto cálido por defecto */
-    -fx-font-size: 14px; /* Tamaño de fuente adecuado */
-    -fx-padding: 10px 20px; /* Espaciado cómodo */
-    -fx-background-radius: 0; /* Bordes rectos */
-    -fx-cursor: hand; /* Cursor interactivo */
-    -fx-background-insets: 0; /* Elimina márgenes internos */
+    -fx-background-color: #FFFFFF;  Fondo blanco 
+    -fx-text-fill: #BF9A77;  Texto cálido por defecto 
+    -fx-font-size: 14px;  Tamaño de fuente adecuado 
+    -fx-padding: 10px 20px;  Espaciado cómodo 
+    -fx-background-radius: 0;  Bordes rectos 
+    -fx-cursor: hand;  Cursor interactivo 
+    -fx-background-insets: 0;  Elimina márgenes internos 
 }
 
-/* Estilo para eliminar el color azul al hacer hover */
+ Estilo para eliminar el color azul al hacer hover 
 .menu-bar .menu:hover {
-    -fx-background-color: transparent; /* Mantén el fondo transparente o personalízalo */
+    -fx-background-color: transparent;  Mantén el fondo transparente o personalízalo 
 }
 
 .menu-bar .menu {
-    -fx-background-color: transparent; /* Fondo estándar del menú */
+    -fx-background-color: transparent;  Fondo estándar del menú 
 }
 
-/* Opcional: Si quieres un color específico al hacer hover */
+ Opcional: Si quieres un color específico al hacer hover 
 .menu-bar .menu:hover {
-    -fx-background-color: #D6C6B9; /* Fondo suave para hover */
+    -fx-background-color: #D6C6B9;  Fondo suave para hover 
 }
 
-/* Hover (cuando el ratón pasa sobre el botón) */
+ Hover (cuando el ratón pasa sobre el botón) 
 .menu-bar .menu-item:hover {
-    -fx-background-color: #BF9A77; /* Fondo cálido */
-    -fx-text-fill: #FFFFFF; /* Texto blanco para contraste */
-    -fx-background-insets: 0; /* Prevenir estilos heredados */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 3, 0, 0, 1); /* Sombra sutil */
+    -fx-background-color: #BF9A77;  Fondo cálido 
+    -fx-text-fill: #FFFFFF;  Texto blanco para contraste 
+    -fx-background-insets: 0;  Prevenir estilos heredados 
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 3, 0, 0, 1);  Sombra sutil 
 }
 
-/* Pressed (cuando el botón se presiona) */
+ Pressed (cuando el botón se presiona) 
 .menu-bar .menu-item:pressed {
-    -fx-background-color: #D35C37; /* Fondo más oscuro */
-    -fx-text-fill: #FFFFFF; /* Texto blanco limpio */
+    -fx-background-color: #D35C37;  Fondo más oscuro 
+    -fx-text-fill: #FFFFFF;  Texto blanco limpio 
 }
 
-/* Ajuste para la imagen dentro del menú */
+ Ajuste para la imagen dentro del menú 
 .menu-bar .menu-item ImageView {
-    -fx-effect: none; /* Deshabilita efectos predeterminados */
-    -fx-opacity: 1; /* Asegura opacidad completa */
-    -fx-background-color: transparent; /* Fondo transparente */
-    -fx-background-insets: 0; /* Prevenir bordes no deseados */
+    -fx-effect: none;  Deshabilita efectos predeterminados 
+    -fx-opacity: 1;  Asegura opacidad completa 
+    -fx-background-color: transparent;  Fondo transparente 
+    -fx-background-insets: 0;  Prevenir bordes no deseados 
 }
 
-/* Hover para la imagen dentro del menú */
+ Hover para la imagen dentro del menú 
 .menu-bar .menu-item:hover ImageView {
-    -fx-effect: none; /* Elimina cualquier efecto en hover */
-    -fx-opacity: 1; /* No cambia la opacidad */
-    -fx-background-color: transparent; /* Fondo transparente */
+    -fx-effect: none;  Elimina cualquier efecto en hover 
+    -fx-opacity: 1;  No cambia la opacidad 
+    -fx-background-color: transparent;  Fondo transparente 
 }
 
-/* Accesibilidad adicional: Foco visible para usuarios de teclado */
+ Accesibilidad adicional: Foco visible para usuarios de teclado 
 .menu-bar .menu-item:focus {
-    -fx-border-color: #FFD700; /* Borde dorado para el foco */
-    -fx-border-width: 2px; /* Tamaño del borde */
-    -fx-border-radius: 0; /* Bordes consistentes */
+    -fx-border-color: #FFD700;  Borde dorado para el foco 
+    -fx-border-width: 2px;  Tamaño del borde 
+    -fx-border-radius: 0;  Bordes consistentes 
+}*/
+@font-face {
+    font-family: 'Poppins';
+    src: url('../../fonts/Poppins-Regular.ttf');
+}
+
+.root {
+    -fx-background-color: #F6F4F0;
+    -fx-font-family: 'Poppins';
+}
+
+/* Imagen del usuario */
+.user-image {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 4, 0, 0, 2);
+    -fx-background-radius: 50%;
+    -fx-border-radius: 50%;
+    -fx-border-color: #2E5077;
+    -fx-border-width: 2px;
+    -fx-fit-width: 80px;
+    -fx-fit-height: 80px;
+}
+
+.label {
+    -fx-text-fill: #2E5077;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+/* Botones principales */
+.button-menu {
+    -fx-background-color: #4DA1A9;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.button-menu:hover {
+    -fx-background-color: #79D7BE;
+}
+
+.button-menu:pressed {
+    -fx-background-color: #2E5077;
+}
+
+/* Fondos */
+.background1 {
+    -fx-background-color: #2E5077;
+}
+
+.background2 {
+    -fx-background-color: #4DA1A9;
+}
+
+.background3 {
+    -fx-background-color: #79D7BE;
+}
+
+.background4 {
+    -fx-background-color: #F6F4F0;
+}
+
+/* Estilo del MenuBar */
+.menu-bar {
+    -fx-background-color: #4DA1A9;
+    -fx-border-color: transparent;
+    -fx-font-size: 14px;
+    -fx-padding: 5px;
+    -fx-background-radius: 60px;
+}
+
+/* Estilo de los elementos del menú */
+.menu-bar .menu-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2E5077;
+    -fx-font-size: 14px;
+    -fx-padding: 8px;
+    -fx-border-radius: 0; /* Esto fuerza el borde recto */
+}
+
+.menu-bar .menu-item:hover {
+    -fx-background-color: #79D7BE;
+    -fx-border-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 8px; /* Asegura que no haya ajustes internos inesperados */
+    -fx-effect: none; /* Elimina posibles sombras que causen el borde redondeado */
+}
+
+.menu-bar .menu-item {
+    -fx-background-radius: 0 !important;
+}
+
+.menu-bar .menu-item:hover {
+    -fx-background-radius: 0 !important;
+}
+
+/* Eliminamos el hover en el menú principal */
+.menu-bar .menu:hover {
+    -fx-background-color: transparent;
+}
+
+
+
+/* Eliminamos cualquier efecto de selección */
+.menu-bar .menu-item:selected {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2E5077;
+    -fx-font-weight: bold;
+}
+
+/* Eliminamos el cambio de fondo al presionar */
+.menu-bar .menu-item:pressed {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2E5077;
+}
+
+/* Eliminamos sombras del texto */
+.button-menu, .menu-bar .menu-item {
+    -fx-effect: none;
+}
+
+/* Estilo para el ComboBox de idioma */
+.combo-box {
+    -fx-background-color: #4DA1A9;
+    -fx-border-color: #2E5077;
+    -fx-border-radius: 5px;
+    -fx-font-size: 14px;
+    -fx-padding: 5px;
+}
+
+/* Estilo de los elementos dentro del ComboBox */
+.combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2E5077;
+    -fx-font-size: 14px;
+}
+
+/* Hover en los elementos del ComboBox */
+.combo-box .list-cell:hover {
+    -fx-background-color: #79D7BE;
+    -fx-text-fill: #2E5077;
+}
+
+/* Cuando un elemento está seleccionado */
+.combo-box .list-cell:selected {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2E5077;
+    -fx-font-weight: bold;
 }

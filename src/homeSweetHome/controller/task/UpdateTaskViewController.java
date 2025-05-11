@@ -23,6 +23,8 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import java.time.ZoneId;
 import javafx.application.Platform;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 
 /**
  * FXML Controller class for the Update Task View.
@@ -36,11 +38,13 @@ public class UpdateTaskViewController implements Initializable {
     @FXML
     private DatePicker fieldDateLimit;
     @FXML
-    private TextField fieldTaskDescription;
+    private TextArea fieldTaskDescription;
     @FXML
     private Button btnUpdateTask;
     @FXML
     private Button btnCancelTask;
+    @FXML
+    private Label updateTaskTitle;
 
     private TaskViewController taskViewController; // Referencia al controlador principal
 
@@ -58,7 +62,7 @@ public class UpdateTaskViewController implements Initializable {
         LanguageManager.getInstance().addListener(() -> Platform.runLater(this::updateTexts));
         updateTexts(); // Actualiza los textos inicialmente
 
-/////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////   
+/////////////////////////////////FIN IDIOMAS///////////////////////////////////////////// 
 
         int groupId = CurrentSession.getInstance().getUserGroupId(); // ID del grupo actual
         UserDAO userDAO = new UserDAO();
@@ -77,12 +81,12 @@ public class UpdateTaskViewController implements Initializable {
      * Actualiza los textos de la interfaz en función del idioma.
      */
     private void updateTexts() {
-        
+
         // Obtiene la instancia única del Singleton
         LanguageManager languageManager = LanguageManager.getInstance();
 
         if (languageManager == null) {
-            
+
             System.err.println("Error: LanguageManager es nulo. Traducción no aplicada.");
             return;
         }
@@ -94,6 +98,8 @@ public class UpdateTaskViewController implements Initializable {
         // Traducción de botones
         btnUpdateTask.setText(languageManager.getTranslation("updateTask"));
         btnCancelTask.setText(languageManager.getTranslation("cancel"));
+
+        updateTaskTitle.setText(languageManager.getTranslation("updateTaskTitle"));
 
         System.out.println("Botón 'updateTask': " + btnUpdateTask.getText());
         System.out.println("Botón 'cancel': " + btnCancelTask.getText());
@@ -129,7 +135,7 @@ public class UpdateTaskViewController implements Initializable {
      * @param taskViewController - Controlador principal
      */
     public void setTaskViewController(TaskViewController taskViewController) {
-        
+
         this.taskViewController = taskViewController;
     }
 
@@ -140,7 +146,7 @@ public class UpdateTaskViewController implements Initializable {
      * @param task - Objeto Task que contiene los datos de la tarea
      */
     public void setTaskData(Task task) {
-        
+
         System.out.println("ID recibido en setTaskData: " + task.getId());
 
         // Asigna los valores a los campos de entrada
@@ -149,37 +155,37 @@ public class UpdateTaskViewController implements Initializable {
 
         // Configura la fecha límite en el DatePicker
         if (task.getFechaLimite() != null) {
-            
+
             // Verifica si es una instancia de java.sql.Date
             if (task.getFechaLimite() instanceof java.sql.Date) {
-                
+
                 fieldDateLimit.setValue(((java.sql.Date) task.getFechaLimite()).toLocalDate());
-                
+
             } else {
-                
+
                 // Si es java.util.Date u otra, conveierte correctamente
                 fieldDateLimit.setValue(task.getFechaLimite().toInstant()
                         .atZone(ZoneId.systemDefault())
                         .toLocalDate());
             }
-            
+
         } else {
-            
+
             fieldDateLimit.setValue(null); // En caso de que no haya fecha límite, se deja vacío
         }
 
         // Selecciona el usuario asignado en el ComboBox
         if (task.getAsignadoAId() != 0) {
-            
+
             for (String usuario : cmbUsuario.getItems()) {
                 if (getUserNameById(task.getAsignadoAId()).equals(usuario)) {
                     cmbUsuario.getSelectionModel().select(usuario);
                     break;
                 }
             }
-            
+
         } else {
-            
+
             cmbUsuario.getSelectionModel().clearSelection(); // Si no hay usuario asignado
         }
     }
@@ -192,15 +198,15 @@ public class UpdateTaskViewController implements Initializable {
      * encuentra
      */
     private String getUserNameById(int id) {
-        
+
         for (Map.Entry<String, Integer> entry : userMap.entrySet()) {
-            
+
             if (entry.getValue().equals(id)) {
-                
+
                 return entry.getKey(); // Retorna el nombre del usuario
             }
         }
-        
+
         return "Usuario desconocido"; // Retorna un valor predeterminado si no se encuentra
     }
 
@@ -211,7 +217,7 @@ public class UpdateTaskViewController implements Initializable {
      */
     @FXML
     private void cancel(ActionEvent event) {
-        
+
         ((Stage) btnCancelTask.getScene().getWindow()).close();
     }
 
@@ -222,9 +228,9 @@ public class UpdateTaskViewController implements Initializable {
      */
     @FXML
     private void updateTaskTask(ActionEvent event) {
-        
+
         try {
-            
+
             // Recupera valores de los campos de entrada
             String nombreTarea = fieldTaskName.getText().trim(); // Nombre de la tarea
             String descripcion = fieldTaskDescription.getText().trim(); // Descripción de la tarea
@@ -242,17 +248,35 @@ public class UpdateTaskViewController implements Initializable {
 
             // Valida que no haya campos vacíos
             if (nombreTarea.isEmpty() || descripcion.isEmpty() || usuarioSeleccionado == null || fechaLimite == null) {
-                
-                AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos", "Por favor completa todos los campos, incluida la fecha límite.");
+
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Campos incompletos", "Por favor completa todos los campos, incluida la fecha límite.");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.WARNING, "Incomplete Fields", "Please complete all fields, including the deadline.");
+
+                }
+
                 return;
             }
 
             // Valida el usuario seleccionado
             int asignadoAId = userMap.getOrDefault(usuarioSeleccionado, -1);
-            
+
             if (asignadoAId == -1) {
-                
-                AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se encontró el usuario seleccionado.");
+
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se encontró el usuario seleccionado.");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "The selected user was not found.");
+
+                }
+
                 return;
             }
 
@@ -285,27 +309,36 @@ public class UpdateTaskViewController implements Initializable {
             boolean success = taskDAO.updateTask(tareaActualizada);
 
             if (success) {
-                
-                // Muestra un mensaje de éxito
-                AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Éxito", "La tarea se ha actualizado correctamente.");
+
+                if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
+
+                    // Muestra un mensaje de éxito
+                    AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Éxito", "La tarea se ha actualizado correctamente.");
+
+                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
+
+                    // Muestra un mensaje de éxito
+                    AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Success", "The task has been updated successfully.");
+
+                }
 
                 // Refresca la lista de tareas en el controlador principal
                 if (taskViewController != null) {
-                    
+
                     taskViewController.loadTasks();
                 }
 
                 // Cierra la ventana actual
                 ((Stage) btnUpdateTask.getScene().getWindow()).close();
-                
+
             } else {
-                
+
                 // Muestra un mensaje de error si la actualización falla
                 AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "Ocurrió un problema al intentar actualizar la tarea.");
             }
-            
+
         } catch (Exception e) {
-            
+
             // Maneja cualquier excepción no prevista
             e.printStackTrace();
             AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "Se produjo un error al procesar la actualización.");
