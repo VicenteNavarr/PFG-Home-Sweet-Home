@@ -25,10 +25,12 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -81,6 +83,8 @@ public class MainViewController implements Initializable {
     private Button btnLoadRecipes;
     @FXML
     private ComboBox<String> languageSelector;
+    @FXML
+    private MenuItem btnHelp;
 
     private Server server; // Referencia al servidor
 
@@ -101,12 +105,12 @@ public class MainViewController implements Initializable {
 
         // Carga automáticamente la vista del panel de control al iniciar
         try {
-            
+
             AnchorPane root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/ControlPanelView.fxml"));
             rootPane.setCenter(root);
-            
+
         } catch (IOException ex) {
-            
+
             Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, "Error al cargar ControlPanelView", ex);
         }
 
@@ -122,7 +126,6 @@ public class MainViewController implements Initializable {
     }
 
 /////////////////////////////////IDIOMAS/////////////////////////////////////////////   
-    
     /**
      * Configura el ComboBox de selección de idioma y actualiza los textos.
      */
@@ -141,6 +144,12 @@ public class MainViewController implements Initializable {
             String selectedLanguage = languageSelector.getValue().equals("English") ? "en" : "es";
             languageManager.setLanguage(selectedLanguage);
             updateTexts(currentUser); // Actualiza los textos de la interfaz
+            
+            if (isHelpViewLoaded()) {
+                
+            openHelp();
+        }
+            
         });
     }
 
@@ -160,14 +169,11 @@ public class MainViewController implements Initializable {
         btnSettings.setText(languageManager.getTranslation("settings"));
         btnCloseSession.setText(languageManager.getTranslation("closeSession"));
         btnExitApp.setText(languageManager.getTranslation("exit"));
+        btnHelp.setText(languageManager.getTranslation("help"));
     }
 
 /////////////////////////////////FIN IDIOMAS/////////////////////////////////////////////  
-    
-    
-    
 ///////////////CARGA DE VISTAS -> ACCIÓN BOTONES/////////////////////////////////////////////
-    
     /**
      * Método llamado cuando se hace clic en el botón "btnLoadControlPanelView".
      * Carga y muestra la vista ControlPanelView.fxml en el centro del
@@ -406,8 +412,6 @@ public class MainViewController implements Initializable {
     }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    
     /**
      * Método para cargar y establecer la imagen de perfil del usuario actual
      * desde la base de datos.
@@ -422,7 +426,7 @@ public class MainViewController implements Initializable {
         System.out.println("Obteniendo usuario con ID: " + currentUserId);
 
         try {
-            
+
             // Obtiene el usuario desde la base de datos
             User currentUser = userDAO.getUserById(currentUserId);
 
@@ -507,7 +511,7 @@ public class MainViewController implements Initializable {
      */
     @FXML
     private void closeSession(ActionEvent event) {
-        
+
         try {
 
             // Carga el archivo FXML de la nueva vista
@@ -541,5 +545,50 @@ public class MainViewController implements Initializable {
         System.out.println("Saliendo del programa");
         System.exit(0);
     }
+
+    /**
+     * Abre la pantalla de ayuda, dependiendo del idioma, carga una vista u otra - en/es
+     * Para hacerlo dinámico, se llama al metodo en el selector de lenguaje
+     * @param event
+     */
+    @FXML
+    private void openHelp() {
+        
+        //  Elimina la vista anterior de forma segura
+        rootPane.setCenter(null);
+
+        // Obtener el idioma actual
+        String lang = LanguageManager.getInstance().getLanguageCode();
+        String fxmlPath = lang.equals("es") ? "/homeSweetHome/view/HelpViewEs.fxml" : "/homeSweetHome/view/HelpViewEn.fxml";
+
+        try {
+            
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+            AnchorPane root = loader.load();
+            
+            root.setUserData(fxmlPath); // Guarda el nombre del FXML cargado
+            
+            rootPane.setCenter(root);
+            
+        } catch (IOException ex) {
+            
+            Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, " ERROR al cargar la vista de ayuda", ex);
+        }
+    }
+
+    
+    private boolean isHelpViewLoaded() {
+        
+    Node currentView = rootPane.getCenter();
+    
+    if (currentView instanceof Parent) {
+        
+        String fxmlName = currentView.getUserData() != null ? currentView.getUserData().toString() : "";
+        return fxmlName.equals("/homeSweetHome/view/HelpViewEs.fxml") || fxmlName.equals("/homeSweetHome/view/HelpViewEn.fxml");
+    }
+    return false;
+}
+
+
 
 }

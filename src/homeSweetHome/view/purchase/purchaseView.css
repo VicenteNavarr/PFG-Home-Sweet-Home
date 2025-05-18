@@ -105,7 +105,7 @@
 .root {
     -fx-background-color: #F6F4F0;
     -fx-font-family: 'Poppins';
-    -fx-font-size: 14px;
+    -fx-font-size: 12px;
 }
 
 /* Estilo del encabezado con altura reducida */
@@ -126,9 +126,17 @@
     -fx-background-color: #4DA1A9; /* Cambia el color de fondo de la cabecera */
 }
 
+.instruction {
+    
+    
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 10px;
+    
+}
+
 .table-view .column-header .label {
     -fx-text-fill: white; /* Cambia el color del texto */
-    -fx-font-size: 14px; /* Ajusta el tamaño del texto */
+    -fx-font-size: 12px; /* Ajusta el tamaño del texto */
     -fx-font-weight: bold; /* Hace el texto más visible */
 }
 
@@ -168,10 +176,27 @@
     -fx-background-color: #2E5077;
 }
 
+.btn-primary2 {
+    -fx-background-color: #4DA1A9;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 15px;
+    -fx-cursor: hand;
+}
+
+.btn-primary2:hover {
+    -fx-background-color: #79D7BE;
+}
+
+.btn-primary2:pressed {
+    -fx-background-color: #2E5077;
+}
+
 .btn-secondary {
     -fx-background-color: #778D45;
     -fx-text-fill: #FFFFFF;
-    -fx-font-size: 14px;
+    -fx-font-size: 12px;
     -fx-background-radius: 5px;
     -fx-padding: 8px 15px;
     -fx-cursor: hand;

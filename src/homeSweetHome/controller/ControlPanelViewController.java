@@ -73,10 +73,13 @@ public class ControlPanelViewController implements Initializable {
     private Label lblEventHistory;
     @FXML
     private Label lblTaskHistory;
+    @FXML
+    private Label lblRegisteredUsers;
        
     private final EventDAO eventDAO = new EventDAO();
     
     private final TaskDAO taskDAO = new TaskDAO();
+
 
     /**
      * Métodos Inicio
@@ -125,6 +128,7 @@ public class ControlPanelViewController implements Initializable {
         controlPanelTitle.setText(languageManager.getTranslation("controlPanelTitle"));
         lblEventHistory.setText(languageManager.getTranslation("lblEventHistory"));
         lblTaskHistory.setText(languageManager.getTranslation("lblTaskHistory"));
+        lblRegisteredUsers.setText(languageManager.getTranslation("lblRegisteredUsers"));
 
         // Actualiza encabezados de la tabla de usuarios
         colUserId.setText(languageManager.getTranslation("userId"));

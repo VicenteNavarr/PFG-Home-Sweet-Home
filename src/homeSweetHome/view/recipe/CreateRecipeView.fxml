@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" prefHeight="863.0" prefWidth="911.0" stylesheets="@createRecipe.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.recipe.CreateRecipeViewController">
+<AnchorPane id="AnchorPane" prefHeight="768.0" prefWidth="911.0" stylesheets="@createRecipe.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.recipe.CreateRecipeViewController">
    <children>
       <VBox alignment="CENTER" layoutX="0.0" layoutY="0.0" prefHeight="962.0" prefWidth="916.0" spacing="30" styleClass="main-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>

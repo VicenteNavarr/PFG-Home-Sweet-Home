@@ -23,6 +23,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -127,6 +128,7 @@ public class EventViewController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Crear Nuevo Evento"); // Título de la ventana
             stage.setResizable(false);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/eventIconBlue.png")));
             stage.setScene(new Scene(root)); // Configura la escena
             stage.initModality(Modality.WINDOW_MODAL); // Establece la ventana como modal
             stage.initOwner(btnOpenCreateNewEvent.getScene().getWindow()); // Asocia la ventana actual como propietaria

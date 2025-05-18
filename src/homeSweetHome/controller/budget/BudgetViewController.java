@@ -32,6 +32,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -75,8 +76,13 @@ public class BudgetViewController implements Initializable {
     private Label budgetTitle;
     @FXML
     private HBox HboxFiltros;
+    @FXML
+    private Label instructionBudget;
 
     int role = CurrentSession.getInstance().getUserRole(); // Tomamos rol para control de permisos
+    @FXML
+    private Label labelTotalSpent;
+
 
     /**
      * Initializes the controller class.
@@ -147,6 +153,7 @@ public class BudgetViewController implements Initializable {
         btnOpenAddNewSpent.setText(languageManager.getTranslation("addSpent"));
         btnApplyFilters.setText(languageManager.getTranslation("applyFilters"));
         btnClearFilters.setText(languageManager.getTranslation("clearFilters"));
+        instructionBudget.setText(languageManager.getTranslation("instructionBudget"));
 
         budgetTitle.setText(languageManager.getTranslation("budgetTitle"));
 
@@ -187,6 +194,10 @@ public class BudgetViewController implements Initializable {
         int groupId = CurrentSession.getInstance().getUserGroupId(); // Recupera el ID del grupo del usuario actual
 
         List<Budget> gastos = budgetDAO.getBudgetsByGroup(groupId); // Obtiene los gastos de la base de datos
+        
+        // Calcula el total de gastos sin filtros
+        double totalSpent = gastos.stream().mapToDouble(Budget::getMonto).sum();
+        labelTotalSpent.setText(String.format("Total: %.2f€", totalSpent));
 
         tableViewSpent.getItems().setAll(gastos); // Llena la tabla con los datos obtenidos
     }
@@ -217,6 +228,7 @@ public class BudgetViewController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Añadir Nuevo Gasto"); // Título de la ventana
             stage.setResizable(false);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/budgetIconBlue.png")));
             stage.setScene(new Scene(root)); // Configura la escena
             stage.initModality(Modality.WINDOW_MODAL); // Establece la ventana como modal
             stage.initOwner(btnOpenAddNewSpent.getScene().getWindow()); // Asocia la ventana actual como propietaria
@@ -263,6 +275,7 @@ public class BudgetViewController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Actualizar Gasto"); // Título de la ventana
             stage.setResizable(false);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/budgetIconBlue.png")));
             stage.setScene(new Scene(root)); // Configura la escena
             stage.initModality(Modality.WINDOW_MODAL); // Establece la ventana como modal
             stage.initOwner(tableViewSpent.getScene().getWindow()); // Asocia la ventana actual como propietaria
@@ -356,6 +369,10 @@ public class BudgetViewController implements Initializable {
                 gastos.sort((g1, g2) -> Double.compare(g2.getMonto(), g1.getMonto())); // Orden descendente
             }
         }
+        
+        // Calcula el total de gastos filtrados
+        double totalSpent = gastos.stream().mapToDouble(Budget::getMonto).sum();
+        labelTotalSpent.setText(String.format("Total: %.2f€", totalSpent));
 
         // Muestra los resultados filtrados en la tabla
         System.out.println("Total de registros finales: " + gastos.size());

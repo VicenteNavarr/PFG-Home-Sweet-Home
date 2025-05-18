@@ -22,6 +22,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -118,7 +119,7 @@ public class LoginViewController {
         // Valida que los campos no estén vacíos
         if (nombre.getText().isEmpty() || apellidos.getText().isEmpty() || mail.getText().isEmpty() || contrasenia.getText().isEmpty()) {
 
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Todos los campos son obligatorios.");
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Todos los campos son obligatorios.\nAll the fields are required.");
             alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
             alert.showAndWait();
             return;
@@ -127,7 +128,7 @@ public class LoginViewController {
         // Valida el formato del correo electrónico utilizando ValidationUtils
         if (!ValidationUtils.isValidEmail(mail.getText())) {
 
-            Alert alert = new Alert(Alert.AlertType.ERROR, "El correo electrónico no tiene un formato válido.");
+            Alert alert = new Alert(Alert.AlertType.ERROR, "El correo electrónico no tiene un formato válido.\nMail invalid format");
             alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
             alert.showAndWait();
             return;
@@ -146,7 +147,7 @@ public class LoginViewController {
 
         if (userDAO.addFirstUser(newUser)) {
 
-            showAlert(Alert.AlertType.INFORMATION, "Registro Exitoso", "El usuario se ha registrado correctamente.");
+            showAlert(Alert.AlertType.INFORMATION, "Registro Exitoso", "El usuario se ha registrado correctamente.\nThe user has been successfully registered.");
             loginAutomatically(newUser, event);
 
         } else {
@@ -167,7 +168,7 @@ public class LoginViewController {
         // Validar que los campos no estén vacíos
         if (login_usuario.getText().isEmpty() || login_contrasenia.getText().isEmpty()) {
 
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Todos los campos son obligatorios.");
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Todos los campos son obligatorios.\nAll the fields are required.");
             alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
             alert.showAndWait();
             return;
@@ -186,7 +187,7 @@ public class LoginViewController {
             session.setUserRole(user.getIdRol());//REVISAR!!
 
             // Mostrar alerta de éxito
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "¡Bienvenido, " + user.getNombre() + "!");
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "¡Bienvenido/Welcome, " + user.getNombre() + "!");
             alert.setHeaderText(null);
             alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
 
@@ -214,6 +215,7 @@ public class LoginViewController {
                 stage.setMinHeight(768);
                 stage.setMinWidth(1280);
                 stage.setTitle("Sweet Home - Vista Principal");
+                stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/HSHLogoCuadrado.png")));
                 stage.setResizable(true);
                 stage.centerOnScreen();
                 stage.show();
@@ -228,7 +230,7 @@ public class LoginViewController {
 
         } else {
 
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Usuario o contraseña incorrectos.");
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Usuario o contraseña incorrectos.\nInvalid user or password.");
             alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
             alert.showAndWait();
         }

@@ -52,7 +52,7 @@
    </children>
 </AnchorPane> -->
 
-<AnchorPane id="AnchorPane" prefHeight="831.0" prefWidth="911.0" stylesheets="@viewRecipe.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.recipe.ViewRecipeViewController">
+<AnchorPane id="AnchorPane" prefHeight="768.0" prefWidth="911.0" stylesheets="@viewRecipe.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.recipe.ViewRecipeViewController">
     <children>
         <VBox alignment="CENTER" layoutX="0.0" layoutY="0.0" prefHeight="746.0" prefWidth="911.0" spacing="30" styleClass="main-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>

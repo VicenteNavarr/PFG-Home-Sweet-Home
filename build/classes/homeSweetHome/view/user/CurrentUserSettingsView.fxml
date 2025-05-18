@@ -56,7 +56,14 @@
          <top>
             <VBox alignment="CENTER_RIGHT" style="-fx-background-color: #79D7BE;" styleClass="header-section" BorderPane.alignment="CENTER">
                <children>
-                  <Label fx:id="settingsTitle" styleClass="header-label" text="AJUSTES" />
+                  <Label fx:id="settingsTitle" styleClass="header-label" text="AJUSTES">
+                     <graphic>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../images/userSettingIcon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Label>
                </children>
             </VBox>
          </top>

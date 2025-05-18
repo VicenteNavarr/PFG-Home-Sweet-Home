@@ -47,6 +47,7 @@ import java.nio.file.*;
 import java.io.IOException;
 import javax.mail.PasswordAuthentication;
 import java.util.Properties;
+import javafx.scene.image.Image;
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -92,6 +93,8 @@ public class PurchaseViewController {
     private Label purchasesTitle;
     @FXML
     private Button btnSendPurchase;
+    @FXML
+    private Label instructionProduct;
 
     // Lista interna que contiene los datos del inventario
     private ObservableList<Product> inventoryList = FXCollections.observableArrayList();
@@ -100,6 +103,7 @@ public class PurchaseViewController {
     private ObservableList<Product> shoppingList = FXCollections.observableArrayList();
 
     int role = CurrentSession.getInstance().getUserRole(); // Tomamos rol para control de permisos
+
 
     /**
      * Carga los productos del inventario pertenecientes al grupo especificado.
@@ -236,6 +240,7 @@ public class PurchaseViewController {
         btnOpenAddNewProduct.setText(languageManager.getTranslation("addNewProduct"));
         btnCompletePurchase.setText(languageManager.getTranslation("completePurchase"));
         btnSendPurchase.setText(languageManager.getTranslation("sendPurchase"));
+        instructionProduct.setText(languageManager.getTranslation("instructionProduct"));
 
         purchasesTitle.setText(languageManager.getTranslation("purchasesTitle"));
 
@@ -284,6 +289,7 @@ public class PurchaseViewController {
             Stage stage = new Stage();
             stage.setTitle("Actualizar Producto");
             stage.setResizable(false);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/shoppingIconBlue.png")));
             stage.setScene(new Scene(root));
             stage.initModality(Modality.APPLICATION_MODAL); // Ventana modal
             stage.showAndWait(); // Espera hasta que se cierre la ventana
@@ -541,6 +547,7 @@ public class PurchaseViewController {
             Stage stage = new Stage();
             stage.setTitle("Añadir Nuevo Producto"); // Título de la ventana
             stage.setResizable(false);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/shoppingIconBlue.png")));
             stage.setScene(new Scene(root)); // Configura la escena
             stage.initModality(Modality.WINDOW_MODAL); // Establece la ventana como modal
             stage.initOwner(btnOpenAddNewProduct.getScene().getWindow()); // Asocia la ventana actual como propietaria

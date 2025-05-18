@@ -219,11 +219,39 @@
 
 /* Botones de incremento y decremento */
 .btn-increase {
-    -fx-background-color: #4CAF50;
+    -fx-background-color: #778D45;
     -fx-text-fill: white;
 }
 
 .btn-decrease {
-    -fx-background-color: #F44336;
+    -fx-background-color: #AA1803;
     -fx-text-fill: white;
+}
+
+/* Estilo para el ComboBox de idioma */
+.combo-box {
+    -fx-background-color: #4DA1A9 !important;
+    -fx-border-color: #2E5077 !important;
+    -fx-border-radius: 5px !important;
+    -fx-font-size: 14px !important;
+    -fx-padding: 5px !important;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: transparent !important;
+    -fx-text-fill: #2E5077 !important;
+    -fx-font-size: 14px !important;
+}
+
+/* Hover en los elementos del ComboBox */
+.combo-box .list-cell:hover {
+    -fx-background-color: #79D7BE !important;
+    -fx-text-fill: #2E5077 !important;
+}
+
+/* Cuando un elemento está seleccionado */
+.combo-box .list-cell:selected {
+    -fx-background-color: transparent !important;
+    -fx-text-fill: #2E5077 !important;
+    -fx-font-weight: bold !important;
 }

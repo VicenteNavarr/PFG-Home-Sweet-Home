@@ -26,7 +26,7 @@
                         <VBox layoutX="72.0" layoutY="199.0" prefHeight="720.0" prefWidth="244.0" styleClass="background1" stylesheets="@main.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
                                 <HBox prefHeight="100.0" prefWidth="200.0" />
-                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="244.0">
+                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="244.0" spacing="10.0">
                                     <children>
                                         <Button fx:id="btnLoadControlPanelView" mnemonicParsing="false" onAction="#LoadControlPanelView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Panel de Control">
                                             <font>
@@ -39,7 +39,7 @@
                                         </Button>
                                     </children>
                                 </HBox>
-                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
+                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0" spacing="10.0">
                                     <children>
                                         <Button fx:id="btnLoadUserView" mnemonicParsing="false" onAction="#loadUserView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Usuarios">
                                             <font>
@@ -52,7 +52,7 @@
                                         </Button>
                                     </children>
                                 </HBox>
-                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
+                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0" spacing="10.0">
                                     <children>
                                         <Button fx:id="btnLoadMealView" mnemonicParsing="false" onAction="#LoadMealView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Comidas">
                                             <font>
@@ -65,7 +65,7 @@
                                         </Button>
                                     </children>
                                 </HBox>
-                        <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
+                        <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0" spacing="10.0">
                            <children>
                               <Button fx:id="btnLoadRecipes" mnemonicParsing="false" onAction="#LoadRecipeView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Recetas">
                                  <font>
@@ -78,7 +78,7 @@
                               </Button>
                            </children>
                         </HBox>
-                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
+                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0" spacing="10.0">
                                     <children>
                                         <Button fx:id="btnLoadPurchaseView" mnemonicParsing="false" onAction="#LoadPurchaseView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Compras">
                                             <font>
@@ -91,7 +91,7 @@
                                         </Button>
                                     </children>
                                 </HBox>
-                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
+                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0" spacing="10.0">
                                     <children>
                                         <Button fx:id="btnLoadTaskView" mnemonicParsing="false" onAction="#LoadTaskView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Tareas">
                                             <font>
@@ -104,7 +104,7 @@
                                         </Button>
                                     </children>
                                 </HBox>
-                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
+                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0" spacing="10.0">
                                     <children>
                                         <Button fx:id="btnLoadEventView" mnemonicParsing="false" onAction="#LoadEventView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Eventos">
                                             <font>
@@ -117,7 +117,7 @@
                                         </Button>
                                     </children>
                                 </HBox>
-                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0">
+                                <HBox alignment="CENTER" prefHeight="60.0" prefWidth="200.0" spacing="10.0">
                                     <children>
                                         <Button fx:id="btnLoadBudgetView" mnemonicParsing="false" onAction="#LoadBudgetView" prefHeight="30.0" prefWidth="170.0" stylesheets="@main.css" text="Gastos">
                                             <font>
@@ -153,9 +153,9 @@
                         <HBox alignment="CENTER_RIGHT" layoutX="386.0" prefHeight="96.0" prefWidth="894.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="386.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <children>
                         <HBox prefHeight="100.0" prefWidth="200.0" />
-                        <ImageView fitHeight="56.0" fitWidth="73.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../images/languageIcon.png" />
+                              <Image url="@../../images/languageIcon_1.png" />
                            </image>
                         </ImageView>
                         <ComboBox fx:id="languageSelector" prefHeight="42.0" prefWidth="191.0" promptText="Idioma" />
@@ -176,6 +176,7 @@
                                             <items>
                                                 <MenuItem fx:id="btnSettings" onAction="#settings" styleClass="button-menu" text="Ajustes" />
                                                 <MenuItem fx:id="btnCloseSession" onAction="#closeSession" styleClass="button-menu" text="Cerrar Sesión" />
+                                    <MenuItem fx:id="btnHelp" onAction="#openHelp" styleClass="button-menu" text="Ayuda" />
                                                 <MenuItem fx:id="btnExitApp" onAction="#exitApp" styleClass="button-menu" text="Salir" />
                                             </items>
                                  <graphic>

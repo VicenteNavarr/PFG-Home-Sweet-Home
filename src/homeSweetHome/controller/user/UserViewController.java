@@ -23,6 +23,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -130,6 +131,7 @@ public class UserViewController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Crear Usuario");
             stage.setResizable(false);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/usersIconBlue.png")));
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL); // Ventana modal
             stage.initOwner(btnOpenCreateUser.getScene().getWindow()); // Establece el dueño de la ventana

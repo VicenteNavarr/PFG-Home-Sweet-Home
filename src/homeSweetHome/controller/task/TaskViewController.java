@@ -20,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -135,6 +136,7 @@ public class TaskViewController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Crear Nueva Tarea");
             stage.setResizable(false);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/taskIconBlue.png")));
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL); // Establece la ventana como modal
             stage.initOwner(btnOpenCreateNewTask.getScene().getWindow()); // Asocia la ventana actual como propietaria

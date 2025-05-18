@@ -209,6 +209,7 @@ public class CreateRecipeViewController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Añadir Ingrediente");
             stage.setResizable(false);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/recipeIconBlue.png")));
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnAddIngredient.getScene().getWindow());

@@ -4,6 +4,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -71,7 +73,14 @@
          <top>
             <VBox alignment="CENTER_RIGHT" style="-fx-background-color: #79D7BE;" styleClass="header-section" BorderPane.alignment="CENTER">
                <children>
-                  <Label fx:id="eventsTitle" styleClass="header-label" text="EVENTOS" />
+                  <Label fx:id="eventsTitle" styleClass="header-label" text="EVENTOS">
+                     <graphic>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../images/eventIcon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Label>
                </children>
             </VBox>
          </top>

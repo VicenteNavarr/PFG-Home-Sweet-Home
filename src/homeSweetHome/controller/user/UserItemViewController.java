@@ -212,6 +212,7 @@ public class UserItemViewController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Actualizar Usuario");
             stage.setResizable(false);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/usersIconBlue.png")));
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnOpenUpdate.getScene().getWindow());

@@ -7,6 +7,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -19,7 +21,14 @@
             <top>
                 <VBox alignment="CENTER_RIGHT" style="-fx-background-color: #79D7BE;" styleClass="header-section" BorderPane.alignment="CENTER">
                     <children>
-                        <Label fx:id="budgetTitle" styleClass="header-label" text="GASTOS" />
+                        <Label fx:id="budgetTitle" styleClass="header-label" text="GASTOS">
+                     <graphic>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../images/budgetIcon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Label>
                     </children>
                 </VBox>
             </top>
@@ -33,12 +42,12 @@
                     <children>
                         <HBox fx:id="HboxFiltros" alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                      <children>
-                              <ComboBox fx:id="filterCategory" prefHeight="30.0" prefWidth="210.0" promptText="Categoría" />
+                              <ComboBox fx:id="filterCategory" prefHeight="30.0" prefWidth="210.0" promptText="Categoría" styleClass="combo-box" />
                               <DatePicker fx:id="filterStartDate" prefWidth="150" promptText="Inicio" />
                               <DatePicker fx:id="filterEndDate" prefWidth="150" promptText="Fin" />
-                              <ComboBox fx:id="filterOrder" prefHeight="30.0" prefWidth="186.0" promptText="Orden por importe" />
-                              <Button fx:id="btnApplyFilters" onAction="#applyFilters" prefHeight="30.0" prefWidth="100.0" text="Filtrar" />
-                              <Button fx:id="btnClearFilters" layoutX="920" layoutY="20" onAction="#clearFilters" prefHeight="30.0" prefWidth="147.0" text="Limpiar filtros" />
+                              <ComboBox fx:id="filterOrder" prefHeight="30.0" prefWidth="186.0" promptText="Orden por importe" styleClass="combo-box" />
+                              <Button fx:id="btnApplyFilters" onAction="#applyFilters" prefHeight="30.0" prefWidth="100.0" styleClass="btn-increase" text="Filtrar" />
+                              <Button fx:id="btnClearFilters" layoutX="920" layoutY="20" onAction="#clearFilters" prefHeight="30.0" prefWidth="147.0" styleClass="btn-decrease" text="Limpiar filtros" />
                      </children></HBox>
 
                         <HBox alignment="CENTER">
@@ -56,9 +65,19 @@
                                                 <TableColumn fx:id="colDescription" prefWidth="333.0" text="Descripción" /> <!-- Nueva columna para botones +/- -->
                                             </columns>
                                         </TableView>
-                                        
-                                        <!-- Botón debajo de la tabla del Inventario -->
-                                        <Button fx:id="btnOpenAddNewSpent" mnemonicParsing="false" onAction="#openAddNewSpent" styleClass="btn-primary" text="Añadir Nuevo Gasto" />
+                              <HBox alignment="CENTER" prefHeight="19.0" prefWidth="976.0" spacing="10.0">
+                                 <children>
+                                              
+                                              <!-- Botón debajo de la tabla del Inventario -->
+                                              <Button fx:id="btnOpenAddNewSpent" mnemonicParsing="false" onAction="#openAddNewSpent" styleClass="btn-primary" text="Añadir Nuevo Gasto" />
+                                    <Label fx:id="instructionBudget" text="Doble click en el gasto para modificar o eliminar" />
+                                    <Label fx:id="labelTotalSpent" text="Total gastos: 0.00€">
+                                       <HBox.margin>
+                                          <Insets left="80.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                 </children>
+                              </HBox>
                                     </children>
                                 </VBox>
 

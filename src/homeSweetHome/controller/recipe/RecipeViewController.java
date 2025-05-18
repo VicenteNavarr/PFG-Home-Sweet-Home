@@ -309,6 +309,7 @@ public class RecipeViewController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Modificar Receta");
             stage.setResizable(false);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/recipeIconBlue.png")));
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnOpenAddNewRecipe.getScene().getWindow());
@@ -344,6 +345,7 @@ public class RecipeViewController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Ver Receta");
             stage.setResizable(false);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/recipeIconBlue.png")));
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnOpenAddNewRecipe.getScene().getWindow());
@@ -430,6 +432,7 @@ public class RecipeViewController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Crear Nueva Receta");
             stage.setResizable(false);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/recipeIconBlue.png")));
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnOpenAddNewRecipe.getScene().getWindow());

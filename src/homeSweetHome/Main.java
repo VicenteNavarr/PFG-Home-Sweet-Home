@@ -7,6 +7,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -18,6 +19,9 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        
+        //Font.loadFont(getClass().getResourceAsStream("/fonts/Poppins-Bold.ttf"), 0);
+
 
         Parent root = FXMLLoader.load(getClass().getResource("/homeSweetHome/view/LoginView.fxml"));
 
@@ -26,6 +30,7 @@ public class Main extends Application {
         stage.setTitle("Registro de Usuario / Register User");
         stage.setMinHeight(400);
         stage.setMinWidth(600);
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/HSHLogoCuadrado.png")));
         stage.setResizable(false);
 
         stage.setScene(scene);

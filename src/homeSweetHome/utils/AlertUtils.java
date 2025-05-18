@@ -1,6 +1,9 @@
 package homeSweetHome.utils;
 
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 
 /**
  * Clase utilitaria para mostrar alertas.
@@ -20,11 +23,13 @@ public class AlertUtils {
         alert.setHeaderText(null);
         alert.setContentText(message);
         
+
+        
         // Aplicar la hoja de estilos personalizada
         alert.getDialogPane().getStylesheets().add(AlertUtils.class.getResource("alertsCss.css").toExternalForm());
         
         // Aplicar una clase de estilo específica si es necesario
-    alert.getDialogPane().getStyleClass().add("dialog-pane");
+        alert.getDialogPane().getStyleClass().add("dialog-pane");
         
         alert.showAndWait();
     }

@@ -5,10 +5,13 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane id="AnchorPane" prefHeight="624.0" prefWidth="1036.0" style="-fx-background-color: white;" stylesheets="@purchaseView.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.purchase.PurchaseViewController">
     <children>
@@ -17,7 +20,14 @@
             <top>
                 <VBox alignment="CENTER_RIGHT" style="-fx-background-color: #79D7BE;" styleClass="header-section" BorderPane.alignment="TOP_RIGHT">
                     <children>
-                        <Label fx:id="purchasesTitle" styleClass="header-label" text="COMPRAS" />
+                        <Label fx:id="purchasesTitle" styleClass="header-label" text="COMPRAS">
+                     <graphic>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../images/shoppingIcon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Label>
                     </children>
                 </VBox>
             </top>
@@ -39,19 +49,27 @@
                                               <Label contentDisplay="CENTER" stylesheets="@purchaseView.css" text="Inventario" />
                                  </children>
                               </HBox>
-                                        <TableView fx:id="tableViewInventory" prefHeight="444.0" prefWidth="633.0">
+                                        <TableView fx:id="tableViewInventory" prefHeight="407.0" prefWidth="672.0">
                                             <columns>
                                                 <TableColumn fx:id="colProductName" text="Producto" />
-                                                <TableColumn fx:id="colQuantity" prefWidth="167.0" text="Cantidad Actual" />
-                                                <TableColumn fx:id="colMinQuantity" prefWidth="168.0" text="Cantidad Mínima" />
-                                                <TableColumn fx:id="colCategory" prefWidth="97.0" text="Categoría" />
-                                                <TableColumn fx:id="colType" prefWidth="121.0" text="Tipo" /> <!-- Nueva columna para "Cantidad" o "Gramos" -->
+                                                <TableColumn fx:id="colQuantity" prefWidth="126.0" text="Cantidad Actual" />
+                                                <TableColumn fx:id="colMinQuantity" prefWidth="152.0" text="Cantidad Mínima" />
+                                                <TableColumn fx:id="colCategory" prefWidth="154.0" text="Categoría" />
+                                                <TableColumn fx:id="colType" prefWidth="139.0" text="Tipo" /> <!-- Nueva columna para "Cantidad" o "Gramos" -->
                                                 <TableColumn fx:id="colQuantityControls" minWidth="0.0" prefWidth="0.0" text="Controles" /> <!-- Nueva columna para botones +/- -->
                                             </columns>
                                         </TableView>
-                                        
-                                        <!-- Botón debajo de la tabla del Inventario -->
-                                        <Button fx:id="btnOpenAddNewProduct" mnemonicParsing="false" onAction="#openAddNewProduct" styleClass="btn-primary" text="Añadir Nuevo Producto" />
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                 <children>
+                                              
+                                              <!-- Botón debajo de la tabla del Inventario -->
+                                              <Button fx:id="btnOpenAddNewProduct" mnemonicParsing="false" onAction="#openAddNewProduct" styleClass="btn-primary" text="Añadir Nuevo Producto" />
+                                    <Label id="instruction" fx:id="instructionProduct" prefHeight="20.0" prefWidth="448.0" text="Doble clik en el producto para modificar o eliminar">
+                                       <font>
+                                          <Font size="11.0" />
+                                       </font></Label>
+                                 </children>
+                              </HBox>
                                     </children>
                                 </VBox>
 
@@ -63,19 +81,19 @@
                                               <Label stylesheets="@purchaseView.css" text="Lista de la Compra" />
                                  </children>
                               </HBox>
-                                        <TableView fx:id="tableViewShoppingList" prefHeight="596.0" prefWidth="303.0">
+                                        <TableView fx:id="tableViewShoppingList" prefHeight="596.0" prefWidth="294.0">
                                             <columns>
                                                 <TableColumn fx:id="colShoppingProduct" prefWidth="116.0" text="Producto" />
                                                 <TableColumn fx:id="colShoppingQuantity" minWidth="0.0" prefWidth="102.0" text="Cantidad Necesaria" />
                                                 <TableColumn fx:id="colShoppingType" prefWidth="83.0" text="Tipo" /> <!-- Nueva columna para "Cantidad" o "Gramos" -->
                                             </columns>
                                         </TableView>
-                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                              <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                  <children>
                                               
                                               <!-- Botón debajo de la tabla de la Lista de la Compra -->
-                                              <Button fx:id="btnCompletePurchase" mnemonicParsing="false" onAction="#completePurchase" styleClass="btn-secondary" text="Completar Compra" />
-                                    <Button fx:id="btnSendPurchase" mnemonicParsing="false" onAction="#sendPurchase" prefHeight="36.0" prefWidth="117.0" styleClass="btn-primary" text="Enviar Mail" />
+                                              <Button fx:id="btnCompletePurchase" mnemonicParsing="false" onAction="#completePurchase" prefHeight="36.0" prefWidth="176.0" styleClass="btn-secondary" text="Completar Compra" />
+                                    <Button fx:id="btnSendPurchase" mnemonicParsing="false" onAction="#sendPurchase" prefHeight="36.0" prefWidth="106.0" styleClass="btn-primary2" text="Enviar Mail" />
                                  </children>
                               </HBox>
                                     </children>

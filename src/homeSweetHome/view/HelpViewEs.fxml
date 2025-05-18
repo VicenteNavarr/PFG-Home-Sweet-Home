@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+
+<AnchorPane id="AnchorPane" prefHeight="3000.0" prefWidth="1036.0" style="-fx-background-color: white;" stylesheets="@helpView.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.HelpViewController">
+    <children>
+        <BorderPane style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+            <!-- Sección superior -->
+            <top>
+                <VBox id="AnchorPane" alignment="CENTER_RIGHT" style="-fx-background-color: #79D7BE;" styleClass="header-section" BorderPane.alignment="CENTER">
+                    <children>
+                        <Label fx:id="helpTitle" styleClass="header-label" text="AYUDA">
+                     <graphic>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/helpIcon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Label>
+                    </children>
+                </VBox>
+            </top>
+
+            <!-- Sección central con ScrollPane -->
+            <center>
+                <ScrollPane fx:id="helpScrollPane" fitToWidth="true" prefHeight="500.0" prefWidth="800.0" style="-fx-background-color: white;" styleClass="custom-scroll-pane" BorderPane.alignment="CENTER">
+                    <content>
+                        <VBox fx:id="helpContentContainer" alignment="CENTER" fillWidth="false" prefWidth="800.0" spacing="20" style="-fx-padding: 30px;">
+                     <children>
+                        <HBox prefHeight="0.0" prefWidth="958.0" />
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH" text="📖 Guía de Usuario" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="26.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="Bienvenido a SweetHome , una aplicación integral diseñada para gestionar tu hogar de manera eficiente. Este sistema te permite controlar el inventario de productos, administrar usuarios, planificar comidas, gestionar compras, asignar tareas, registrar eventos y controlar el presupuesto de tu hogar." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH" text="🎯 Objetivo de la Aplicación" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="26.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="SweetHome está diseñado para facilitar la organización en un hogar o grupo de convivencia, asegurando que las tareas, compras y recursos sean gestionados de manera efectiva. Con esta herramienta, los usuarios pueden registrar productos, compartir responsabilidades y mantener un mejor control sobre el funcionamiento del hogar." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH" text="🔹 Panel de Control" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="26.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="Esta es la vista principal de la aplicación. Desde aquí puedes acceder a todos los módulos que conforman SweetHome." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH2" text=" ¿Qué puedes hacer aquí?" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="🔹 Navegar entre los distintos módulos de la aplicación a través del menú lateral. 🔹 Consultar información general sobre el estado del sistema. 🔹 Acceder a configuraciones y ajustes de usuario." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH" text="🗂 Gestión de Usuarios" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="26.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="Desde el módulo de Usuarios, puedes administrar las personas que tienen acceso al sistema, gestionar sus datos y establecer permisos." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH2" text=" ¿Qué puedes hacer aquí?" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="🔹 Ver la lista de usuarios registrados en el sistema. 🔹 Eliminar usuarios que ya no pertenezcan al grupo. 🔹 Recuperar contraseñas en caso de que un usuario pierda su acceso. 🔹 Modificar información personal." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH" text="🍽 Planificación de Comidas" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="26.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="El módulo de Comidas ayuda a organizar los menús semanales, asegurando que los ingredientes estén disponibles." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH2" text=" ¿Qué puedes hacer aquí?" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="🔹 Crear planes de comida asignando recetas a días específicos. 🔹 Consultar ingredientes necesarios para cada comida del día. 🔹 Generar listas de compra con los productos faltantes en el inventario." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH" text="🥘 Recetas" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="26.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="El módulo de Recetas permite registrar y administrar recetas preparadas dentro del hogar." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH2" text=" ¿Qué puedes hacer aquí?" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="🔹 Agregar nuevas recetas especificando ingredientes y pasos. 🔹 Editar recetas existentes para ajustar detalles. 🔹 Eliminar recetas que ya no sean necesarias. 🔹 Relacionar recetas con productos del inventario para facilitar la compra de ingredientes." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH" text="🛒 Compras" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="26.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="El módulo de Compras facilita la adquisición de productos necesarios para el grupo." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH2" text=" ¿Qué puedes hacer aquí?" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="🔹 Generar listas de compra automáticamente según el inventario. 🔹 Registrar compras realizadas y actualizar el stock. " wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH" text="✅ Gestión de Tareas" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="26.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="El módulo de Tareas permite asignar y organizar las actividades dentro del hogar." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH2" text=" ¿Qué puedes hacer aquí?" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="🔹 Crear nuevas tareas asignadas a usuarios del grupo. 🔹 Consultar tareas activas y fechas de vencimiento. 🔹 Historial de tareas completadas. 🔹 Modificar y eliminar tareas." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH" text="📅 Eventos" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="26.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="El módulo de Eventos sirve para organizar reuniones, actividades, citas y más dentro del grupo." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH2" text=" ¿Qué puedes hacer aquí?" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="🔹 Programar eventos con fecha, hora y descripción. 🔹 Modificar y eliminar eventos." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH" text="💰 Presupuesto" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="26.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="El módulo de Presupuesto permite administrar los ingresos y gastos del grupo." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textosH2" text=" ¿Qué puedes hacer aquí?" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font name="System Bold" size="18.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="JUSTIFY">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="🔹 Registrar ingresos y gastos dentro del sistema. 🔹 Consultar historial de movimientos para control financiero. 🔹 Generar reportes de gasto por categoría. 🔹 Optimizar compras según el presupuesto disponible." wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                     </children>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </center>
+
+        </BorderPane>
+    </children>
+</AnchorPane>

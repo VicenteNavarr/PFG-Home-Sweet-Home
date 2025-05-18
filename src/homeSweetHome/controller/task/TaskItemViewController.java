@@ -22,6 +22,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -212,6 +213,7 @@ public class TaskItemViewController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Actualizar Tarea");
             stage.setResizable(false);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/taskIconBlue.png")));
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnOpenUpdateTask.getScene().getWindow());

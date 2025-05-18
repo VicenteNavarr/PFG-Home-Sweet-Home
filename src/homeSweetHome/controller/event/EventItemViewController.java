@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
 
 /**
  * Controlador para la vista de ítem de evento.
@@ -205,6 +206,7 @@ public class EventItemViewController implements Initializable {
             Stage stage = new Stage();
             stage.setTitle("Actualizar Evento");
             stage.setResizable(false);
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/eventIconBlue.png")));
             stage.setScene(new Scene(root));
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(btnOpenUpdateEvent.getScene().getWindow());

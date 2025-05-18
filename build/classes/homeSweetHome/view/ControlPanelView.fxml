@@ -3,8 +3,11 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <!--
@@ -74,7 +77,14 @@
             <top>
                 <VBox alignment="CENTER_RIGHT" style="-fx-background-color: #79D7BE;" styleClass="header-section" BorderPane.alignment="CENTER">
                     <children>
-                        <Label fx:id="controlPanelTitle" styleClass="header-label" text="PANEL DE CONTROL" />
+                        <Label fx:id="controlPanelTitle" styleClass="header-label" text="PANEL DE CONTROL">
+                     <graphic>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/controlIcon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Label>
                     </children>
                 </VBox>
             </top>
@@ -83,6 +93,16 @@
             <center>
                 <VBox alignment="TOP_CENTER" spacing="20" style="-fx-padding: 30px;" BorderPane.alignment="CENTER">
                     <children>
+                  <HBox prefHeight="100.0" prefWidth="200.0" maxHeight="100.0" maxWidth="200.0">
+                     <children>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/usersIconBlue.png" />
+                           </image>
+                        </ImageView>
+                        <Label fx:id="lblRegisteredUsers" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Usuarios Registrados" />
+                     </children>
+                  </HBox>
                         <TableView fx:id="usersTable" maxWidth="900.0" minWidth="900.0" prefHeight="200.0" prefWidth="900.0">
                             <columns>
                                 <TableColumn fx:id="colUserId" prefWidth="62.0" text="ID" />
@@ -93,8 +113,17 @@
                                 <TableColumn fx:id="colUserFoto" prefWidth="202.0" text="Foto" />
                             </columns>
                         </TableView>
-
-                        <Label fx:id="lblEventHistory" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Histórico de Eventos" />
+                  <HBox prefHeight="100.0" prefWidth="200.0" maxHeight="100.0" maxWidth="200.0"  >
+                     <children>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/eventIconBlue.png" />
+                           </image>
+                        </ImageView>
+      
+                              <Label fx:id="lblEventHistory" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Histórico de Eventos" />
+                     </children>
+                  </HBox>
                         <TableView fx:id="eventHistoryTable" maxWidth="900" minWidth="900" prefHeight="180" prefWidth="900">
                             <columns>
                                 <TableColumn fx:id="colEventName" prefWidth="198.0" text="Evento" />
@@ -103,8 +132,17 @@
                                 <TableColumn fx:id="colEventTime" prefWidth="161.0" text="Hora" />
                             </columns>
                         </TableView>
-
-                        <Label fx:id="lblTaskHistory" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Histórico de Tareas" />
+                  <HBox prefHeight="100.0" prefWidth="200.0" maxHeight="100.0" maxWidth="200.0">
+                     <children>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/taskIconBlue.png" />
+                           </image>
+                        </ImageView>
+      
+                              <Label fx:id="lblTaskHistory" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Histórico de Tareas" />
+                     </children>
+                  </HBox>
                         <TableView fx:id="taskHistoryTable" maxWidth="900" minWidth="900" prefHeight="180" prefWidth="900">
                             <columns>
                                 <TableColumn fx:id="colTaskName" text="Tarea" />
