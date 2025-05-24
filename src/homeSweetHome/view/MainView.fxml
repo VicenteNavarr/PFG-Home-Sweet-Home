@@ -175,9 +175,10 @@
                                         <Menu styleClass="button-menu">
                                             <items>
                                                 <MenuItem fx:id="btnSettings" onAction="#settings" styleClass="button-menu" text="Ajustes" />
-                                                <MenuItem fx:id="btnCloseSession" onAction="#closeSession" styleClass="button-menu" text="Cerrar Sesión" />
                                     <MenuItem fx:id="btnHelp" onAction="#openHelp" styleClass="button-menu" text="Ayuda" />
+                                                <MenuItem fx:id="btnCloseSession" onAction="#closeSession" styleClass="button-menu" text="Cerrar Sesión" />
                                                 <MenuItem fx:id="btnExitApp" onAction="#exitApp" styleClass="button-menu" text="Salir" />
+                                    <MenuItem fx:id="btnInfo" onAction="#opneInfo" styleClass="button-menu" text="Info+" />
                                             </items>
                                  <graphic>
                                     <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">

@@ -85,6 +85,8 @@ public class MainViewController implements Initializable {
     private ComboBox<String> languageSelector;
     @FXML
     private MenuItem btnHelp;
+    @FXML
+    private MenuItem btnInfo;
 
     private Server server; // Referencia al servidor
 
@@ -96,6 +98,7 @@ public class MainViewController implements Initializable {
 
     // Utiliza el Singleton para obtener la instancia del LanguageManager
     private final LanguageManager languageManager = LanguageManager.getInstance();
+
 
     /**
      * Initializes the controller class.
@@ -588,6 +591,30 @@ public class MainViewController implements Initializable {
     }
     return false;
 }
+
+    @FXML
+    private void opneInfo(ActionEvent event) {
+        
+        try {
+
+            // Crea una instancia explícita de FXMLLoader
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/InfoView.fxml"));
+
+            // Carga la vista y obtener el nodo raíz
+            AnchorPane root = loader.load();
+
+            // Pasa el ID del usuario actual al controlador
+            int currentUserId = CurrentSession.getInstance().getUserId(); // Obtiene el ID desde la sesión actual
+
+            // Establece la vista cargada en el centro del BorderPane
+            rootPane.setCenter(root);
+
+        } catch (IOException ex) {
+
+            Logger.getLogger(MainViewController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
 
 
 

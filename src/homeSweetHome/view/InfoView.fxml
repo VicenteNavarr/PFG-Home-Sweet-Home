@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+
+<AnchorPane id="AnchorPane" prefHeight="624.0" prefWidth="1036.0" style="-fx-background-color: white;" stylesheets="@helpView.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homeSweetHome.controller.HelpViewController">
+    <children>
+        <BorderPane style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+            <!-- Sección superior -->
+            <top>
+                <VBox id="AnchorPane" alignment="CENTER_RIGHT" style="-fx-background-color: #79D7BE;" styleClass="header-section" BorderPane.alignment="CENTER">
+                    <children>
+                        <Label fx:id="helpTitle" styleClass="header-label" text="INFO +">
+                     <graphic>
+                        <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/helpIcon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic></Label>
+                    </children>
+                </VBox>
+            </top>
+
+            <!-- Sección central con ScrollPane -->
+            <center>
+                <ScrollPane fx:id="helpScrollPane" fitToWidth="true" prefHeight="500.0" prefWidth="800.0" style="-fx-background-color: white;" styleClass="custom-scroll-pane" BorderPane.alignment="CENTER">
+                    <content>
+                        <VBox fx:id="helpContentContainer" alignment="CENTER" fillWidth="false" prefWidth="800.0" spacing="20" style="-fx-padding: 30px;">
+                     <children>
+                        <HBox prefHeight="0.0" prefWidth="958.0" />
+                        <ImageView fitHeight="457.0" fitWidth="446.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../images/SweetHomeLogoAzul2.png" />
+                           </image>
+                        </ImageView>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="CENTER">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="V 0.1" textAlignment="CENTER" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="CENTER">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="©Vicente Navarro Palacios | 2025" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="CENTER">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="https://github.com/VicenteNavarr/PFG-Home-Sweet-Home.git" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                        <TextFlow id="AnchorPane" prefHeight="0.0" prefWidth="974.0" styleClass="text-flow" textAlignment="CENTER">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="text-flow" text="PFG 2º DAM" wrappingWidth="350.0559997558594">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Text>
+                           </children>
+                        </TextFlow>
+                     </children>
+                        </VBox>
+                    </content>
+                </ScrollPane>
+            </center>
+
+        </BorderPane>
+    </children>
+</AnchorPane>

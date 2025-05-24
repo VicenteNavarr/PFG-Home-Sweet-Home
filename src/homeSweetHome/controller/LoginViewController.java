@@ -4,6 +4,8 @@ import homeSweetHome.dataPersistence.CurrentSession;
 import homeSweetHome.dataPersistence.UserDAO;
 import homeSweetHome.model.User;
 import homeSweetHome.utils.AlertUtils;
+import homeSweetHome.utils.LanzadorMail;
+import homeSweetHome.utils.PasswordRecoveryMailSender;
 import homeSweetHome.utils.ValidationUtils;
 import java.io.IOException;
 import java.util.Optional;
@@ -147,12 +149,23 @@ public class LoginViewController {
 
         if (userDAO.addFirstUser(newUser)) {
 
-            showAlert(Alert.AlertType.INFORMATION, "Registro Exitoso", "El usuario se ha registrado correctamente.\nThe user has been successfully registered.");
-            loginAutomatically(newUser, event);
+            Alert successAlert = new Alert(Alert.AlertType.INFORMATION, "El usuario se ha registrado correctamente.\nThe user has been successfully registered.");
+            successAlert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
+            successAlert.showAndWait();
+
+            Alert loginAlert = new Alert(Alert.AlertType.INFORMATION, "Pulsa 'ya tengo una cuenta' y logeate!.\nClick 'I already have an account' and log in!.");
+            loginAlert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
+            loginAlert.showAndWait();
 
         } else {
 
-            showAlert(Alert.AlertType.ERROR, "Error de Registro", "Hubo un problema al registrar el usuario. Inténtalo nuevamente.");
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setTitle("Error de Registro");
+            errorAlert.setHeaderText(null);
+            errorAlert.setContentText("Hubo un problema al registrar el usuario - El mail ya está registrado. Inténtalo nuevamente.\nMail already exists.");
+            errorAlert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
+            errorAlert.showAndWait();
+
         }
     }
 
@@ -262,54 +275,6 @@ public class LoginViewController {
         alert.showAndWait();
     }
 
-    /**
-     * Método para iniciar sesión automáticamente después del registro.
-     *
-     * @param user - Usuario registrado
-     * @param event - Evento de registro
-     */
-    private void loginAutomatically(User user, ActionEvent event) {
-
-        try {
-
-            // Guarda el userId y userGroupId en la sesión actual
-            CurrentSession session = CurrentSession.getInstance();
-            session.setUserId(user.getId());
-            session.setUserGroupId(user.getIdGrupo()); // Asigna el grupo al usuario registrado
-
-            showAlert(Alert.AlertType.INFORMATION, "Inicio de Sesión Exitoso", "¡Bienvenido, " + user.getNombre() + "!");
-
-            // Redirige a la vista principal
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/homeSweetHome/view/MainView.fxml"));
-            Parent mainView = loader.load();
-
-            // Obtiene el controlador asociado
-            MainViewController mainViewController = loader.getController();
-
-            // Pasa el nombre del usuario al controlador de la vista principal
-            mainViewController.setUserName(user.getNombre());
-
-            // Configura la nueva escena
-            Scene mainScene = new Scene(mainView);
-
-            // Obtiene el escenario actual desde el evento
-            Stage mainStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-
-            // Establece la nueva escena en el escenario
-            mainStage.setScene(mainScene);
-            mainStage.setTitle("Sweet Home - Vista Principal");
-            mainStage.centerOnScreen();
-            mainStage.setResizable(true);
-            mainStage.show();
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", "No se pudo cargar la vista principal.");
-
-        }
-    }
-
 ///Recuperación de mail////////
     /**
      * Envie mail con la contraseña del usuario
@@ -363,37 +328,73 @@ public class LoginViewController {
      */
     @FXML
     private void handleForgotPassword(ActionEvent event) {
-        
+
         UserDAO userDAO = new UserDAO();
-        
-        String email = login_usuario.getText(); //Obtiene el email directamente del formulario
+        String email = login_usuario.getText(); // Obtiene el email del formulario
 
         if (email != null && !email.isEmpty()) {
-            
-            User user = userDAO.getUserByEmail(email); //Método para obtener el usuario por correo
-            
+
+            User user = userDAO.getUserByEmail(email); // Obtiene el usuario por correo
+
             if (user != null) {
-                
-                String userPassword = userDAO.getUserPasswordById(user.getId()); // Recupera contraseña con el `userId`
-                
+
+                String userPassword = userDAO.getUserPasswordById(user.getId()); // Recupera la contraseña
+
                 if (userPassword != null && !userPassword.isEmpty()) {
-                    
-                    sendEmailWithPassword(email, userPassword); //Envía el email con la contraseña
+
+                    LanzadorMail lanzador = new LanzadorMail();
+                    lanzador.lanzarEnvioCorreoPass(email, userPassword);
+
                     System.out.println("Correo de recuperación enviado a: " + email);
-                    
+
+                    Platform.runLater(() -> {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Éxito");
+                        alert.setHeaderText(null);
+                        alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
+                        alert.setContentText("El correo de recuperación ha sido enviado correctamente.\nThe recovery email has been sent successfully.");
+                        alert.showAndWait();
+                    });
+
                 } else {
-                    
+
                     System.err.println("No se pudo obtener la contraseña del usuario.");
+
+                    Platform.runLater(() -> {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Error");
+                        alert.setHeaderText(null);
+                        alert.setContentText("No se pudo obtener la contraseña del usuario.");
+                        alert.showAndWait();
+                    });
                 }
-                
+
             } else {
-                
+
                 System.err.println("No se encontró un usuario con ese correo.");
+
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
+                    alert.setHeaderText(null);
+                    alert.setContentText("No se encontró un usuario con ese correo.\nNo user was found with that email.");
+                    alert.showAndWait();
+                });
             }
-            
+
         } else {
-            
+
             System.err.println("El campo de correo está vacío.");
+
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
+                alert.setHeaderText(null);
+                alert.setContentText("El campo de correo está vacío. Introduce un correo para poder enviar la contraseña.\nThe email field is empty. Please enter an email to send the password.");
+                alert.showAndWait();
+            });
         }
     }
 

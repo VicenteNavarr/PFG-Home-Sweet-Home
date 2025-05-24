@@ -238,6 +238,12 @@ public class MealViewController implements Initializable {
 
         imageView.setFitWidth(100);
         imageView.setFitHeight(100);
+        
+        // Aplica bordes redondeados con un radio de 8
+        Rectangle clip = new Rectangle(imageView.getFitWidth(), imageView.getFitHeight());
+        clip.setArcWidth(16); // Doble del radio deseado para suavizar bordes
+        clip.setArcHeight(16);
+        imageView.setClip(clip);
 
         // Nombre de la receta
         Label recipeName = new Label(meal.getRecipeName());

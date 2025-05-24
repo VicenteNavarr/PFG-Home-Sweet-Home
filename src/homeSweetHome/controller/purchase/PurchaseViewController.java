@@ -9,6 +9,7 @@ import homeSweetHome.model.Budget;
 import homeSweetHome.model.Product;
 import homeSweetHome.utils.AlertUtils;
 import homeSweetHome.utils.LanguageManager;
+import homeSweetHome.utils.LanzadorMail;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -103,7 +104,6 @@ public class PurchaseViewController {
     private ObservableList<Product> shoppingList = FXCollections.observableArrayList();
 
     int role = CurrentSession.getInstance().getUserRole(); // Tomamos rol para control de permisos
-
 
     /**
      * Carga los productos del inventario pertenecientes al grupo especificado.
@@ -1049,20 +1049,7 @@ public class PurchaseViewController {
         return FXCollections.unmodifiableObservableList(inventoryList); // Proporciona acceso seguro a la lista
     }
 
-//    /**
-//     * Metodo que envia por mail la lista de la compra
-//     *
-//     * @param event
-//     */
-//    @FXML
-//    private void sendPurchase(ActionEvent event) {
-//        
-//        String filePath = saveShoppingListToFile(); //  Guarda la lista y obtiene la ruta
-//        System.out.println("Ruta del archivo: " + filePath); //  Verifica ruta correcta
-//
-//        String recipientEmail = "algamento2@gmail.com";
-//        sendEmailWithShoppingList(recipientEmail, filePath); //  Envía la ruta, NO el contenido
-//    }
+
     
      /**
      * Metodo que envia por mail la lista de la compra
@@ -1071,23 +1058,43 @@ public class PurchaseViewController {
      */
     @FXML
     private void sendPurchase(ActionEvent event) {
-        
-        String filePath = saveShoppingListToFile(); // Guarda la lista y obtiene la ruta
-        System.out.println("Ruta del archivo: " + filePath); // Verifica ruta correcta
 
-        // Obtiene el correo electrónico del usuario actual
+        String filePath = saveShoppingListToFile();
+        System.out.println("Ruta del archivo: " + filePath);
+
         int userId = CurrentSession.getInstance().getUserId();
         UserDAO userDAO = new UserDAO();
         String recipientEmail = userDAO.getUserEmailById(userId);
 
         if (recipientEmail != null && !recipientEmail.isEmpty()) {
-            
-            sendEmailWithShoppingList(recipientEmail, filePath); // Envía la lista
-            System.out.println("Email enviado a: " + recipientEmail);
-            
+
+            LanzadorMail lanzador = new LanzadorMail();
+            lanzador.lanzarEnvioCorreo(filePath, recipientEmail);
+            System.out.println("Proceso de envío de email correcto.");
+
+            // 📌 Mostramos una alerta de éxito cuando se inicia el proceso
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Éxito");
+                alert.setHeaderText(null);
+                alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
+                alert.setContentText("El correo se ha enviado correctamente.\nThe email has been sent successfully.");
+                alert.showAndWait();
+            });
+
         } else {
-            
+
             System.err.println("No se pudo obtener el correo electrónico del usuario.");
+
+            // 📌 Mostramos una alerta de error si no se obtiene el correo del usuario
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.getDialogPane().getStylesheets().add(getClass().getResource("/homeSweetHome/utils/alertsCss.css").toExternalForm());
+                alert.setHeaderText(null);
+                alert.setContentText("No se pudo obtener el correo del usuario.\nCould not retrieve the user's email.");
+                alert.showAndWait();
+            });
         }
     }
 
@@ -1117,87 +1124,6 @@ public class PurchaseViewController {
         }
     }
 
-    /**
-     * Configura el envio del mail
-     *
-     * @param recipientEmail
-     * @param filePath
-     */
-    private void sendEmailWithShoppingList(String recipientEmail, String filePath) {
-
-        final String senderEmail = "apphomesweethome@gmail.com"; // correo de la app -> en esta caso un gmail con autenticación y contraseña de aplicación
-        final String senderPassword = "mskh lydf tzib vguo"; // Usa autenticación segura ->contraseña app terceros de google
-
-        // Lee el contenido del archivo correctamente
-        String fileContent = "";
-
-        try {
-
-            System.out.println("Ruta del archivo recibida: '" + filePath + "'");
-
-            Path path = Paths.get(filePath); //  Usa la ruta sin modificar
-            fileContent = Files.readString(path); //  Usa `Files.readString()` en lugar de `readAllBytes()`
-
-            System.out.println("Contenido del archivo:\n" + fileContent); //  Verifica contenido 
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-        }
-
-        // Configuración del servidor SMTP
-        Properties properties = new Properties();
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true");
-        properties.put("mail.smtp.host", "smtp.gmail.com");
-        properties.put("mail.smtp.port", "587");
-
-        // Sesión con autenticación segura
-        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
-
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(senderEmail, senderPassword);
-            }
-        });
-
-        try {
-
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(senderEmail));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
-            message.setSubject("Lista de Compras");
-
-            // Cuerpo del correo con el contenido del archivo
-            message.setText("Aquí está tu lista de compras:\n\n" + fileContent);
-
-            Transport.send(message);
-            
-            if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
-
-                     AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Éxito", "Correo enviado correctamente.");
-
-                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
-
-                     AlertUtils.showAlert(Alert.AlertType.INFORMATION, "Success", "Email sent successfully.");
-                }
-            
-            System.out.println("Correo enviado correctamente a: " + recipientEmail);
-            
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-            
-            if (LanguageManager.getInstance().getLanguageCode().equals("es")) {
-
-                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "No se pudo enviar el correo. Formato inválido");
-
-                } else if (LanguageManager.getInstance().getLanguageCode().equals("en")) {
-
-                    AlertUtils.showAlert(Alert.AlertType.ERROR, "Error", "The email could not be sent. Invalid format.");
-                }
-            
-        }
-    }
+   
 
 }
